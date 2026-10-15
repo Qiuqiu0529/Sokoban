@@ -14,6 +14,7 @@ public class ObjDataList_SO : SerializedScriptableObject
 
     public List<ObjData> GetObjsByType(ObjectType objType)
     {
-        return objDataList.FindAll(i => i.objType == objType);
+        return objDataList.FindAll(i => i.objType.HasFlag(objType));
     }
+
 }

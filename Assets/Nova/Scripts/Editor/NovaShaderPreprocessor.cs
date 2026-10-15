@@ -66,7 +66,10 @@ namespace Nova.Editor.Builds
         private bool IncludedInBuild(string shaderName)
         {
             if (!TryGetBuildFlag(shaderName, out Internal.LightingModel lightingModel) ||
-                !TryGetVisualType(shaderName, out VisualType visualType))
+                !TryGetVisualType(shaderName, out VisualType visualType) ||
+                // Need to do this check here to ensure that the settings initialization
+                // happens
+                !Internal.NovaSettings.Initialized)
             {
                 return false;
             }

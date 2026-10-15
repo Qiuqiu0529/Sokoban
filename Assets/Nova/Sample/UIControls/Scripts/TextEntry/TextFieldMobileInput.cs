@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -19,14 +20,15 @@ namespace NovaSamples.UIControls
         private bool secure = false;
 
         /// <summary>
+        /// The touch screen keyboard controller shared by all text fields.
+        /// </summary>
+        private static readonly TouchScreenKeyboardController touchScreenKeyboardController = new TextFieldMobileInput.TouchScreenKeyboardController();
+
+        /// <summary>
         /// The coroutine tracking tracking the keyboard visibility and listening for input events.
         /// </summary>
         private Coroutine inputRoutine = null;
 
-        /// <summary>
-        /// The active touchscreen keyboard
-        /// </summary>
-        private TouchScreenKeyboard keyboard = null;
 
         /// <summary>
         /// Tracks if we are currently updating the <see cref="TextField"/> from the touch screen keyboard.
@@ -60,12 +62,6 @@ namespace NovaSamples.UIControls
         /// </summary>
         protected override void HandleFocused()
         {
-            if (keyboard != null)
-            {
-                Debug.LogWarning("Got focus event when keyboard already existed");
-                return;
-            }
-
             inputRoutine = StartCoroutine(InputLoop());
         }
 
@@ -81,11 +77,7 @@ namespace NovaSamples.UIControls
                 inputRoutine = null;
             }
 
-            if (keyboard != null)
-            {
-                keyboard.active = false;
-                keyboard = null;
-            }
+            touchScreenKeyboardController.RequestHide(this);
         }
 
         /// <summary>
@@ -93,7 +85,8 @@ namespace NovaSamples.UIControls
         /// </summary>
         private void UpdateTouchScreenKeyboardSelection()
         {
-            if (keyboard == null || keyboard.status != TouchScreenKeyboard.Status.Visible)
+            if (touchScreenKeyboardController.Status != TouchScreenKeyboard.Status.Visible ||
+                !touchScreenKeyboardController.IsCurrentController(this))
             {
                 return;
             }
@@ -113,7 +106,7 @@ namespace NovaSamples.UIControls
             int count = inputField.StringIndexFromTextPosition(right) - start;
 
             // Update the keyboard selection
-            keyboard.selection = new RangeInt(start, count);
+            touchScreenKeyboardController.Selection = new RangeInt(start, count);
         }
 
         /// <summary>
@@ -123,7 +116,14 @@ namespace NovaSamples.UIControls
         private IEnumerator InputLoop()
         {
             // Open the touch screen keyboard
-            keyboard = TouchScreenKeyboard.Open(inputField.Text, keyboardType, autoCorrect, allowNewlines, secure, alert: false);
+            touchScreenKeyboardController.RequestShow(this, inputField.Text, new TouchScreenConfig()
+            {
+                KeyboardType = keyboardType,
+                Autocorrection = autoCorrect,
+                Multiline = allowNewlines,
+                Secure = secure,
+                Alert = false
+            });
 
             // Update the touch screen keyboard selection
             UpdateTouchScreenKeyboardSelection();
@@ -131,7 +131,7 @@ namespace NovaSamples.UIControls
             // Loop indefinitely, the loop will stop when the coroutine is stopped.
             while (true)
             {
-                if (keyboard.status != TouchScreenKeyboard.Status.Visible)
+                if (touchScreenKeyboardController.Status != TouchScreenKeyboard.Status.Visible)
                 {
                     // The touch screen keyboard was hidden (for example, if the user clicks somewhere else
                     // on the screen), so unfocus the text input field (our unfocus event handler will 
@@ -140,17 +140,17 @@ namespace NovaSamples.UIControls
                     yield break;
                 }
 
-                if (keyboard.text != inputField.Text)
+                if (touchScreenKeyboardController.Text != inputField.Text)
                 {
                     // The keyboard text and input field text don't match, so update the input field
                     updatingText = true;
-                    inputField.Text = keyboard.text;
+                    inputField.Text = touchScreenKeyboardController.Text;
                     updatingText = false;
                 }
 
                 // Convert the touch screen keyboard positions to display string positions
-                TextPosition left = inputField.TextPositionFromStringIndex(keyboard.selection.start);
-                TextPosition right = inputField.TextPositionFromStringIndex(keyboard.selection.end);
+                TextPosition left = inputField.TextPositionFromStringIndex(touchScreenKeyboardController.Selection.start);
+                TextPosition right = inputField.TextPositionFromStringIndex(touchScreenKeyboardController.Selection.end);
 
                 if (left.IsValid && right.IsValid)
                 {
@@ -159,6 +159,106 @@ namespace NovaSamples.UIControls
                 }
 
                 yield return null;
+            }
+        }
+
+        /// <summary>
+        /// Configuration describing the touch screen keyboard.
+        /// </summary>
+        private struct TouchScreenConfig : IEquatable<TouchScreenConfig>
+        {
+            public TouchScreenKeyboardType KeyboardType;
+            public bool Autocorrection;
+            public bool Multiline;
+            public bool Secure;
+            public bool Alert;
+
+            public bool Equals(TouchScreenConfig other)
+            {
+                return
+                    this.KeyboardType == other.KeyboardType &&
+                    this.Autocorrection == other.Autocorrection &&
+                    this.Multiline == other.Multiline &&
+                    this.Secure == other.Secure &&
+                    this.Alert == other.Alert;
+            }
+        }
+
+        /// <summary>
+        /// Handles control of the touch screen keyboard. Since transferring control from
+        /// one text field to another shouldn't hide the keyboard, we need a single controller that handles
+        /// accessing "Show" and "Hide" requests
+        /// </summary>
+        private class TouchScreenKeyboardController
+        {
+            /// <summary>
+            /// The active touchscreen keyboard
+            /// </summary>
+            private TouchScreenKeyboard keyboard = null;
+
+            /// <summary>
+            /// The current controller of the virtual keyboard
+            /// </summary>
+            private TextFieldMobileInput currentKeyboardController = null;
+
+            /// <summary>
+            /// The current configuration of the keyboard
+            /// </summary>
+            private TouchScreenConfig currentConfig;
+
+            public TouchScreenKeyboard.Status Status => keyboard != null ? keyboard.status : TouchScreenKeyboard.Status.LostFocus;
+            public string Text => keyboard != null ? keyboard.text : null;
+
+            public bool IsCurrentController(TextFieldMobileInput toCheck) => currentKeyboardController == toCheck;
+
+            public RangeInt Selection
+            {
+                get => keyboard != null ? keyboard.selection : default;
+                set
+                {
+                    if (keyboard != null)
+                    {
+                        keyboard.selection = value;
+                    }
+                }
+            }
+
+            public void RequestShow(TextFieldMobileInput requestor, string text, TouchScreenConfig config)
+            {
+                if (currentKeyboardController == requestor)
+                {
+                    Debug.LogWarning("TextFieldMobileInput requested to show virtual keyboard when already controller", requestor);
+                    return;
+                }
+
+                currentKeyboardController = requestor;
+
+                if (keyboard != null && currentConfig.Equals(config))
+                {
+                    // The config is the same, so just update the text
+                    keyboard.text = text;
+                }
+                else
+                {
+                    // It's a different type of keyboard, so open a new one
+                    currentConfig = config;
+                    // Different keyboard type, so re-open
+                    keyboard = TouchScreenKeyboard.Open(text, config.KeyboardType, config.Autocorrection, config.Multiline, config.Secure, config.Alert);
+                }
+            }
+
+            public void RequestHide(TextFieldMobileInput requestor)
+            {
+                if (requestor != currentKeyboardController)
+                {
+                    // The requestor is not the current controller, nothing to do
+                    return;
+                }
+
+                currentKeyboardController = null;
+                keyboard.active = false;
+                keyboard = null;
+                currentConfig = default;
             }
         }
     }

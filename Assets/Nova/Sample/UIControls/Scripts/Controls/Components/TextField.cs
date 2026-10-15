@@ -125,7 +125,7 @@ namespace NovaSamples.UIControls
                 {
                     // If we have a placeholder, enable/disable it based on whether or not the
                     // display string is empty
-                    placeHolderText.Visible = string.IsNullOrWhiteSpace(displayText);
+                    placeHolderText.Visible = string.IsNullOrEmpty(displayText);
                 }
 
                 // Update the TextBlock and force a text mesh update so that any cursor/highlight
@@ -178,7 +178,7 @@ namespace NovaSamples.UIControls
         /// <summary>
         /// The current position (in <see cref="TextBlock"/> space) of the cursor.
         /// </summary>
-        public Vector2 CursorVisualPosition => EnsureInitialized() ? cursorVisual.Position.XY.Value : Vector2.zero;
+        public Vector2 CursorVisualPosition => EnsureInitialized() ? GetCenteredPosition(cursorVisual) : Vector2.zero;
 
         /// <summary>
         /// The height of the cursor (in <see cref="TextBlock"/> space).
@@ -245,6 +245,8 @@ namespace NovaSamples.UIControls
                 return;
             }
 
+            textBlock.CalculateLayout();
+
             if (!newPos.IsValid)
             {
                 if (newPos.TextMeshIsEmpty)
@@ -272,15 +274,18 @@ namespace NovaSamples.UIControls
             // Get the new cursor position
             // NOTE: We add half of the cursor width since cursorPosition.XPos describes the
             // location of the left edge of the cursor
-            float cursorWidth = cursorVisual.Size.X.Value;
-            Vector2 position = new Vector2(cursorPosition.XPos + .5f * cursorWidth, cursorPosition.YPos);
+            Vector2 cursorSize = cursorVisual.Size.XY.Value;
 
             // Reset the cursor animation to guarantee that it's initially solid
             ResetCursorAnimation();
 
-            // Ensure cursor alignment is centered
-            cursorVisual.Alignment.X = HorizontalAlignment.Center;
-            cursorVisual.Alignment.Y = VerticalAlignment.Center;
+            MatchTextAlignment(cursorVisual);
+
+            // The same as position, but adding in half of the cursor width since 
+            // cursorPosition.XPos describes the location of the left edge of the cursor
+            Vector2 centeredPosition = new Vector2(cursorPosition.XPos + .5f * cursorSize.x, cursorPosition.YPos);
+
+            Vector2 position = ConvertCenteredPositionToAlignedPosition(cursorVisual, centeredPosition, cursorVisual.Size.XY.Value);
 
             // Update cursor visual position
             cursorVisual.Position.XY.Value = position;
@@ -779,25 +784,7 @@ namespace NovaSamples.UIControls
 
             // Set the horizontal and vertical alignment of the cursor based
             // on the text alignment
-            switch (TextBlock.TMP.horizontalAlignment)
-            {
-                case HorizontalAlignmentOptions.Left:
-                    cursorVisual.Alignment.X = HorizontalAlignment.Left;
-                    break;
-                case HorizontalAlignmentOptions.Right:
-                    cursorVisual.Alignment.X = HorizontalAlignment.Right;
-                    break;
-            }
-
-            switch (TextBlock.TMP.verticalAlignment)
-            {
-                case VerticalAlignmentOptions.Top:
-                    cursorVisual.Alignment.Y = VerticalAlignment.Top;
-                    break;
-                case VerticalAlignmentOptions.Bottom:
-                    cursorVisual.Alignment.Y = VerticalAlignment.Bottom;
-                    break;
-            }
+            MatchTextAlignment(cursorVisual);
 
             // Reset the cursor animation to ensure it is initially solid
             ResetCursorAnimation();
@@ -814,6 +801,129 @@ namespace NovaSamples.UIControls
 
             // Hide highlights if there are any
             ClearTextSelection();
+        }
+
+        /// <summary>
+        /// Returns the centered position of the UIBlock, adjusting for alignment as needed
+        /// </summary>
+        /// <param name="block"></param>
+        /// <returns></returns>
+        private Vector2 GetCenteredPosition(UIBlock block)
+        {
+            Vector2 parentSize = block.Parent.CalculatedSize.XY.Value;
+            Vector2 halfParentSize = .5f * parentSize;
+
+            Vector2 blockSize = block.CalculatedSize.XY.Value;
+            Vector2 halfBlockSize = .5f * blockSize;
+
+            Vector2 position = cursorVisual.Position.XY.Value;
+
+            Vector2 centeredPosition = default;
+            switch (block.Alignment.X)
+            {
+                case HorizontalAlignment.Center:
+                    centeredPosition.x = position.x;
+                    break;
+                case HorizontalAlignment.Left:
+                    centeredPosition.x = position.x - halfParentSize.x + halfBlockSize.x;
+                    break;
+                case HorizontalAlignment.Right:
+                    centeredPosition.x = halfParentSize.x - position.x - halfBlockSize.x;
+                    break;
+            }
+
+            switch (block.Alignment.Y)
+            {
+                case VerticalAlignment.Center:
+                    centeredPosition.y = position.y;
+                    break;
+                case VerticalAlignment.Top:
+                    //position.y = halfParentSize.y - centeredPosition.y - .5f * blockSize.y;
+                    centeredPosition.y = halfParentSize.y - position.y - halfBlockSize.y;
+                    break;
+                case VerticalAlignment.Bottom:
+                    //position.y = halfParentSize.y + centeredPosition.y - .5f * blockSize.y;
+                    centeredPosition.y = position.y - halfParentSize.y + halfBlockSize.y;
+                    break;
+            }
+
+            return centeredPosition;
+        }
+
+        /// <summary>
+        /// Converts the provided target center position of the UIBlock to the 
+        /// matching position based on the alignment of the block
+        /// </summary>
+        /// <param name="block"></param>
+        /// <param name="centeredPosition"></param>
+        /// <param name="blockSize"></param>
+        /// <returns></returns>
+        private Vector2 ConvertCenteredPositionToAlignedPosition(UIBlock block, Vector2 centeredPosition, Vector2 blockSize)
+        {
+            Vector2 parentSize = block.Parent.CalculatedSize.XY.Value;
+            Vector2 halfParentSize = .5f * parentSize;
+
+            Vector2 position = default;
+            switch (block.Alignment.X)
+            {
+                case HorizontalAlignment.Center:
+                    position.x = centeredPosition.x;
+                    break;
+                case HorizontalAlignment.Left:
+                    position.x = centeredPosition.x + halfParentSize.x - .5f * blockSize.x;
+                    break;
+                case HorizontalAlignment.Right:
+                    position.x = halfParentSize.x - centeredPosition.x - .5f * blockSize.x;
+                    break;
+            }
+
+            switch (block.Alignment.Y)
+            {
+                case VerticalAlignment.Center:
+                    // Same as position
+                    position.y = centeredPosition.y;
+                    break;
+                case VerticalAlignment.Top:
+                    position.y = halfParentSize.y - centeredPosition.y - .5f * blockSize.y;
+                    break;
+                case VerticalAlignment.Bottom:
+                    position.y = halfParentSize.y + centeredPosition.y - .5f * blockSize.y;
+                    break;
+            }
+
+            return position;
+        }
+
+        /// <summary>
+        /// Sets the alignment of the provided block to match the text alignment
+        /// </summary>
+        private void MatchTextAlignment(UIBlock block)
+        {
+            switch (TextBlock.TMP.horizontalAlignment)
+            {
+                case HorizontalAlignmentOptions.Left:
+                    block.Alignment.X = HorizontalAlignment.Left;
+                    break;
+                case HorizontalAlignmentOptions.Right:
+                    block.Alignment.X = HorizontalAlignment.Right;
+                    break;
+                default:
+                    block.Alignment.X = HorizontalAlignment.Center;
+                    break;
+            }
+
+            switch (TextBlock.TMP.verticalAlignment)
+            {
+                case VerticalAlignmentOptions.Top:
+                    block.Alignment.Y = VerticalAlignment.Top;
+                    break;
+                case VerticalAlignmentOptions.Bottom:
+                    block.Alignment.Y = VerticalAlignment.Bottom;
+                    break;
+                default:
+                    block.Alignment.Y = VerticalAlignment.Center;
+                    break;
+            }
         }
 
         /// <summary>
@@ -917,33 +1027,40 @@ namespace NovaSamples.UIControls
         {
             UIBlock2D highlight = GetFreeHighlightVisual();
 
+            MatchTextAlignment(highlight);
+
+            Vector2 size = default;
+            Vector2 centeredPosition = default;
+
             // Use the height of the line
-            float height = left.LineHeight;
+            size.y = left.LineHeight;
 
             // Y position is the center of the line
-            float yPos = left.LineYCenter;
+            centeredPosition.y = left.LineYCenter;
 
             // X position is the center point between the left and right edges
             // of the selection
-            float xPos = 0.5f * (left.XPos + right.XPos);
+            centeredPosition.x = 0.5f * (left.XPos + right.XPos);
 
             // Width just goes from left to right edge
-            float width = Mathf.Abs(right.XPos - left.XPos);
+            size.x = Mathf.Abs(right.XPos - left.XPos);
 
-            if (width == 0f)
+            if (size.x == 0f)
             {
                 // If selection doesn't contain any visible characters (which could
                 // happen if the selection only contains the newline character),
                 // we want to at least show something, so we set the width to be
                 // a quarter of the height, which is arbitrary but looks reasonable.
-                width = .25f * height;
+                size.x = .25f * size.y;
                 // And adjust the xposition based on the new width
-                xPos += .5f * width;
+                centeredPosition.x += .5f * size.x;
             }
 
+            Vector2 position = ConvertCenteredPositionToAlignedPosition(highlight, centeredPosition, size);
+
             // Set the size and position of the visual
-            highlight.Position.XY.Value = new Vector2(xPos, yPos);
-            highlight.Size.XY.Value = new Vector2(width, height);
+            highlight.Position.XY.Value = position;
+            highlight.Size.XY.Value = size;
 
             // Track the visual
             activeHighlights.Add(highlight);

@@ -41,7 +41,7 @@ namespace Nova.Internal.Collections
 
     internal static class StructHandle<T>
     {
-        private interface IStructWrapper
+        internal interface IStructWrapper
         {
             void Remove(UID<T> instanceID);
         }

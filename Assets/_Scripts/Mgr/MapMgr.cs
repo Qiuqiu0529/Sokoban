@@ -69,9 +69,9 @@ public class MapMgr : Singleton<MapMgr>
             return false;
         }
 
-        if (levelData.insideWorld.Count == 0 || levelData.outsideWorld.Count == 0)
+        if (levelData.insideWorld.Count == 0 && levelData.outsideWorld.Count == 0)
         {
-            Debug.LogError("[MapMgr] LevelData contains no maps!");
+            Debug.LogError("[MapMgr] LevelData contains no maps in either world list!");
             return false;
         }
 
@@ -94,6 +94,9 @@ public class MapMgr : Singleton<MapMgr>
         runtimeMapData.Clear();
         insideWorld.Clear();
         outsideWorld.Clear();
+        mapplaneCount = 0;
+        loadMap = 0;
+        IsAllMapLoaded = false;
         startPoint.position = originalStartPoint;
     }
 
@@ -174,10 +177,12 @@ public class MapMgr : Singleton<MapMgr>
         }
 
         MapPlane planeInstance = Instantiate(mapPlanePrefab, startPoint.position, Quaternion.identity);
-        planeInstance.SetPreViewScale(CalculateMapScale(mapData));
-        //planeInstance.transform.localScale = CalculateMapScale(mapData);
-
         planeInstance.isEditMode = isEditMode;
+        if (!isEditMode)
+        {
+            planeInstance.SetPreViewScale(CalculateMapScale(mapData));
+        }
+
         if (!isEditMode)
         {
             // if (!runtimeMapData.ContainsKey(mapData.mapID))

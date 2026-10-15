@@ -204,11 +204,20 @@ namespace Nova
 
             ref Internal.TextBlockData renderData = ref RenderingDataStore.Instance.Access(this, textInfo.meshInfo.Length);
 
-            // We can't use textInfo.characterCount or vertex count because that doesn't include quads
-            // used for things like highlighting and other rich text functionality
+            // We can't use meshInfo[i].vertexCount because it doesn't include quads used for highlighting or 
+            // other rich text functionality
+            // We can't use textInfo.characterCount, because that includes spaces that don't have mesh information
+            // associated with them.
             int newQuadCount = 0;
             for (int i = 0; i < textInfo.meshInfo.Length; i++)
             {
+                if (i != 0)
+                {
+                    // Only clear the unused vertices for submeshes, since the first (i.e. primary) mesh
+                    // may contain highlights, which are silently stored in the "unused" vertices at the
+                    // end of the vertex buffer.
+                    textInfo.meshInfo[i].ClearUnusedVertices();
+                }
                 newQuadCount += textInfo.meshInfo[i].vertices.Length;
             }
 

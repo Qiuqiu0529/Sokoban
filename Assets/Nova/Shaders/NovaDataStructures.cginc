@@ -20,13 +20,20 @@ fixed4 UnpackColor(NovaColor color)
 #endif
 
 #if defined(NOVA_FALLBACK_RENDERING)
+    #define MAX_TEXTURE_DIMENSION 16384u
     // Returns the UV into a texture buffer, given the index, float4s per instance,
     // and texelSize
-    float4 GetTextureBufferUV(uint index, uint pixelsPerInstance, float4 texelSize)
+
+    float4 GetTextureBufferUV(uint index, uint pixelsPerInstance, uint subIndex, float4 texelSize) // texelSize: (1/width, 1/height, width, height)
     {
+        uint linearizedPixelIndex = index * pixelsPerInstance + subIndex;
+        uint xIndex = linearizedPixelIndex % MAX_TEXTURE_DIMENSION;
+        uint yIndex = linearizedPixelIndex / MAX_TEXTURE_DIMENSION;
+
         float2 halfPixelOffset = .5 * texelSize.xy;
-        float xUV = (float)index * (float)pixelsPerInstance * texelSize.x + halfPixelOffset.x;
-        float4 uv = float4(xUV, halfPixelOffset.y, 0, 0);
+        float xUV = xIndex * texelSize.x + halfPixelOffset.x;
+        float yUV = yIndex * texelSize.y + halfPixelOffset.y;
+        float4 uv = float4(xUV, yUV, 0, 0);
         return uv;
     }
 #endif
@@ -72,14 +79,14 @@ fixed4 UnpackColor(NovaColor color)
     #if defined(NOVA_FALLBACK_RENDERING)
 
         #define NOVA_GET_BUFFER_ITEM_uint(name, index, bufferName) \
-            float4 bufferName##_UV = GetTextureBufferUV(index, 1, bufferName##_TexelSize); \
+            float4 bufferName##_UV = GetTextureBufferUV(index, 1, 0, bufferName##_TexelSize); \
             float bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
             uint name = (uint)bufferName##_Temp;
 
 
         #if defined(NOVA_BLINNPHONG_LIGHTING)
             #define NOVA_GET_BUFFER_ITEM_TransformAndLighting(name, index, bufferName) \
-                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, bufferName##_TexelSize); \
+                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 0, bufferName##_TexelSize); \
                 TransformAndLighting name; \
                 float4 bufferName##_Temp; \
                 \
@@ -89,21 +96,21 @@ fixed4 UnpackColor(NovaColor color)
                 name.RootFromBlock[2][0] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][0] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][1] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][1] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][1] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][1] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][2] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][2] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][2] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][2] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][3] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][3] = bufferName##_Temp.y; \
@@ -117,7 +124,7 @@ fixed4 UnpackColor(NovaColor color)
 
         #elif defined(NOVA_STANDARD_LIGHTING)
             #define NOVA_GET_BUFFER_ITEM_TransformAndLighting(name, index, bufferName) \
-                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, bufferName##_TexelSize); \
+                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 0, bufferName##_TexelSize); \
                 TransformAndLighting name; \
                 float4 bufferName##_Temp; \
                 \
@@ -127,35 +134,35 @@ fixed4 UnpackColor(NovaColor color)
                 name.RootFromBlock[2][0] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][0] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][1] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][1] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][1] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][1] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][2] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][2] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][2] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][2] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][3] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][3] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][3] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][3] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 4, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.Lighting.Smoothness = bufferName##_Temp.x; \
                 name.Lighting.Metallic = bufferName##_Temp.y;
 
         #elif defined(NOVA_STANDARDSPECULAR_LIGHTING)
             #define NOVA_GET_BUFFER_ITEM_TransformAndLighting(name, index, bufferName) \
-                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, bufferName##_TexelSize); \
+                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 0, bufferName##_TexelSize); \
                 TransformAndLighting name; \
                 float4 bufferName##_Temp; \
                 \
@@ -165,38 +172,38 @@ fixed4 UnpackColor(NovaColor color)
                 name.RootFromBlock[2][0] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][0] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][1] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][1] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][1] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][1] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][2] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][2] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][2] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][2] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][3] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][3] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][3] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][3] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 4, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.Lighting.Smoothness = bufferName##_Temp.x; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 5, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.Lighting.SpecularColor.Val = bufferName##_Temp; \
 
         #else
             #define NOVA_GET_BUFFER_ITEM_TransformAndLighting(name, index, bufferName) \
-                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, bufferName##_TexelSize); \
+                float4 bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 0, bufferName##_TexelSize); \
                 TransformAndLighting name; \
                 float4 bufferName##_Temp; \
                 \
@@ -206,21 +213,21 @@ fixed4 UnpackColor(NovaColor color)
                 name.RootFromBlock[2][0] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][0] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][1] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][1] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][1] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][1] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][2] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][2] = bufferName##_Temp.y; \
                 name.RootFromBlock[2][2] = bufferName##_Temp.z; \
                 name.RootFromBlock[3][2] = bufferName##_Temp.w; \
                 \
-                bufferName##_UV.x += bufferName##_TexelSize.x; \
+                bufferName##_UV = GetTextureBufferUV(index, NOVA_FLOAT4S_PER_TRANSFORM_AND_LIGHTING, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
                 name.RootFromBlock[0][3] = bufferName##_Temp.x; \
                 name.RootFromBlock[1][3] = bufferName##_Temp.y; \

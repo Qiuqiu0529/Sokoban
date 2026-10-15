@@ -1,0 +1,158 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f592e86713ea19b419511b220ebcf965, type: 3}
+  m_Name: LevelUnlockConfig
+  m_EditorClassIdentifier: 
+  unlockRules:
+  - levelName: 1-1
+    sceneName: Level_1-1
+    requiredLevels: []
+    nextScene: Level_1-2
+  - levelName: 1-2
+    sceneName: Level_1-2
+    requiredLevels:
+    - 1-1
+    nextScene: Level_1-3
+  - levelName: 1-3
+    sceneName: Level_1-3
+    requiredLevels:
+    - 1-2
+    nextScene: HubWorld
+  - levelName: 1-3A
+    sceneName: Level_1-3A
+    requiredLevels:
+    - 1-3
+    nextScene: HubWorld
+  - levelName: 2-1
+    sceneName: Level_2-1
+    requiredLevels:
+    - 1-3
+    nextScene: Level_2-2
+  - levelName: 2-2
+    sceneName: Level_2-2
+    requiredLevels:
+    - 2-1
+    nextScene: Level_2-3
+  - levelName: 2-3
+    sceneName: Level_2-3
+    requiredLevels:
+    - 2-2
+    nextScene: HubWorld
+  - levelName: 2-3A
+    sceneName: Level_2-3A
+    requiredLevels:
+    - 2-3
+    nextScene: HubWorld
+  - levelName: 3-1
+    sceneName: Level_3-1
+    requiredLevels:
+    - 1-3
+    nextScene: Level_3-2
+  - levelName: 3-2
+    sceneName: Level_3-2
+    requiredLevels:
+    - 3-1
+    nextScene: Level_3-3
+  - levelName: 3-3
+    sceneName: Level_3-3
+    requiredLevels:
+    - 3-2
+    nextScene: HubWorld
+  - levelName: 3-2A
+    sceneName: Level_3-2A
+    requiredLevels:
+    - 3-2
+    nextScene: HubWorld
+  - levelName: 3-3A
+    sceneName: Level3-3A
+    requiredLevels:
+    - 3-3
+    nextScene: HubWorld
+  - levelName: 3-3B
+    sceneName: Level3-3B
+    requiredLevels:
+    - 3-3
+    nextScene: HubWorld
+  - levelName: 4-1
+    sceneName: Level_4-1
+    requiredLevels:
+    - 2-3
+    - 3-3
+    nextScene: Level_4-2
+  - levelName: 4-2
+    sceneName: Level_4-2
+    requiredLevels: []
+    nextScene: Level_4-3
+  - levelName: 4-3
+    sceneName: Level_4-3
+    requiredLevels: []
+    nextScene: HubWorld
+  - levelName: 4-1A
+    sceneName: Level_4-1A
+    requiredLevels:
+    - 4-1
+    nextScene: HubWorld
+  - levelName: 4-M1
+    sceneName: Level_4-M1
+    requiredLevels:
+    - 4-2
+    nextScene: HubWorld
+  - levelName: 4-M2
+    sceneName: Level_4-M2
+    requiredLevels:
+    - 4-2
+    nextScene: HubWorld
+  - levelName: 5-1
+    sceneName: Level_5-1
+    requiredLevels:
+    - 4-3
+    nextScene: Level_5-2
+  - levelName: 5-2
+    sceneName: Level_5-2
+    requiredLevels:
+    - 5-1
+    nextScene: Level_5-3
+  - levelName: 5-3
+    sceneName: Level_5-3
+    requiredLevels:
+    - 5-2
+    nextScene: Level_5-4
+  - levelName: 5-4
+    sceneName: Level_5-4
+    requiredLevels:
+    - 5-3
+    nextScene: HubWorld
+  - levelName: 5-1A
+    sceneName: Level_5-1A
+    requiredLevels:
+    - 5-1
+    nextScene: HubWorld
+  - levelName: 5-2A
+    sceneName: Level_5-2A
+    requiredLevels:
+    - 5-2
+    nextScene: HubWorld
+  - levelName: 5-3A
+    sceneName: Level_5-3A
+    requiredLevels:
+    - 5-3
+    nextScene: HubWorld
+  - levelName: 5-3B
+    sceneName: Level_5-3B
+    requiredLevels:
+    - 5-3
+    nextScene: HubWorld
+  - levelName: 5-M1
+    sceneName: Level_5-M1
+    requiredLevels:
+    - 5-4
+    nextScene: HubWorld

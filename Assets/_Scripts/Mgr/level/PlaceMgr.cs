@@ -30,8 +30,8 @@ public class ObjectPlacementState : IPlacementState
     private PlaceMgr placeMgr;
     private ObjData currentObjConfig;
     private GameObject previewItem;
+    private GameObject previewPrefab;
     private Quaternion rotation = Quaternion.identity;
-    private int currentHeight = 0;
 
     private Vector2Int lastPlacedGridPos = new Vector2Int(-1, -1);
 
@@ -50,9 +50,10 @@ public class ObjectPlacementState : IPlacementState
             GameObject.Destroy(previewItem);
         }
 
-        GameObject prefab = currentObjConfig.prefab;
+        GameObject prefab = currentObjConfig.GetPrefab(Vector2Int.zero);
         if (prefab != null)
         {
+            previewPrefab = prefab;
             previewItem = GameObject.Instantiate(prefab);
             previewItem.layer = 1;
             previewItem.transform.localScale = prefab.transform.localScale;
@@ -68,18 +69,26 @@ public class ObjectPlacementState : IPlacementState
         if (!placeMgr.RaycastOnMap(out Vector3 targetPos, out MapPlane map, out Vector2Int gridPos, out Vector3 mousepos))
             return;
 
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if (Input.GetKeyDown(KeyCode.E)) currentHeight++;
-            if (Input.GetKeyDown(KeyCode.Q)) currentHeight = Mathf.Max(0, currentHeight - 1);
-        }
-
-        targetPos.y = currentHeight * map.mapData.cellSize;
+        const int placementHeight = 0;
+        targetPos.y = 0f;
+        GameObject targetPrefab = currentObjConfig.GetPrefab(gridPos);
+        UpdatePreviewPrefab(targetPrefab);
+        if (previewItem == null) return;
         previewItem.transform.position = targetPos;
         rotation = placeMgr.HandleRotationInput(previewItem.transform.rotation);
         previewItem.transform.rotation = rotation;
 
-        bool canPlace = map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, currentHeight, rotation);
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+        {
+            var objectInstance = new ObjDataInstance(currentObjConfig.objID, gridPos, placementHeight, rotation, currentObjConfig);
+            bool expanded = false;
+            foreach (var occupiedGrid in objectInstance.currentOccupied)
+                expanded |= map.mapData.EnsureGridContains(new Vector2Int(occupiedGrid.x, occupiedGrid.y));
+            if (expanded) map.RefreshMapBounds();
+        }
+
+        bool canPlace = map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, placementHeight, rotation) &&
+                        (map.levelData == null || map.levelData.CanPlaceMoreObjects(currentObjConfig));
         placeMgr.UpdatePreviewColor(canPlace, previewItem);
 
         if (Input.GetMouseButtonDown(0) && canPlace)
@@ -89,8 +98,26 @@ public class ObjectPlacementState : IPlacementState
 
         if (Input.GetMouseButtonDown(1))
         {
-            placeMgr.RemoveObjectAt(targetPos, gridPos, currentHeight, map);
+            placeMgr.RemoveObjectAt(targetPos, gridPos, map);
         }
+    }
+
+    private void UpdatePreviewPrefab(GameObject prefab)
+    {
+        if (prefab == null)
+        {
+            if (previewItem != null) GameObject.Destroy(previewItem);
+            previewItem = null;
+            return;
+        }
+
+        if (previewPrefab == prefab && previewItem != null) return;
+        if (previewItem != null) GameObject.Destroy(previewItem);
+        previewItem = GameObject.Instantiate(prefab);
+        previewPrefab = prefab;
+        previewItem.name = prefab.name + " (Preview)";
+        previewItem.layer = 1;
+        previewItem.transform.localScale = prefab.transform.localScale;
     }
 
 
@@ -100,7 +127,7 @@ public class ObjectPlacementState : IPlacementState
         if (gridPos != lastPlacedGridPos)
         {
             placeMgr.PlaceObjectAt(targetPos, gridPos, currentObjConfig, map,
-                previewItem.transform.rotation, currentHeight, previewItem.transform.localScale);
+                previewItem.transform.rotation, previewItem.transform.localScale);
             lastPlacedGridPos = gridPos;
         }
     }
@@ -209,6 +236,7 @@ public class WallPlacementState : IPlacementState
     private PlaceMgr placeMgr;
     private WallData currentItemConfig;
     private GameObject previewItem;
+    private GameObject previewPrefab;
     private Quaternion rotation = Quaternion.identity;
 
     private Vector2Int lastPlacedGridPos = new Vector2Int(-1, -1);
@@ -230,9 +258,10 @@ public class WallPlacementState : IPlacementState
             GameObject.Destroy(previewItem);
         }
 
-        GameObject prefab = currentItemConfig.prefab;
+        GameObject prefab = currentItemConfig.GetPrefab(Vector2Int.zero, WallDirection.Up);
         if (prefab != null)
         {
+            previewPrefab = prefab;
             previewItem = GameObject.Instantiate(prefab);
             previewItem.layer = 1;
             previewItem.transform.localScale = prefab.transform.localScale;
@@ -251,6 +280,8 @@ public class WallPlacementState : IPlacementState
         mousepos.y = 0;
         targetPos.y = 0;
         WallDirection wallDirection = GetWallDirection(targetPos, mousepos);
+        UpdatePreviewPrefab(currentItemConfig.GetPrefab(gridPos, wallDirection));
+        if (previewItem == null) return;
         RotatePreviewItem(wallDirection);
 
 
@@ -339,6 +370,19 @@ public class WallPlacementState : IPlacementState
                 previewItem.transform.rotation = Quaternion.Euler(0, -90, 0);
                 break;
         }
+    }
+
+    private void UpdatePreviewPrefab(GameObject prefab)
+    {
+        if (prefab == previewPrefab) return;
+        if (previewItem != null) GameObject.Destroy(previewItem);
+        previewItem = null;
+        previewPrefab = prefab;
+        if (prefab == null) return;
+
+        previewItem = GameObject.Instantiate(prefab);
+        previewItem.layer = 1;
+        previewItem.transform.localScale = prefab.transform.localScale;
     }
 
 
@@ -470,38 +514,35 @@ public class PlaceMgr : Singleton<PlaceMgr>
         gridPos = Vector2Int.zero;
         mousepos = Input.mousePosition;
 
+        var maps = MapMgr.Instance != null ? MapMgr.Instance.GetMapPlanes() : null;
+        if (maps == null || maps.Count == 0 || maps[0] == null) return false;
+
+        map = maps[0];
         Ray ray = Camera.main.ScreenPointToRay(mousepos);
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, detectionLayers))
+        Plane mapPlane = new Plane(Vector3.up, map.startPoint.position);
+        if (!mapPlane.Raycast(ray, out float distance)) return false;
+
+        mousepos = ray.GetPoint(distance);
+        gridPos = map.WorldToGridPosition(mousepos);
+        targetPos = map.GridToWorldPosition(gridPos);
+
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
-            map = hit.collider.GetComponent<MapPlane>();
-            if (map == null) return false;
-            mousepos = hit.point;
-            gridPos = map.WorldToGridPosition(mousepos);
-            targetPos = map.GridToWorldPosition(gridPos);
-            return true;
+            if (map.mapData.EnsureGridContains(gridPos)) map.RefreshMapBounds();
         }
-        return false;
+        return true;
     }
 
     public Quaternion HandleRotationInput(Quaternion rotation)
     {
-        Vector3 eulerRotation = rotation.eulerAngles;
-
-        if (Input.GetKeyDown(KeyCode.Keypad1))
+        float yaw = rotation.eulerAngles.y;
+        if (Input.GetKeyDown(KeyCode.Keypad2))
         {
-            eulerRotation.x = (eulerRotation.x + 90) % 360;
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            eulerRotation.y = (eulerRotation.y + 90) % 360;
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            eulerRotation.z = (eulerRotation.z + 90) % 360;
+            yaw = (yaw + 90) % 360;
         }
 
-        rotation = Quaternion.Euler(eulerRotation);
-        return rotation;
+        // Objects stay on the board plane: only rotate around the vertical axis.
+        return Quaternion.Euler(0, yaw, 0);
     }
 
     public void PlaceTileAt(Vector3 position, Vector2Int gridPos, TileData tileData, MapPlane map, Quaternion rotation, Vector3 scale)
@@ -536,26 +577,29 @@ public class PlaceMgr : Singleton<PlaceMgr>
     }
 
 
-    public void PlaceObjectAt(Vector3 position, Vector2Int gridPos, ObjData objData, MapPlane map, Quaternion rotation, int height, Vector3 scale)
+    public void PlaceObjectAt(Vector3 position, Vector2Int gridPos, ObjData objData, MapPlane map, Quaternion rotation, Vector3 scale)
     {
-        if (map.mapData.CanPlaceObj(gridPos, objData.objID, height, rotation))
+        const int editorHeight = 0;
+        if (map.mapData.CanPlaceObj(gridPos, objData.objID, editorHeight, rotation) &&
+            (map.levelData == null || map.levelData.CanPlaceMoreObjects(objData)))
         {
             if (map.levelData == null)
             {
                 Debug.LogError($"[PlaceMgr] MapPlane {map.gameObject.name} is missing levelData reference!");
                 return;
             }
-            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, height, rotation, objData, map, scale);
+            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, editorHeight, rotation, objData, map, scale);
             commandMgr.ExecuteCommand(placeCommand);
         }
     }
 
-    public void RemoveObjectAt(Vector3 position, Vector2Int gridPos, int height, MapPlane map)
+    public void RemoveObjectAt(Vector3 position, Vector2Int gridPos, MapPlane map)
     {
-        ObjData existingObj = map.GetObjectDataAtGridPosition(gridPos, height);
+        const int editorHeight = 0;
+        ObjData existingObj = map.GetObjectDataAtGridPosition(gridPos, editorHeight);
         if (existingObj != null)
         {
-            var removeCommand = new Commands.RemoveObjectCommand(position, gridPos, height, map);
+            var removeCommand = new Commands.RemoveObjectCommand(position, gridPos, editorHeight, map);
             commandMgr.ExecuteCommand(removeCommand);
         }
     }

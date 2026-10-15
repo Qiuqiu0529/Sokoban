@@ -133,7 +133,7 @@
 	#if defined(NOVA_FALLBACK_RENDERING)
 		#if 1 //////////////////////// UIBlock2D ////////////////////////
 			#define NOVA_GET_BUFFER_ITEM_SubQuadVert(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 2, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 2, 0, bufferName##_TexelSize); \
 				SubQuadVert name; \
 				float4 bufferName##_Temp; \
 				\
@@ -142,13 +142,13 @@
 				name.BlockDataIndex = bufferName##_Temp.z; \
 				name.EdgeSoftenMask = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 2, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.UVZoom = bufferName##_Temp.xy; \
 				name.CenterUV = bufferName##_Temp.zw; 
 
 			#define NOVA_GET_BUFFER_ITEM_UIBlock2DData(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 9, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 9, 0, bufferName##_TexelSize); \
 				UIBlock2DData name; \
 				float4 bufferName##_Temp; \
 				\
@@ -156,48 +156,48 @@
 				name.QuadSize = bufferName##_Temp.xy; \
 				name.GradientCenter = bufferName##_Temp.zw; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.GradientSizeReciprocal = bufferName##_Temp.xy; \
 				name.GradientRotationSinCos = bufferName##_Temp.zw; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.ShadowOffset = bufferName##_Temp.xy; \
 				name.CornerRadius = bufferName##_Temp.z; \
 				name.ShadowWidth = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.TransformIndex = bufferName##_Temp.x; \
 				name.TexturePackSlice = bufferName##_Temp.y; \
 				name.BorderWidth = bufferName##_Temp.z; \
 				name.ShadowBlur = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 4, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.RadialFillCenter = bufferName##_Temp.xy; \
 				name.RadialFillRotation = bufferName##_Temp.z; \
 				name.RadialFillAngle = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 5, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.PrimaryColor.Val = bufferName##_Temp; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 6, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.GradientColor.Val = bufferName##_Temp; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 7, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.ShadowColor.Val = bufferName##_Temp; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 9, 8, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.BorderColor.Val = bufferName##_Temp; 
 
 			#define NOVA_GET_BUFFER_ITEM_PerInstanceDropShadowShaderData(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 5, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 5, 0, bufferName##_TexelSize); \
 				PerInstanceDropShadowShaderData name; \
 				float4 bufferName##_Temp; \
 				\
@@ -205,29 +205,29 @@
 				name.Offset = bufferName##_Temp.xy; \
 				name.HalfBlockQuadSize = bufferName##_Temp.zw; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 5, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.Width = bufferName##_Temp.x; \
 				name.Blur = bufferName##_Temp.y; \
 				name.BlockClipRadius = bufferName##_Temp.z; \
 				name.RadialFillRotation = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 5, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.TransformIndex = bufferName##_Temp.x; \
 				name.EdgeSoftenMask = bufferName##_Temp.y; \
 				name.RadialFillCenter = bufferName##_Temp.zw; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 5, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.RadialFillAngle = bufferName##_Temp.x; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 5, 4, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.Color.Val = bufferName##_Temp; 
 
 			#define NOVA_GET_BUFFER_ITEM_PerQuadDropShadowShaderData(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 1, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 1, 0, bufferName##_TexelSize); \
 				PerQuadDropShadowShaderData name; \
 				float4 bufferName##_Temp; \
 				\
@@ -238,7 +238,7 @@
 
 		#if 1 //////////////////////// UIBlock3D ////////////////////////
 			#define NOVA_GET_BUFFER_ITEM_UIBlock3DData(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 3, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 3, 0, bufferName##_TexelSize); \
 				UIBlock3DData name; \
 				float4 bufferName##_Temp; \
 				\
@@ -246,19 +246,19 @@
 				name.Size = bufferName##_Temp.xyz; \
 				name.CornerRadius = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 3, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.EdgeRadius = bufferName##_Temp.x; \
 				name.TransformIndex = bufferName##_Temp.y; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 3, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.Color.Val = bufferName##_Temp; 
 		#endif
 
 		#if 1 //////////////////////// TextBlock ////////////////////////
 			#define NOVA_GET_BUFFER_ITEM_PerVertTextData(name, index, bufferName) \
-				float4 bufferName##_UV = GetTextureBufferUV(index, 4, bufferName##_TexelSize); \
+				float4 bufferName##_UV = GetTextureBufferUV(index, 4, 0, bufferName##_TexelSize); \
 				PerVertTextData name; \
 				float4 bufferName##_Temp; \
 				\
@@ -266,16 +266,16 @@
 				name.Position = bufferName##_Temp.xyz; \
 				name.TransformIndex = bufferName##_Temp.w; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 4, 1, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.Texcoord0 = bufferName##_Temp.xy; \
 				name.Texcoord1 = bufferName##_Temp.zw; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 4, 2, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.ScaleMultiplier = bufferName##_Temp.x; \
 				\
-				bufferName##_UV.x += bufferName##_TexelSize.x; \
+				bufferName##_UV = GetTextureBufferUV(index, 4, 3, bufferName##_TexelSize); \
 				bufferName##_Temp = tex2Dlod(bufferName, bufferName##_UV); \
 				name.Color.Val = bufferName##_Temp; 
 		#endif

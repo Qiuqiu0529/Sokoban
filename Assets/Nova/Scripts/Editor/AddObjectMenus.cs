@@ -161,6 +161,11 @@ namespace Nova.Editor
                 UnityEditor.SceneManagement.StageUtility.PlaceGameObjectInCurrentStage(go);
             }
 
+            if (go != null)
+            {
+                go.transform.SetAsLastSibling();
+            }
+
             Selection.activeObject = go;
         }
 

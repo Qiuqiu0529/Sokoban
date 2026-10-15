@@ -455,6 +455,10 @@ namespace Nova.Internal
 
             public void Init()
             {
+                // workaround to avoid code stripping in IL2CPP Faster (smaller) builds
+                ((StructHandle<InputID>.IStructWrapper)new StructHandle<InputID>.Storage<Input<bool>>()).Remove(default(UID<InputID>));
+                ((StructHandle<InputID>.IStructWrapper)new StructHandle<InputID>.Storage<Input<UniqueValue<Vector3>>>()).Remove(default(UID<InputID>));
+
                 pointerHits.Clear();
                 waitingForRelease.Clear();
                 inputHandles = new InputHandle[MaxControls];

@@ -104,7 +104,7 @@ namespace Nova.Internal.Layouts
 
                 for (int i = length - 1; i >= 0; --i)
                 {
-                    leafToRoot.Execute(DepthLevelSortedIndices[i], forceRun: processingSingleElement);
+                    leafToRoot.Execute(DepthLevelSortedIndices[i], isSecondPass: false, forceRun: processingSingleElement);
                 }
 
                 if (needsSecondPass)
@@ -128,7 +128,7 @@ namespace Nova.Internal.Layouts
 
                         if (secondPass)
                         {
-                            leafToRoot.Execute(elementIndex, forceRun: processingSingleElement);
+                            leafToRoot.Execute(elementIndex, isSecondPass: true, forceRun: processingSingleElement);
                         }
                     }
                 }

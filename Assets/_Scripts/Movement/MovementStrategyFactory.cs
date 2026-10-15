@@ -25,7 +25,6 @@ namespace Movement
             strategies = new Dictionary<ObjectType, IMovementStrategy>
             {
                 { ObjectType.Rollable, new RollingMovementStrategy() },
-                { ObjectType.Jumpable, new JumpMovementStrategy() },
             };
         }
 
@@ -35,11 +34,6 @@ namespace Movement
             {
                 return strategies[ObjectType.Rollable];
             }
-            if (objType.HasFlag(ObjectType.Jumpable))
-            {
-                return new JumpMovementStrategy();
-            }
-
             return new SimpleMovementStrategy();
         }
 

@@ -15,6 +15,8 @@ namespace NovaSamples.UIControls
     [RequireComponent(typeof(Interactable))]
     public class TextFieldSelector : MonoBehaviour
     {
+        private static TextFieldSelector currentlySelected = null;
+
         /// <summary>
         /// Fires when the associated <see cref="TextField"/> gains focus.
         /// </summary>
@@ -165,6 +167,13 @@ namespace NovaSamples.UIControls
                 }
 
                 OnFocused?.Invoke();
+
+                if (currentlySelected != null)
+                {
+                    currentlySelected.RemoveFocus();
+                }
+
+                currentlySelected = this;
             }
             else
             {
@@ -188,6 +197,8 @@ namespace NovaSamples.UIControls
                 return;
             }
 
+
+            currentlySelected = null;
             isFocused = false;
             inputField.HideAllVisuals();
             OnFocusLost?.Invoke();

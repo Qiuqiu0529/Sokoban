@@ -30,9 +30,16 @@ namespace Nova.Internal
 
 
         private EngineUpdateInfo engineUpdateInfo;
+        private bool isUpdating = false;
 
         public void UpdateElement(DataStoreID dataStoreID)
         {
+            if (isUpdating)
+            {
+                return;
+            }
+
+            isUpdating = true;
             using (new Layouts.LayoutDataStore.UpdateScope(this))
             {
                 Layouts.LayoutEngine.Instance.UpdateLayoutElement(dataStoreID, secondPass: false);
@@ -43,6 +50,8 @@ namespace Nova.Internal
                     Layouts.LayoutEngine.Instance.UpdateLayoutElement(dataStoreID, secondPass: true);
                 }
             }
+
+            isUpdating = false;
         }
 
         private bool UpdateEngines => Hierarchy.HierarchyDataStore.Instance.Elements.Count > 0;
@@ -313,6 +322,7 @@ namespace Nova.Internal
                 Rendering.RenderingDataStore.Instance.UpdateScreenSpaces();
             }
 
+            isUpdating = true;
             HaveUpdated = true;
 
             JobHandle preUpdateHandle = default(JobHandle);
@@ -387,7 +397,9 @@ namespace Nova.Internal
                     Debug.LogError($"NovaEngine CompleteUpdate failed with {e}");
                 }
             }
-            
+
+            isUpdating = false;
+
             if (NovaApplication.IsEditor)
             {
                 EditorOnly_OnAfterEngineUpdate?.Invoke();

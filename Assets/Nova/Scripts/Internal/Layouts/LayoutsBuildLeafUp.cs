@@ -67,13 +67,14 @@ namespace Nova.Internal.Layouts
 
             private DataStoreIndex parentIndex;
             private LayoutAccess.CalculatedSnapshot layoutProperties;
+            private bool secondPass;
             private AutoLayoutContext ctx;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Execute(DataStoreIndex layoutIndex, bool forceRun = false)
+            public void Execute(DataStoreIndex layoutIndex, bool isSecondPass, bool forceRun = false)
             {
                 ctx = default;
-
+                secondPass = isSecondPass;
                 parentIndex = layoutIndex;
                 ctx.ParentElement = Hierarchy[parentIndex];
 
@@ -184,6 +185,7 @@ namespace Nova.Internal.Layouts
                 childLayout.WrapAutoSizes(ref AutoSizes);
                 childLayout.WrapMinMaxes(ref LengthRanges);
                 childLayout.WrapAspectRatios(ref AspectRatios);
+                childLayout.WrapRelativeSizes(ref ParentSizes);
 
                 GetMaxChildBounds(0, childCount - 1, childLayout, shrinkMask, out float3x2 minMax, out float2 totalChildLength, out expandCount);
 
@@ -249,7 +251,7 @@ namespace Nova.Internal.Layouts
                         ctx.RecalculateFirstAxisAutoSpace(ref track, ref extraSpace);
                         track.ChildLength = track.FillableLength - extraSpace;
                     }
-                    
+
                     shift = ctx.FirstAxisCenterAligned ? -0.5f * track.ChildLength : 0;
                 }
 
@@ -370,6 +372,13 @@ namespace Nova.Internal.Layouts
                 bool rotateSize = UseRotations[childLayout.Index];
                 quaternion rotation = rotateSize ? Rotations[childLayout.Index] : Math.quaterion_Indentity;
 
+                int aspectRatioAxis = childLayout.AspectRatio.Axis.Index();
+
+                if (secondPass && aspectRatioAxis >= 0)
+                {
+                    SecondPassAspectLock(ref childLayout, aspectRatioAxis);
+                }
+
                 float3 sizePercent = childLayout.Size.Percent;
                 float3 childSize = childLayout.CalculatedSize.Value * Math.Mask(!childLayout.SizeIsRelativeToParent | valueMask);
 
@@ -378,7 +387,7 @@ namespace Nova.Internal.Layouts
                     childSize[mainAxis] = 0;
                     sizePercent[mainAxis] = 0;
 
-                    if (childLayout.AspectRatio.Axis.Index() == mainAxis)
+                    if (aspectRatioAxis == mainAxis)
                     {
                         childSize = 0;
                         sizePercent = 0;
@@ -416,6 +425,14 @@ namespace Nova.Internal.Layouts
 
                 bool rotateSize = UseRotations[childLayout.Index];
                 quaternion rotation = rotateSize ? Rotations[childLayout.Index] : Math.quaterion_Indentity;
+
+                int aspectRatioAxis = childLayout.AspectRatio.Axis.Index();
+
+                if (secondPass && aspectRatioAxis >= 0)
+                {
+                    SecondPassAspectLock(ref childLayout, aspectRatioAxis);
+                }
+
                 float3 childSize = childLayout.CalculatedSize.Value;
 
                 if (expand)
@@ -434,6 +451,22 @@ namespace Nova.Internal.Layouts
                 return new float3(GetFlexibleSize(value.x, percent.x),
                                   GetFlexibleSize(value.y, percent.y),
                                   GetFlexibleSize(value.z, percent.z));
+            }
+
+            /// <summary>
+            /// In the second pass this step actually runs top-down, 
+            /// and we need to ensure the calculated aspect-locked sizes
+            /// are updated before we use them.
+            /// </summary>
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            private void SecondPassAspectLock(ref LayoutAccess.Properties childLayout, int aspectRatioAxis)
+            {
+                if (layoutProperties.AutoSize[aspectRatioAxis] != AutoSize.Expand || !childLayout.SizeIsRelativeToParent[aspectRatioAxis])
+                {
+                    return;
+                }
+
+                childLayout.CalculateSize(layoutProperties.Size.Value, true);
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

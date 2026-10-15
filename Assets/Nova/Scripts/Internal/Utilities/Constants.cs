@@ -22,10 +22,13 @@ namespace Nova.Internal.Utilities
         public const int MaxVisualModifiers = 16;
 
         public const int QuadsPerAccent = 8;
+        public const float DistanceComparisonThreshold = .98f;
         public const float DrawCallDistanceAdjustmentRatio = .999f;
         public const float InverseDrawCallDistanceAdjustmentRatio = 1 - DrawCallDistanceAdjustmentRatio;
 
         public const int LightingModelMax = (int)LightingModel.StandardSpecular + 1;
+
+        public const int MaxTextureDimension = 16384;
 
         public const string TMPSupportedShaderName = "TextMeshPro/Mobile/Distance Field";
 

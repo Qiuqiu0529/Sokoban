@@ -11,6 +11,8 @@ public class MapData : SerializedScriptableObject
     public string mapID;
     public int gridLength = 10;
     public int gridWidth = 10;
+    // Logical grid coordinate at the lower-left corner of tileIDs.
+    public Vector2Int gridMin = Vector2Int.zero;
     public float cellSize = 1.0f;
 
     public TileDataList_SO tileDataList;
@@ -70,6 +72,7 @@ public class MapData : SerializedScriptableObject
     public void Initialize()
     {
         tileIDs = new int[gridLength * gridWidth];
+        gridMin = Vector2Int.zero;
         objectInstances.Clear();
         tileRotations.Clear();
         tileWalls.Clear();
@@ -96,6 +99,7 @@ public class MapData : SerializedScriptableObject
         copy.mapID = this.mapID;
         copy.gridLength = this.gridLength;
         copy.gridWidth = this.gridWidth;
+        copy.gridMin = this.gridMin;
         copy.cellSize = this.cellSize;
         copy.tileDataList = this.tileDataList;
         copy.objDataList = this.objDataList;
@@ -152,7 +156,7 @@ public class MapData : SerializedScriptableObject
     {
         if (IsWithinGrid(gridPosition))
         {
-            int index = gridPosition.y * gridLength + gridPosition.x;//x length, y width
+            int index = (gridPosition.y - gridMin.y) * gridLength + (gridPosition.x - gridMin.x);
             this.tileIDs[index] = tileID;
         }
     }
@@ -172,7 +176,7 @@ public class MapData : SerializedScriptableObject
     {
         if (IsWithinGrid(gridPosition))
         {
-            int index = gridPosition.y * gridLength + gridPosition.x;
+            int index = (gridPosition.y - gridMin.y) * gridLength + (gridPosition.x - gridMin.x);
             return tileIDs[index];
         }
         return -1;
@@ -286,11 +290,20 @@ public class MapData : SerializedScriptableObject
         ObjData objData = objDataList.GetObjDetails(objID);
         if (objData == null) return false;
         bool isGoal = objData.objType.HasFlag(ObjectType.Goal);
+        bool isPlayer = objData.objType.HasFlag(ObjectType.Player);
 
         ObjDataInstance tempInstance = new ObjDataInstance(objID, mainGrid, height, rotation, objData);
 
         foreach (var grid in tempInstance.currentOccupied)
         {
+            // Pomme may only be placed on a tile marked Walkable. Goal markers
+            // are stored separately from solid occupants, so they can share
+            // the tile with the player.
+            if (isPlayer && !HasTileType(new Vector2Int(grid.x, grid.y), TileType.Walkable))
+            {
+                return false;
+            }
+
             if (!CanPlaceAtGrid(grid, isGoal))
             {
                 return false;
@@ -327,7 +340,7 @@ public class MapData : SerializedScriptableObject
 
         if (gridPosition.z == 0)
         {
-            if (!HasTileType(baseGrid, TileType.Placeable))
+            if (!HasTileAt(baseGrid))
             {
                 return false;
             }
@@ -356,7 +369,7 @@ public class MapData : SerializedScriptableObject
 
         if (gridPosition.z == 0)
         {
-            if (!HasTileType(baseGrid, TileType.Placeable))
+            if (!HasTileAt(baseGrid))
             {
                 return false;
             }
@@ -379,7 +392,7 @@ public class MapData : SerializedScriptableObject
     {
         if (gridPosition.z == 0)
         {
-            if (!HasTileType(new Vector2Int(gridPosition.x, gridPosition.y), TileType.Placeable))
+            if (!HasTileAt(new Vector2Int(gridPosition.x, gridPosition.y)))
             {
                 return false;
             }
@@ -481,7 +494,7 @@ public class MapData : SerializedScriptableObject
     }
 
 
-    private void GetNormalizedWallPosition(Vector2Int gridPos, WallDirection direction, out Vector2Int basePos, out WallDirection baseDir)
+    public void GetNormalizedWallPosition(Vector2Int gridPos, WallDirection direction, out Vector2Int basePos, out WallDirection baseDir)
     {
         switch (direction)
         {
@@ -502,28 +515,19 @@ public class MapData : SerializedScriptableObject
 
     public bool CanPlaceWall(Vector2Int gridPos, WallDirection direction)
     {
-        Vector2Int offset = Vector2Int.zero;
+        Vector2Int otherPos = GetNeighbor(gridPos, direction);
 
-        switch (direction)
-        {
-            case WallDirection.Up: offset = new Vector2Int(0, 1); break;
-            case WallDirection.Down: offset = new Vector2Int(0, -1); break;
-            case WallDirection.Left: offset = new Vector2Int(-1, 0); break;
-            case WallDirection.Right: offset = new Vector2Int(1, 0); break;
-        }
-
-        Vector2Int otherPos = gridPos + offset;
+        // A wall belongs to the shared edge between two cells. At least one
+        // side must have a placed tile, which also permits walls around the
+        // outer edge of a tiled area.
+        if (!HasTileAt(gridPos) && !HasTileAt(otherPos)) return false;
 
         Vector3Int pos3D = new Vector3Int(gridPos.x, gridPos.y, 0);
         string instanceID = GetInstanceIDAtGrid(pos3D);
-        if (string.IsNullOrEmpty(instanceID))
-            return true;
         Vector3Int pos3D1 = new Vector3Int(otherPos.x, otherPos.y, 0);
         string instanceID1 = GetInstanceIDAtGrid(pos3D1);
-        if (string.IsNullOrEmpty(instanceID1))
-            return true;
 
-        if (instanceID == instanceID1)
+        if (!string.IsNullOrEmpty(instanceID) && instanceID == instanceID1)
         {
             return false;
         }
@@ -531,10 +535,24 @@ public class MapData : SerializedScriptableObject
         return true;
     }
 
+    public bool HasTileAt(Vector2Int gridPos)
+    {
+        int tileID = GetTileID(gridPos);
+        return tileID != 0 && tileID != -1;
+    }
+
 
     public void SetWall(Vector2Int gridPos, WallDirection direction, int wallID)
     {
         GetNormalizedWallPosition(gridPos, direction, out var basePos, out var baseDir);
+
+        Vector2Int neighborPos = GetNeighbor(basePos, baseDir);
+        WallDirection mirroredDirection = GetOpposite(baseDir);
+        if (tileWalls.TryGetValue(neighborPos, out var mirroredWalls))
+        {
+            mirroredWalls.Remove(mirroredDirection);
+            if (mirroredWalls.Count == 0) tileWalls.Remove(neighborPos);
+        }
 
         if (!tileWalls.ContainsKey(basePos))
         {
@@ -555,6 +573,15 @@ public class MapData : SerializedScriptableObject
                 return wallID;
             }
         }
+
+        // Read older maps that may have stored the shared edge from its other side.
+        Vector2Int neighborPos = GetNeighbor(basePos, baseDir);
+        if (tileWalls.TryGetValue(neighborPos, out var neighborWalls) &&
+            neighborWalls.TryGetValue(GetOpposite(baseDir), out var mirroredWallID))
+        {
+            return mirroredWallID;
+        }
+
         return -1;//no walls
     }
 
@@ -579,6 +606,13 @@ public class MapData : SerializedScriptableObject
                 tileWalls.Remove(basePos);
             }
         }
+
+        Vector2Int neighborPos = GetNeighbor(basePos, baseDir);
+        if (tileWalls.TryGetValue(neighborPos, out var neighborWalls))
+        {
+            neighborWalls.Remove(GetOpposite(baseDir));
+            if (neighborWalls.Count == 0) tileWalls.Remove(neighborPos);
+        }
     }
 
     public bool HasWallBetween(Vector2Int a, Vector2Int b)
@@ -599,8 +633,43 @@ public class MapData : SerializedScriptableObject
     #region other
     public bool IsWithinGrid(Vector2Int gridPosition)
     {
-        return gridPosition.x >= 0 && gridPosition.x < gridLength &&
-               gridPosition.y >= 0 && gridPosition.y < gridWidth;
+        return gridPosition.x >= gridMin.x && gridPosition.x < gridMin.x + gridLength &&
+               gridPosition.y >= gridMin.y && gridPosition.y < gridMin.y + gridWidth;
+    }
+
+    /// <summary>Expands the editable grid while preserving all existing tile data.</summary>
+    public bool EnsureGridContains(Vector2Int gridPosition)
+    {
+        if (IsWithinGrid(gridPosition)) return false;
+        if (tileIDs == null)
+        {
+            tileIDs = new int[gridLength * gridWidth];
+        }
+
+        int newMinX = Mathf.Min(gridMin.x, gridPosition.x);
+        int newMinY = Mathf.Min(gridMin.y, gridPosition.y);
+        int newMaxX = Mathf.Max(gridMin.x + gridLength - 1, gridPosition.x);
+        int newMaxY = Mathf.Max(gridMin.y + gridWidth - 1, gridPosition.y);
+        int newLength = newMaxX - newMinX + 1;
+        int newWidth = newMaxY - newMinY + 1;
+        int[] expanded = new int[newLength * newWidth];
+
+        for (int y = 0; y < gridWidth; y++)
+        {
+            for (int x = 0; x < gridLength; x++)
+            {
+                int oldIndex = y * gridLength + x;
+                int newX = gridMin.x + x - newMinX;
+                int newY = gridMin.y + y - newMinY;
+                expanded[newY * newLength + newX] = tileIDs[oldIndex];
+            }
+        }
+
+        gridMin = new Vector2Int(newMinX, newMinY);
+        gridLength = newLength;
+        gridWidth = newWidth;
+        tileIDs = expanded;
+        return true;
     }
 
     public IEnumerable<ObjDataInstance> GetAllObjectInstances()

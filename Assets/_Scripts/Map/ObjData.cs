@@ -8,6 +8,8 @@ public class ObjData
     public int objID;
     public string objName;
 
+    // Keep 3D offsets for multi-cell footprints and future rules. Editor
+    // placement currently fixes every instance to the ground layer.
     [OdinSerialize]
     public List<Vector3Int> occupiedGrids = new List<Vector3Int>();
 
@@ -16,9 +18,43 @@ public class ObjData
     public GameObject prefab;
     public int maxCount = -1; 
 
+    public virtual GameObject GetPrefab(Vector2Int gridPosition)
+    {
+        return prefab;
+    }
+
     public bool ContainsGrid(Vector3Int gridPosition)
     {
         return occupiedGrids.Contains(gridPosition);
+    }
+}
+
+/// <summary>
+/// ObjData variant for objects that choose a visual prefab from a set.
+/// The choice is stable for each grid position, matching wall variant behavior.
+/// </summary>
+public class RandomObjData : ObjData
+{
+    public List<GameObject> prefabVariants = new List<GameObject>();
+
+    public override GameObject GetPrefab(Vector2Int gridPosition)
+    {
+        if (prefabVariants == null || prefabVariants.Count == 0) return prefab;
+
+        unchecked
+        {
+            uint hash = (uint)(gridPosition.x * 73856093) ^
+                        (uint)(gridPosition.y * 19349663) ^
+                        ((uint)objID * 2654435761u);
+            int startIndex = (int)(hash % (uint)prefabVariants.Count);
+            for (int i = 0; i < prefabVariants.Count; i++)
+            {
+                GameObject candidate = prefabVariants[(startIndex + i) % prefabVariants.Count];
+                if (candidate != null) return candidate;
+            }
+        }
+
+        return prefab;
     }
 }
 
@@ -38,16 +74,12 @@ public class ObjDataInstance
     public int height;
     public Quaternion rotation;
     public List<Vector3Int> currentOccupied;
-    public bool canPush;
-    public bool canPossess;
 
     public ObjDataInstance DeepCopy()
     {
         return new ObjDataInstance(this.objID, this.mainGrid, this.height, this.rotation)
         {
             instanceID = this.instanceID,
-            canPossess = this.canPossess,
-            canPush = this.canPush,
             currentOccupied = new List<Vector3Int>(this.currentOccupied)
         };
     }
@@ -76,8 +108,6 @@ public class ObjDataInstance
         this.height = height;
         rotation = rot;
         currentOccupied = CalculateOccupiedGrids(objData);
-        canPush = objData.objType.HasFlag(ObjectType.Pushable);
-        canPossess = objData.objType.HasFlag(ObjectType.CanPossess);
     }
 
     public List<Vector3Int> CalculateOccupiedGrids(ObjData objData)

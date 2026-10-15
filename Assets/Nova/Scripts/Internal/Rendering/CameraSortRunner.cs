@@ -323,7 +323,7 @@ namespace Nova.Internal.Rendering
                             continue;
                         }
 
-                        if (setToCheckInfo.Distances.MinDistance > perCameraSetInfo.Distances.MaxDistance &&
+                        if ((Constants.DistanceComparisonThreshold * setToCheckInfo.Distances.MinDistance) > perCameraSetInfo.Distances.MaxDistance &&
                             !Math.ApproximatelyEqual(setToCheckInfo.Distances.MinDistance, perCameraSetInfo.Distances.MaxDistance))
                         {
                             // We've checked all elements with overlapping min/max, so break

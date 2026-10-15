@@ -129,6 +129,7 @@ namespace Commands
         private Quaternion previousRotation;
         private TileData previousTileConfig;
         private bool hadPreviousTile = false;
+        private readonly Dictionary<WallDirection, int> previousWalls = new Dictionary<WallDirection, int>();
 
         private MapPlane mapPlane;
 
@@ -144,6 +145,11 @@ namespace Commands
                 hadPreviousTile = true;
                 previousTileConfig = mapPlane.GetTileDataAtGridPosition(gridPosition);
                 previousRotation = previousTileInstance.transform.rotation;
+                foreach (WallDirection direction in System.Enum.GetValues(typeof(WallDirection)))
+                {
+                    int wallID = mapPlane.mapData.GetWall(gridPosition, direction);
+                    if (wallID != -1) previousWalls[direction] = wallID;
+                }
             }
         }
 
@@ -157,6 +163,11 @@ namespace Commands
             if (hadPreviousTile)
             {
                 mapPlane.PlaceTile(gridPosition, previousTileConfig, previousRotation);
+                foreach (var wall in previousWalls)
+                {
+                    WallData wallData = mapPlane.wallDataList.GetTileDetails(wall.Value);
+                    if (wallData != null) mapPlane.PlaceWall(gridPosition, wallData, wall.Key);
+                }
             }
         }
 
@@ -494,11 +505,6 @@ namespace Commands
         private List<Vector3Int> originalOccupiedGrids;
         private List<Vector3Int> targetOccupiedGrids;
         bool isPlayer;
-        private bool isTrailAsObstacle;
-        private bool isTrailAsRoad;
-
-        private List<Vector3Int> addedTrailStep;
-        private List<Vector3Int> removedTrailStep;
 
 
 
@@ -533,10 +539,6 @@ namespace Commands
                 targetOccupiedGrids.Add(finalPos);
             }
 
-            var objData = map.mapData.GetObjectData(instance.objID);
-            isTrailAsObstacle = objData.objType.HasFlag(ObjectType.TrailAsObstacle);
-            isTrailAsRoad = objData.objType.HasFlag(ObjectType.TrailAsRoad);
-            addedTrailStep = new List<Vector3Int>(targetOccupiedGrids);
         }
 
         public void Execute()
@@ -568,15 +570,6 @@ namespace Commands
             if (isPlayer)
             {
                 GameMgr.Instance.UpdatePlayerPosition(toPos);
-                if (isTrailAsRoad)
-                {
-                    GameMgr.Instance.RecordPlayerStep(instanceID, addedTrailStep, out removedTrailStep);
-                }
-            }
-
-            if (isTrailAsObstacle)
-            {
-                GameMgr.Instance.AddTrailStep(instanceID, addedTrailStep, out removedTrailStep);
             }
         }
 
@@ -609,14 +602,6 @@ namespace Commands
             {
                 GameMgr gm = GameMgr.Instance;
                 gm.UpdatePlayerPosition(fromPos);
-                if (isTrailAsRoad)
-                {
-                    gm.RevertPlayerStep(instanceID, addedTrailStep, removedTrailStep);
-                }
-            }
-            if (isTrailAsObstacle)
-            {
-                GameMgr.Instance.RevertTrailStep(instanceID, addedTrailStep, removedTrailStep);
             }
         }
 
@@ -810,19 +795,19 @@ namespace Commands
         private readonly MapData mapData;
         private readonly MapPlane map;
 
-        private readonly List<IMovementStrategy> attractObjStrategies = new List<IMovementStrategy>();
+        private readonly List<IMovementStrategy> ghostMovementStrategies = new List<IMovementStrategy>();
         List<Vector2Int> moveDirs = new List<Vector2Int>();
         public bool canBark;
         CompositeCommand compositeCommand;
 
-        public BarkCommand(MapData mapData, MapPlane map, Vector2Int playerGridPosition, bool autoAttracted = false)
+        public BarkCommand(MapData mapData, MapPlane map, Vector2Int playerGridPosition)
         {
             this.mapData = mapData;
             this.playerGridPosition = playerGridPosition;
             //Debug.Log("playerGridPositio"+playerGridPosition);
             this.map = map;
             canBark = false;
-            attractObjStrategies.Clear();
+            ghostMovementStrategies.Clear();
 
             foreach (var dir in directions)
             {
@@ -836,8 +821,7 @@ namespace Commands
                         ObjData targetObjData = mapData.GetObjectData(instance.objID);
                         if (targetObjData != null)
                         {
-                            if ((autoAttracted && targetObjData.objType.HasFlag(ObjectType.AutoAttracted))
-                            || (!autoAttracted && targetObjData.objType.HasFlag(ObjectType.Attracted)))
+                            if (targetObjData.objType.HasFlag(ObjectType.Ghost))
                             {
                                 var rollingMovement = new RollingMovementStrategy();
                                 Vector2Int targetPos = rollingMovement.CalculateTargetPosition(instance.mainGrid, -dir, instance.height, map, false);
@@ -846,7 +830,7 @@ namespace Commands
                                     //Debug.Log($"[{instance.instanceID}] main: {instance.mainGrid} at height {instance.height}, checkPos: {checkPos}, targetPos: {targetPos}");
                                     canBark = true;
 
-                                    attractObjStrategies.Add(rollingMovement);
+                                    ghostMovementStrategies.Add(rollingMovement);
                                     moveDirs.Add(-dir);
                                     break;
                                 }
@@ -866,9 +850,9 @@ namespace Commands
             {
                 compositeCommand = new CompositeCommand();
                 //Debug.Log(attractObjStrategies.Count);
-                for (int i = 0; i < attractObjStrategies.Count; i++)
+                for (int i = 0; i < ghostMovementStrategies.Count; i++)
                 {
-                    compositeCommand.AddCommand(attractObjStrategies[i].CreateMoveCommand(moveDirs[i], map, false));
+                    compositeCommand.AddCommand(ghostMovementStrategies[i].CreateMoveCommand(moveDirs[i], map, false));
                 }
             }
         }

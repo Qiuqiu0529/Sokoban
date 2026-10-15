@@ -184,8 +184,8 @@ namespace Nova.Internal.Rendering
             formatDescriptor.IsLinear = !GraphicsFormatUtility.IsSRGBFormat(texture.graphicsFormat);
 
             if (texture is Texture2D tex2D)
-            {
-                formatDescriptor.IsSupportedStatic = SystemInfo.SupportsTextureFormat(tex2D.format);
+            {   
+                formatDescriptor.IsSupportedStatic = SystemInfo.SupportsTextureFormat(tex2D.format) && !GraphicsFormatUtility.IsCrunchFormat(tex2D.format);
                 formatDescriptor.TextureFormat = tex2D.format;
             }
             else

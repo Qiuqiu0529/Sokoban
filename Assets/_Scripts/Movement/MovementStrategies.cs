@@ -99,18 +99,6 @@ namespace Movement
                 targetOccupiedGrids.Add(finalPos);
             }
 
-            //check trail bound
-            ObjData selfData = map.mapData.GetObjectData(objInstance.objID);
-            if (selfData.objType.HasFlag(ObjectType.TrailBound))
-            {
-                GameMgr gameMgr = GameMgr.Instance;
-                foreach (var grid in targetOccupiedGrids)
-                {
-                    if (!map.mapData.HasTileType(new Vector2Int(grid.x, grid.y), TileType.NPCWalkable) && !gameMgr.IsHighlighted(grid))
-                        return false;
-                }
-            }
-
             if (GameMgr.Instance.IsInsideWorld(map))
             {
                 foreach (var grid in targetOccupiedGrids)
@@ -306,10 +294,9 @@ namespace Movement
             Vector2Int currentPos = from;
             ObjData selfData = map.mapData.GetObjectData(objInstance.objID);
             GameMgr gameMgr = GameMgr.Instance;
-            bool trailBound = selfData.objType.HasFlag(ObjectType.TrailBound);
             bool inside = gameMgr.IsInsideWorld(map);
             bool firstStep = true;
-            bool isNpc = selfData.objType.HasFlag(ObjectType.NPC);
+            bool isGhost = selfData.objType.HasFlag(ObjectType.Ghost);
 
 
 
@@ -346,7 +333,7 @@ namespace Movement
                 if (firstStep)
                 {
                     firstStep = false;
-                    if (isNpc)
+                    if (isGhost)
                     {
                         pushObj = false;
                         pushObjStrategies.Clear();
@@ -355,14 +342,6 @@ namespace Movement
                             if (!map.mapData.CanWalkGrid(grid))
                             {
                                 return false;
-                            }
-                            if (trailBound)
-                            {
-                                if (!map.mapData.HasTileType(new Vector2Int(grid.x, grid.y), TileType.NPCWalkable) && !gameMgr.IsHighlighted(grid))
-                                {
-                                    canMoveToNext = false;
-                                    break;
-                                }
                             }
                             if (inside)
                             {
@@ -429,14 +408,6 @@ namespace Movement
                     {
                         canMoveToNext = false;
                         break;
-                    }
-                    if (trailBound)
-                    {
-                        if (!map.mapData.HasTileType(new Vector2Int(grid.x, grid.y), TileType.NPCWalkable) && !gameMgr.IsHighlighted(grid))
-                        {
-                            canMoveToNext = false;
-                            break;
-                        }
                     }
                     if (inside)
                     {
@@ -559,7 +530,6 @@ namespace Movement
 
             ObjData selfData = map.mapData.GetObjectData(objInstance.objID);
             GameMgr gameMgr = GameMgr.Instance;
-            bool trailBound = selfData.objType.HasFlag(ObjectType.TrailBound);
             bool inside = gameMgr.IsInsideWorld(map);
 
             foreach (var grid in targetOccupiedGrids)
@@ -569,13 +539,6 @@ namespace Movement
                     return false;
                 }
 
-                if (trailBound)
-                {
-                    if (!map.mapData.HasTileType(new Vector2Int(grid.x, grid.y), TileType.NPCWalkable) && !gameMgr.IsHighlighted(grid))
-                    {
-                        return false;
-                    }
-                }
                 if (inside)
                 {
                     if (gameMgr.IsBlockedByTrail(grid))

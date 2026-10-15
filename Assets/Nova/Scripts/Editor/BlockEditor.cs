@@ -17,7 +17,7 @@ using static Nova.Editor.Serialization.Wrappers;
 
 namespace Nova.Editor.GUIs
 {
-    [CustomEditor(typeof(UIBlock)), CanEditMultipleObjects]
+    [CanEditMultipleObjects]
     internal abstract class BlockEditor<TBlock> : NovaEditor<TBlock>
         where TBlock : UIBlock
     {

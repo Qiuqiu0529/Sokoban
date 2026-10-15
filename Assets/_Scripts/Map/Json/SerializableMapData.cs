@@ -10,6 +10,7 @@ public class SerializableMapData
     public string mapID;
     public int gridLength;
     public int gridWidth;
+    public Vector2Int gridMin;
     public float cellSize;
     public int[] tileIDs;
     public Dictionary<Vector2Int, Vector3> tileRotations;

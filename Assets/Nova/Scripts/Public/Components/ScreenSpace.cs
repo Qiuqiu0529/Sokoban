@@ -109,12 +109,13 @@ namespace Nova
         public int AdditionalCameraCount => additionalCameras.Count;
 
         /// <summary>
-        /// Adds an additional camera to render to.
+        /// Adds an additional camera to render to, appending to the end of the list.
         /// </summary>
         /// <remarks>
         /// NOTE: The content belonging to the <see cref="ScreenSpace"/> will not be repositioned/sized for
         /// the additional cameras. It will be rendered positioned and sized based on the <see cref="TargetCamera"/>.
         /// </remarks>
+        /// <param name="cam">The camera to add.</param>
         public void AddAdditionalCamera(Camera cam)
         {
             if (cam == null)
@@ -135,6 +136,8 @@ namespace Nova
         /// NOTE: The content belonging to the <see cref="ScreenSpace"/> will not be repositioned/sized for
         /// the additional cameras. It will be rendered positioned and sized based on the <see cref="TargetCamera"/>.
         /// </remarks>
+        /// <param name="index">The target index to replace.</param>
+        /// <param name="cam">The camera to set.</param>
         /// <seealso cref="AddAdditionalCamera"/>
         public void SetAdditionalCamera(int index, Camera cam)
         {
@@ -158,6 +161,8 @@ namespace Nova
         /// <summary>
         /// Gets the additional camera at the specified index.
         /// </summary>
+        /// <param name="index">The index to retrieve.</param>
+        /// <returns>The camera at the target index, or null if the index was invalid.</returns>
         /// <seealso cref="AddAdditionalCamera"/>
         public Camera GetAdditionalCamera(int index)
         {
@@ -171,8 +176,10 @@ namespace Nova
         }
 
         /// <summary>
-        /// Removes the additional camera at the specified index.
+        /// Removes the additional camera at the specified index. The remaining cameras
+        /// in the list will be renumbered to replace the removed item.
         /// </summary>
+        /// <param name="index">The index to remove.</param>
         /// <seealso cref="AddAdditionalCamera"/>
         public void RemoveAdditionalCamera(int index)
         {

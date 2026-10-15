@@ -576,26 +576,15 @@ public class GameMgr : Singleton<GameMgr>
 
     }
 
-    CompositeCommand MakeBarkCommand(bool autoAttract)
+    CompositeCommand MakeBarkCommand()
     {
         CompositeCommand compositeCommand = new CompositeCommand();
-        while (true)
+        BarkCommand barkCommand = new BarkCommand(currentMap.mapData, currentMap, currentGridPos);
+        if (barkCommand.canBark)
         {
-            BarkCommand barkCommand = new BarkCommand(currentMap.mapData, currentMap, currentGridPos, autoAttract);
-            if (!barkCommand.canBark)
-            {
-                break;
-            }
-            else
-            {
-                barkCommand.Execute();
-                compositeCommand.AddCommand(barkCommand);
-            }
+            barkCommand.Execute();
+            compositeCommand.AddCommand(barkCommand);
         }
-        // if (canbark)
-        // {
-        //     commandMgr.AddCommand(compositeCommand);
-        // }
         return compositeCommand;
     }
 
@@ -731,7 +720,7 @@ public class GameMgr : Singleton<GameMgr>
     IEnumerator WaitBarkAnim()
     {
         yield return new WaitForSeconds(0.2f);
-        CompositeCommand compositeCommand = MakeBarkCommand(false);
+        CompositeCommand compositeCommand = MakeBarkCommand();
         if (compositeCommand.CommandSize() > 0)
         {
             commandMgr.AddCommand(compositeCommand);
@@ -768,10 +757,6 @@ public class GameMgr : Singleton<GameMgr>
             ICommand commandtemp = moveObjNow.AnyCommand(moveDir);
             commandtemp.Execute();
             compositeCommand.AddCommand(commandtemp);
-
-            CompositeCommand autoAttract = MakeBarkCommand(true);
-            if (autoAttract.CommandSize() > 0)
-                compositeCommand.AddCommand(autoAttract);
 
             commandMgr.AddCommand(compositeCommand);
         }
@@ -827,14 +812,7 @@ public class GameMgr : Singleton<GameMgr>
 
     public bool CanEnterPossess()
     {
-        possessedObjData = mapMgr.GetCorrespondingObjInstance(true, currentGridPos, out possessedMap, currentHeight);
-        if (possessedObjData != null && possessedObjData.canPossess)
-        {
-            possessedObject = possessedMap.GetObjectByInstanceID(possessedObjData.instanceID);
-            Debug.Log(possessedObject.gameObject.name + "possess");
-
-            return true;
-        }
+        // Possession is retired by the current Sokoban rules.
         return false;
     }
 

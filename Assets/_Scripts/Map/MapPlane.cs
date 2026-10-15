@@ -60,6 +60,22 @@ public class MapPlane : MonoBehaviour
 
     public void LoadMap()
     {
+        // The editor places content against the unbounded grid, so it does not
+        // need the finite Plane preview used by runtime maps.
+        if (isEditMode)
+        {
+            if (planePreview != null)
+            {
+                planePreview.SetActive(false);
+            }
+
+            var previewCollider = GetComponent<Collider>();
+            if (previewCollider != null)
+            {
+                previewCollider.enabled = false;
+            }
+        }
+
         if (!ValidateDataReferences())
         {
             return;
@@ -108,9 +124,9 @@ public class MapPlane : MonoBehaviour
     #region  loadAnim
     private IEnumerator LoadTilesWithAnimation()
     {
-        for (int x = 0; x < mapData.gridLength; x++)
+        for (int x = mapData.gridMin.x; x < mapData.gridMin.x + mapData.gridLength; x++)
         {
-            for (int y = 0; y < mapData.gridWidth; y++)
+            for (int y = mapData.gridMin.y; y < mapData.gridMin.y + mapData.gridWidth; y++)
             {
                 Vector2Int gridPosition = new Vector2Int(x, y);
                 int tileID = mapData.GetTileID(gridPosition);
@@ -136,9 +152,9 @@ public class MapPlane : MonoBehaviour
 
     private IEnumerator LoadWallsWithAnimation()
     {
-        for (int x = -1; x <= mapData.gridLength; x++)
+        for (int x = mapData.gridMin.x - 1; x <= mapData.gridMin.x + mapData.gridLength; x++)
         {
-            for (int y = -1; y <= mapData.gridWidth; y++)
+            for (int y = mapData.gridMin.y - 1; y <= mapData.gridMin.y + mapData.gridWidth; y++)
             {
                 Vector2Int gridPosition = new Vector2Int(x, y);
                 Dictionary<WallDirection, int> wallDict = mapData.GetAllWalls(gridPosition);
@@ -153,7 +169,12 @@ public class MapPlane : MonoBehaviour
                     WallData wallData = wallDataList.GetTileDetails(wallID);
                     if (wallData != null)
                     {
-                        GameObject wall = PlaceWall(gridPosition, wallData, direction);
+                        GameObject wall = null;
+                        if (mapData.CanPlaceWall(gridPosition, direction))
+                            wall = PlaceWall(gridPosition, wallData, direction);
+                        else
+                            mapData.RemoveWall(gridPosition, direction);
+
                         if (wall != null)
                         {
                             float delay = UnityEngine.Random.Range(0f, 0.3f);
@@ -248,28 +269,6 @@ public class MapPlane : MonoBehaviour
         var instances = mapData.GetAllObjectInstances().ToList();
         foreach (var instance in instances)
         {
-            Vector2Int gridPosition = instance.mainGrid;
-            ObjData objData = mapData.GetObjectData(instance.objID);
-
-            if (objData.objType.HasFlag(ObjectType.TrailAsObstacle))
-            {
-                TrailObj trailObj = objData as TrailObj;
-                GameMgr.Instance.SetBlockingMaxStep(instance.instanceID, trailObj.stepMax);
-                List<Vector3Int> vector3s = new List<Vector3Int>();
-                GameMgr.Instance.AddTrailStep(instance.instanceID, instance.currentOccupied, out vector3s);
-
-            }
-
-            if (objData.objType.HasFlag(ObjectType.TrailAsRoad))
-            {
-                TrailObj trailObj = objData as TrailObj;
-                GameMgr.Instance.SetAccseeibleMaxStep(instance.instanceID, trailObj.stepMax);
-
-                List<Vector3Int> vector3s = new List<Vector3Int>();
-                GameMgr.Instance.RecordPlayerStep(instance.instanceID, instance.currentOccupied, out vector3s);
-                
-
-            }
             SetIndiCator(instance);
         }
     }
@@ -359,7 +358,18 @@ public class MapPlane : MonoBehaviour
 
     public void SetPreViewScale(Vector3 scale)
     {
+        if (isEditMode || planePreview == null) return;
+
+        Vector3 gridOrigin = startPoint != null ? startPoint.position : transform.position;
         planePreview.transform.localScale = scale;
+        if (startPoint != null) startPoint.position = gridOrigin;
+    }
+
+    public void RefreshMapBounds()
+    {
+        if (isEditMode || mapData == null || planePreview == null) return;
+        SetPreViewScale(new Vector3((float)mapData.gridLength / 10 / mapData.cellSize, 1,
+            (float)mapData.gridWidth / 10 / mapData.cellSize));
     }
 
 
@@ -367,9 +377,9 @@ public class MapPlane : MonoBehaviour
     #region  tile
     private void LoadTiles()
     {
-        for (int x = 0; x < mapData.gridLength; x++)
+        for (int x = mapData.gridMin.x; x < mapData.gridMin.x + mapData.gridLength; x++)
         {
-            for (int y = 0; y < mapData.gridWidth; y++)
+            for (int y = mapData.gridMin.y; y < mapData.gridMin.y + mapData.gridWidth; y++)
             {
                 Vector2Int gridPosition = new Vector2Int(x, y);
                 int tileID = mapData.GetTileID(gridPosition);
@@ -439,6 +449,20 @@ public class MapPlane : MonoBehaviour
             gridTiles.Remove(gridPosition);
             mapData.SetTileRotation(gridPosition, Quaternion.identity);
             Destroy(existingTile);
+
+            foreach (WallDirection direction in System.Enum.GetValues(typeof(WallDirection)))
+            {
+                Vector2Int neighbor = gridPosition + (direction switch
+                {
+                    WallDirection.Up => Vector2Int.up,
+                    WallDirection.Down => Vector2Int.down,
+                    WallDirection.Left => Vector2Int.left,
+                    WallDirection.Right => Vector2Int.right,
+                    _ => Vector2Int.zero
+                });
+                if (!mapData.HasTileAt(gridPosition) && !mapData.HasTileAt(neighbor))
+                    RemoveWall(gridPosition, direction);
+            }
         }
     }
 
@@ -501,9 +525,9 @@ public class MapPlane : MonoBehaviour
 
     private void LoadWalls()
     {
-        for (int x = -1; x <= mapData.gridLength; x++)
+        for (int x = mapData.gridMin.x - 1; x <= mapData.gridMin.x + mapData.gridLength; x++)
         {
-            for (int y = -1; y <= mapData.gridWidth; y++)
+            for (int y = mapData.gridMin.y - 1; y <= mapData.gridMin.y + mapData.gridWidth; y++)
             {
                 Vector2Int gridPosition = new Vector2Int(x, y);
                 Dictionary<WallDirection, int> wallDict = mapData.GetAllWalls(gridPosition);
@@ -518,7 +542,10 @@ public class MapPlane : MonoBehaviour
                     WallData wallData = wallDataList.GetTileDetails(wallID);
                     if (wallData != null)
                     {
-                        PlaceWall(gridPosition, wallData, direction);
+                        if (mapData.CanPlaceWall(gridPosition, direction))
+                            PlaceWall(gridPosition, wallData, direction);
+                        else
+                            mapData.RemoveWall(gridPosition, direction);
                     }
                 }
             }
@@ -527,7 +554,13 @@ public class MapPlane : MonoBehaviour
 
     public GameObject PlaceWall(Vector2Int gridPosition, WallData wallData, WallDirection wallDirection)
     {
-        var key = (gridPosition, wallDirection);
+        if (!mapData.CanPlaceWall(gridPosition, wallDirection))
+        {
+            return null;
+        }
+
+        mapData.GetNormalizedWallPosition(gridPosition, wallDirection, out var normalizedPosition, out var normalizedDirection);
+        var key = (normalizedPosition, normalizedDirection);
         if (wallObjects.TryGetValue(key, out var existingWall))
         {
             Destroy(existingWall);
@@ -538,7 +571,14 @@ public class MapPlane : MonoBehaviour
         Vector3 basePosition = GridToWorldPosition(gridPosition);
         Quaternion rotation = GetRotationFromDirection(wallDirection);
         Vector3 offset = GetOffsetFromDirection(wallDirection, wallData.startOffset);
-        GameObject wallInstance = Instantiate(wallData.prefab, basePosition + offset, rotation);
+        GameObject wallPrefab = wallData.GetPrefab(gridPosition, wallDirection);
+        if (wallPrefab == null)
+        {
+            Debug.LogError($"[MapPlane] No prefab configured for wall ID {wallData.wallID}");
+            return null;
+        }
+
+        GameObject wallInstance = Instantiate(wallPrefab, basePosition + offset, rotation);
         wallInstance.transform.parent = this.transform;
         wallObjects[key] = wallInstance;
 
@@ -547,7 +587,8 @@ public class MapPlane : MonoBehaviour
 
     public void RemoveWall(Vector2Int gridPosition, WallDirection wallDirection)
     {
-        var key = (gridPosition, wallDirection);
+        mapData.GetNormalizedWallPosition(gridPosition, wallDirection, out var normalizedPosition, out var normalizedDirection);
+        var key = (normalizedPosition, normalizedDirection);
 
         if (wallObjects.TryGetValue(key, out var wallObj))
         {
@@ -692,7 +733,14 @@ public class MapPlane : MonoBehaviour
         newWorldPosition.y = height * mapData.cellSize;
 
         string instanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion);
-        GameObject objInstance = Instantiate(objData.prefab, newWorldPosition, quaternion);
+        GameObject prefab = objData.GetPrefab(gridPosition);
+        if (prefab == null)
+        {
+            Debug.LogError($"[MapPlane] No prefab configured for object ID {objData.objID}");
+            mapData.RemoveObject(new Vector3Int(gridPosition.x, gridPosition.y, height));
+            return null;
+        }
+        GameObject objInstance = Instantiate(prefab, newWorldPosition, quaternion);
         if (scale != default)
         {
             objInstance.transform.localScale = scale;
@@ -763,7 +811,8 @@ public class MapPlane : MonoBehaviour
                     Debug.Log($"[MapPlane] Found player object at {gridPosition}, instanceID {instance.instanceID}");
                 }
 
-                if (objData.prefab == null)
+                GameObject prefab = objData.GetPrefab(gridPosition);
+                if (prefab == null)
                 {
                     Debug.LogError($"[MapPlane] Prefab is null for object ID {objData.objID}");
                     continue;
@@ -772,7 +821,7 @@ public class MapPlane : MonoBehaviour
                 Vector3 worldPosition = GridToWorldPosition(gridPosition);
                 worldPosition.y = instance.height * mapData.cellSize;
 
-                GameObject objInstance = Instantiate(objData.prefab, worldPosition, instance.rotation);
+                GameObject objInstance = Instantiate(prefab, worldPosition, instance.rotation);
 
 
                 if (objInstance == null)

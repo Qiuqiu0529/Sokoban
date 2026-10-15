@@ -283,7 +283,11 @@ namespace NovaSamples.UIControls
             {
                 // Initialize navigation
                 EnsureNavigationIndicator();
-                Navigation.Focus(startNavigationFrom.UIBlock, NavigationID);
+
+                if (startNavigationFrom != null)
+                {
+                    Navigation.Focus(startNavigationFrom.UIBlock, NavigationID);
+                }
             }
 
             if (NavigationIndicator != null)

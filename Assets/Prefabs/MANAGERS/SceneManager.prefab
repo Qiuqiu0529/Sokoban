@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8666668375295708875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3520315699558038106}
+  - component: {fileID: 8677043942836956718}
+  m_Layer: 0
+  m_Name: SceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3520315699558038106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8666668375295708875}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 674.07245, y: 458.36646, z: -313.20972}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4425787485727653162}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8677043942836956718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8666668375295708875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 864149ddfe5ab874d9f8b920aa8ddc3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneTransitionPlayer: {fileID: 7920402456870987375}
+--- !u!1001 &7784815615229625246
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3520315699558038106}
+    m_Modifications:
+    - target: {fileID: 136186182047376881, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: managedReferences[6760462082665087021].DestinationSceneName
+      value: HubWorld
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032235, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_Name
+      value: ChangeSceneFB
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -674.07245
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -458.36646
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 313.20972
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8b486360347ce634d8cecea54d718055, type: 3}
+--- !u!4 &4425787485727653162 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5864450645931032244, guid: 8b486360347ce634d8cecea54d718055,
+    type: 3}
+  m_PrefabInstance: {fileID: 7784815615229625246}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7920402456870987375 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 136186182047376881, guid: 8b486360347ce634d8cecea54d718055,
+    type: 3}
+  m_PrefabInstance: {fileID: 7784815615229625246}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da43522623d4704e979466dc7650b65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

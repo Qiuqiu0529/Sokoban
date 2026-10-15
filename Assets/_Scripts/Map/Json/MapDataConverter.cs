@@ -10,6 +10,7 @@ public static class MapDataConverter
             mapID = map.mapID,
             gridLength = map.gridLength,
             gridWidth = map.gridWidth,
+            gridMin = map.gridMin,
             cellSize = map.cellSize,
             tileIDs = map.GetTileIDs(),
             tileRotations = map.GetTileRotations(),
@@ -25,6 +26,7 @@ public static class MapDataConverter
         map.mapID = serialized.mapID;
         map.gridLength = serialized.gridLength;
         map.gridWidth = serialized.gridWidth;
+        map.gridMin = serialized.gridMin;
         map.cellSize = serialized.cellSize;
 
         map.SetTileIDs(serialized.tileIDs);

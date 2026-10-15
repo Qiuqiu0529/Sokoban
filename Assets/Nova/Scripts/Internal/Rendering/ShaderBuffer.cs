@@ -43,13 +43,19 @@ namespace Nova.Internal.Rendering
             if (dataSize >= float4Size)
             {
                 usingRGBATexture = true;
-                int textureWidth = Count * dataSize / float4Size;
-                texture = new Texture2D(textureWidth, 1, TextureFormat.RGBAFloat, false, true);
+
+                int sizeInBytes = Count * dataSize;
+                int numPixels = sizeInBytes / float4Size;
+
+                int textureWidth = math.min(numPixels, Constants.MaxTextureDimension);
+                int textureHeight = numPixels / Constants.MaxTextureDimension + 1;
+
+                texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RGBAFloat, false, true);
 
                 if (!UnityVersionUtils.Is2022OrNewer && !backingBuffer.IsCreated)
                 {
                     // Workaround for a unity bug with GetPixelData, forcing us to use SetPixelData
-                    int backingBufferSize = textureWidth * UnsafeUtility.SizeOf<float4>();
+                    int backingBufferSize = 4 * textureWidth * textureHeight;
                     backingBuffer = new NativeArray<float>(backingBufferSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
                 }
             }
@@ -58,11 +64,14 @@ namespace Nova.Internal.Rendering
                 usingRGBATexture = false;
 
 
-                texture = new Texture2D(Count, 1, TextureFormat.RFloat, false, true);
+                int textureWidth = math.min(Count, Constants.MaxTextureDimension);
+                int textureHeight = Count / Constants.MaxTextureDimension + 1;
+
+                texture = new Texture2D(textureWidth, textureHeight, TextureFormat.RFloat, false, true);
                 if (!UnityVersionUtils.Is2022OrNewer && !backingBuffer.IsCreated)
                 {
                     // Workaround for a unity bug with GetPixelData, forcing us to use SetPixelData
-                    backingBuffer = new NativeArray<float>(Count, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+                    backingBuffer = new NativeArray<float>(textureWidth * textureHeight, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
                 }
             }
 

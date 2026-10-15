@@ -40,6 +40,10 @@ public class LevelData : SerializedScriptableObject
     {
         if (objData.maxCount == -1) return true;  // 无限制
 
+        // A unique object can be moved to a new cell; this does not create
+        // another instance or increase its global count.
+        if (objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player)) return true;
+
         globalObjectCounts.TryGetValue(objData.objID, out int currentCount);
         return currentCount < objData.maxCount;
     }

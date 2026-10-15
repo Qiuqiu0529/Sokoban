@@ -209,12 +209,33 @@ namespace Nova
         #endregion
 
         #region Controls
+        /// <summary>
+        /// The Nova button control prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock ButtonPrefab = null;
+        /// <summary>
+        /// The Nova toggle control prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock TogglePrefab = null;
+        /// <summary>
+        /// The Nova slider control prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock SliderPrefab = null;
+        /// <summary>
+        /// The Nova dropdown control prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock DropdownPrefab = null;
+        /// <summary>
+        /// The Nova text field prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock TextFieldPrefab = null;
+        /// <summary>
+        /// The Nova scroll view prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock ScrollViewPrefab = null;
+        /// <summary>
+        /// The Nova UI root prefab to instantiate in editor from the GameObject menu (and right-click in hierarchy window).
+        /// </summary>
         public UIBlock UIRootPrefab = null;
         #endregion
 
