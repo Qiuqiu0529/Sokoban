@@ -37,6 +37,9 @@ public class MapData : SerializedScriptableObject
     [OdinSerialize]
     private Dictionary<Vector3Int, string> goalObjectMap3D = new Dictionary<Vector3Int, string>();
 
+    [NonSerialized]
+    private HashSet<string> hiddenPressureObjects = new HashSet<string>();
+
 
     // --- Getters ---
     public int[] GetTileIDs() => tileIDs;
@@ -73,6 +76,7 @@ public class MapData : SerializedScriptableObject
     {
         tileIDs = new int[gridLength * gridWidth];
         gridMin = Vector2Int.zero;
+        hiddenPressureObjects?.Clear();
         objectInstances.Clear();
         tileRotations.Clear();
         tileWalls.Clear();
@@ -219,6 +223,31 @@ public class MapData : SerializedScriptableObject
         return tileData.tileType.HasFlag(type);
     }
 
+    /// <summary>
+    /// Returns whether a ghost can occupy this tile right now. A light source
+    /// temporarily grants access to the complete 3x3 square centered on it.
+    /// Walls remain edge blockers and are checked separately by movement code.
+    /// </summary>
+    public bool IsGhostWalkable(Vector2Int gridPos)
+    {
+        if (!HasTileAt(gridPos)) return false;
+        if (HasTileType(gridPos, TileType.GhostWalkable)) return true;
+        if (objectInstances == null) return false;
+
+        foreach (ObjDataInstance instance in objectInstances.Values)
+        {
+            if (instance == null) continue;
+            ObjData data = GetObjectData(instance.objID);
+            if (data == null || !data.objType.HasFlag(ObjectType.LightSource)) continue;
+
+            if (Mathf.Abs(gridPos.x - instance.mainGrid.x) <= 1 &&
+                Mathf.Abs(gridPos.y - instance.mainGrid.y) <= 1)
+                return true;
+        }
+
+        return false;
+    }
+
 
 
     #endregion
@@ -228,21 +257,10 @@ public class MapData : SerializedScriptableObject
 
     public ObjData GetObjectDataAtGrid(Vector3Int gridPosition)
     {
-        if (gridToInstanceMap3D.TryGetValue(gridPosition, out string instanceID))
-        {
-            if (objectInstances.TryGetValue(instanceID, out var objInstance))
-            {
-                return objDataList.GetObjDetails(objInstance.objID);
-            }
-        }
-        if (goalObjectMap3D.TryGetValue(gridPosition, out string goalInstanceID))
-        {
-            if (objectInstances.TryGetValue(goalInstanceID, out ObjDataInstance goalInstance))
-            {
-                return objDataList.GetObjDetails(goalInstance.objID);
-            }
-        }
-        return null;
+        string instanceID = GetInstanceIDAtGrid(gridPosition);
+        if (string.IsNullOrEmpty(instanceID)) return null;
+        ObjDataInstance instance = GetInstance(instanceID);
+        return instance == null ? null : GetObjectData(instance.objID);
     }
 
     public string GetGoalIDAtGrid(Vector3Int gridPosition)
@@ -261,6 +279,8 @@ public class MapData : SerializedScriptableObject
 
     public string GetInstanceIDAtGrid(Vector3Int gridPosition)
     {
+        string nonBlockingInstanceID = null;
+        string blockingInstanceID = null;
         if (gridToInstanceMap3D.TryGetValue(gridPosition, out string instanceID))
         {
             if (string.IsNullOrEmpty(instanceID))
@@ -268,9 +288,39 @@ public class MapData : SerializedScriptableObject
                 Debug.LogError($"[MapData] Found empty instance ID at position {gridPosition}");
                 return null;
             }
-            return instanceID;
+            if (!IsPressureObjectHidden(instanceID))
+            {
+                ObjDataInstance mappedInstance = GetInstance(instanceID);
+                ObjData mappedData = mappedInstance == null ? null : GetObjectData(mappedInstance.objID);
+                if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksGoal)) return instanceID;
+                if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksMovement))
+                    blockingInstanceID = instanceID;
+                else
+                    nonBlockingInstanceID = instanceID;
+            }
         }
 
+        // Pressure plates may share a grid with actors and pushed objects. Prefer
+        // a solid occupant for interaction while retaining the plate as fallback.
+        foreach (var instance in objectInstances.Values)
+        {
+            if (IsPressureObjectHidden(instance.instanceID) || instance.currentOccupied == null ||
+                !instance.currentOccupied.Contains(gridPosition)) continue;
+            ObjData data = GetObjectData(instance.objID);
+            if (data != null && data.objType.HasFlag(ObjectType.BlocksGoal)) return instance.instanceID;
+            if (data != null && data.objType.HasFlag(ObjectType.BlocksMovement))
+            {
+                blockingInstanceID ??= instance.instanceID;
+                continue;
+            }
+            if (nonBlockingInstanceID == null)
+            {
+                nonBlockingInstanceID = instance.instanceID;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(blockingInstanceID)) return blockingInstanceID;
+        if (!string.IsNullOrEmpty(nonBlockingInstanceID)) return nonBlockingInstanceID;
         return GetGoalIDAtGrid(gridPosition);
     }
 
@@ -283,7 +333,7 @@ public class MapData : SerializedScriptableObject
 
 
 
-    public bool CanPlaceObj(Vector2Int mainGrid, int objID, int height, Quaternion rotation)
+    public bool CanPlaceObj(Vector2Int mainGrid, int objID, int height, Quaternion rotation, int channelID = 0)
     {
         if (!objDataList) return false;
 
@@ -291,6 +341,11 @@ public class MapData : SerializedScriptableObject
         if (objData == null) return false;
         bool isGoal = objData.objType.HasFlag(ObjectType.Goal);
         bool isPlayer = objData.objType.HasFlag(ObjectType.Player);
+        bool isGhost = objData.objType.HasFlag(ObjectType.Ghost);
+        ObjDataInstance linkedInstance = (isGoal || isGhost) && channelID > 0
+            ? GetLinkedInstance(objData.objType, channelID)
+            : null;
+        string ignoredInstanceID = linkedInstance == null ? null : linkedInstance.instanceID;
 
         ObjDataInstance tempInstance = new ObjDataInstance(objID, mainGrid, height, rotation, objData);
 
@@ -304,7 +359,7 @@ public class MapData : SerializedScriptableObject
                 return false;
             }
 
-            if (!CanPlaceAtGrid(grid, isGoal))
+            if (!CanPlaceAtGrid(grid, objData.objType, isGoal, ignoredInstanceID))
             {
                 return false;
             }
@@ -330,7 +385,7 @@ public class MapData : SerializedScriptableObject
         return true;
     }
 
-    public bool CanPlaceAtGrid(Vector3Int gridPosition, bool isGoal = false)
+    public bool CanPlaceAtGrid(Vector3Int gridPosition, ObjectType incomingType, bool isGoal = false, string ignoredInstanceID = null)
     {
         Vector2Int baseGrid = new Vector2Int(gridPosition.x, gridPosition.y);
         if (!IsWithinGrid(baseGrid))
@@ -346,14 +401,48 @@ public class MapData : SerializedScriptableObject
             }
         }
 
-        if (gridToInstanceMap3D.ContainsKey(gridPosition))
+        if (gridToInstanceMap3D.TryGetValue(gridPosition, out string existingInstanceID) &&
+            existingInstanceID != ignoredInstanceID &&
+            !IsPressureObjectHidden(existingInstanceID) &&
+            !CanShareGridWithInstance(incomingType, existingInstanceID))
+        {
+            return false;
+        }
+
+        // Static obstacles cannot overlap linked grave markers. Ghosts may still
+        // share their assigned goal so the runtime can register arrival.
+        if (goalObjectMap3D.TryGetValue(gridPosition, out string blockedGoalID) &&
+            blockedGoalID != ignoredInstanceID && incomingType.HasFlag(ObjectType.BlocksGoal))
         {
             return false;
         }
 
         if (isGoal)
         {
-            return !goalObjectMap3D.ContainsKey(gridPosition);
+            foreach (ObjDataInstance occupant in objectInstances.Values)
+            {
+                if (occupant == null || occupant.instanceID == ignoredInstanceID ||
+                    IsPressureObjectHidden(occupant.instanceID) ||
+                    occupant.currentOccupied == null || !occupant.currentOccupied.Contains(gridPosition)) continue;
+
+                ObjData occupantData = GetObjectData(occupant.objID);
+                if (occupantData != null && occupantData.objType.HasFlag(ObjectType.BlocksGoal)) return false;
+            }
+        }
+
+        foreach (var existing in objectInstances.Values)
+        {
+            if (existing.instanceID == ignoredInstanceID || IsPressureObjectHidden(existing.instanceID)) continue;
+            if (existing.currentOccupied == null || !existing.currentOccupied.Contains(gridPosition)) continue;
+            ObjData existingData = GetObjectData(existing.objID);
+            if (existingData != null && existingData.objType.HasFlag(ObjectType.Goal)) continue;
+            if (existingData != null && !CanShareMovementGrid(incomingType, existingData.objType)) return false;
+        }
+
+        if (isGoal)
+        {
+            return !goalObjectMap3D.TryGetValue(gridPosition, out string existingGoalID) ||
+                   existingGoalID == ignoredInstanceID;
         }
         return true;
 
@@ -375,17 +464,66 @@ public class MapData : SerializedScriptableObject
             }
         }
 
-        if (!gridToInstanceMap3D.ContainsKey(gridPosition))
+        ObjDataInstance movingInstance = GetInstance(instanceID);
+        ObjData movingData = movingInstance == null ? null : GetObjectData(movingInstance.objID);
+        if (movingData == null) return false;
+
+        if (gridToInstanceMap3D.TryGetValue(gridPosition, out string existingInstanceID) &&
+            existingInstanceID != instanceID && !IsPressureObjectHidden(existingInstanceID) &&
+            !CanShareGridWithInstance(movingData.objType, existingInstanceID))
         {
-            return true;
+            return false;
         }
 
-        if (gridToInstanceMap3D.TryGetValue(gridPosition, out string existingInstanceID))
+        // Inspect all instances because multiple non-blocking objects may share
+        // a grid while the lookup map keeps only one primary occupant.
+        foreach (var other in objectInstances.Values)
         {
-            return existingInstanceID == instanceID;
+            if (other.instanceID == instanceID || IsPressureObjectHidden(other.instanceID) || other.currentOccupied == null ||
+                !other.currentOccupied.Contains(gridPosition)) continue;
+            ObjData otherData = GetObjectData(other.objID);
+            if (otherData != null && otherData.objType.HasFlag(ObjectType.Goal)) continue;
+            if (otherData == null || !CanShareMovementGrid(movingData.objType, otherData.objType)) return false;
         }
 
-        return false;
+        return true;
+    }
+
+    bool CanShareGridWithInstance(ObjectType incomingType, string existingInstanceID)
+    {
+        if (IsPressureObjectHidden(existingInstanceID)) return true;
+        ObjDataInstance existing = GetInstance(existingInstanceID);
+        ObjData existingData = existing == null ? null : GetObjectData(existing.objID);
+        if (existingData == null) return false;
+        return CanShareMovementGrid(incomingType, existingData.objType);
+    }
+
+    public static bool CanShareMovementGrid(ObjectType firstType, ObjectType secondType)
+    {
+        return !(firstType.HasFlag(ObjectType.BlocksMovement) &&
+                 secondType.HasFlag(ObjectType.BlocksMovement));
+    }
+
+    public bool IsPressureObjectHidden(string instanceID)
+    {
+        return hiddenPressureObjects != null && hiddenPressureObjects.Contains(instanceID);
+    }
+
+    public void SetPressureObjectHidden(ObjDataInstance instance, bool hidden)
+    {
+        if (instance == null || instance.currentOccupied == null) return;
+        hiddenPressureObjects ??= new HashSet<string>();
+        bool wasHidden = hiddenPressureObjects.Contains(instance.instanceID);
+        if (wasHidden == hidden) return;
+
+        if (hidden) hiddenPressureObjects.Add(instance.instanceID);
+        else hiddenPressureObjects.Remove(instance.instanceID);
+
+        foreach (Vector3Int grid in instance.currentOccupied)
+        {
+            if (hidden) RemoveGridMapping(grid, instance.instanceID);
+            else UpdateGridMapping(grid, instance.instanceID);
+        }
     }
 
     public bool CanWalkGrid(Vector3Int gridPosition)
@@ -401,7 +539,7 @@ public class MapData : SerializedScriptableObject
     }
 
 
-    public string PlaceObject(Vector2Int mainGrid, ObjData objData, int height, Quaternion rotation)
+    public string PlaceObject(Vector2Int mainGrid, ObjData objData, int height, Quaternion rotation, int channelID = 0)
     {
         if (objData == null)
         {
@@ -410,6 +548,7 @@ public class MapData : SerializedScriptableObject
         }
 
         ObjDataInstance newInstance = new ObjDataInstance(objData.objID, mainGrid, height, rotation, objData);
+        newInstance.channelID = channelID;
         string instanceID = newInstance.instanceID;
 
         if (string.IsNullOrEmpty(instanceID))
@@ -440,29 +579,36 @@ public class MapData : SerializedScriptableObject
 
     public void RemoveObject(Vector3Int gridPosition)
     {
-        if (gridToInstanceMap3D.TryGetValue(gridPosition, out string instanceID))
+        string instanceID = GetInstanceIDAtGrid(gridPosition);
+        if (!string.IsNullOrEmpty(instanceID)) RemoveObject(instanceID);
+    }
+
+    public bool RemoveObject(string instanceID)
+    {
+        ObjDataInstance objInstance = GetInstance(instanceID);
+        if (objInstance == null) return false;
+
+        ObjData objData = GetObjectData(objInstance.objID);
+        bool isGoal = objData != null && objData.objType.HasFlag(ObjectType.Goal);
+        if (objInstance.currentOccupied != null)
         {
-            if (objectInstances.TryGetValue(instanceID, out ObjDataInstance objInstance))
+            foreach (Vector3Int occupiedGrid in objInstance.currentOccupied)
             {
-                foreach (var occupiedGrid in objInstance.currentOccupied)
+                if (isGoal)
                 {
-                    gridToInstanceMap3D.Remove(occupiedGrid);
+                    if (goalObjectMap3D.TryGetValue(occupiedGrid, out string mappedGoalID) && mappedGoalID == instanceID)
+                        goalObjectMap3D.Remove(occupiedGrid);
                 }
-                objectInstances.Remove(instanceID);
+                else
+                {
+                    RemoveGridMapping(occupiedGrid, instanceID);
+                }
             }
         }
 
-        if (goalObjectMap3D.TryGetValue(gridPosition, out string goalInstanceID))
-        {
-            if (objectInstances.TryGetValue(goalInstanceID, out ObjDataInstance goalInstance))
-            {
-                foreach (var occupiedGrid in goalInstance.currentOccupied)
-                {
-                    goalObjectMap3D.Remove(occupiedGrid);
-                }
-                objectInstances.Remove(goalInstanceID);
-            }
-        }
+        objectInstances.Remove(instanceID);
+        hiddenPressureObjects?.Remove(instanceID);
+        return true;
     }
     #endregion
 
@@ -692,10 +838,30 @@ public class MapData : SerializedScriptableObject
 
     public ObjDataInstance GetInstance(string instanceID)
     {
-        if (objectInstances.TryGetValue(instanceID, out var instance))
+        if (!string.IsNullOrEmpty(instanceID) && objectInstances.TryGetValue(instanceID, out var instance))
         {
             return instance;
         }
+        return null;
+    }
+
+    public ObjDataInstance GetLinkedInstance(ObjectType objectType, int channelID)
+    {
+        if (channelID <= 0 ||
+            (!objectType.HasFlag(ObjectType.Ghost) && !objectType.HasFlag(ObjectType.Goal))) return null;
+
+        foreach (ObjDataInstance instance in GetAllObjectInstances())
+        {
+            if (instance.channelID != channelID) continue;
+            ObjData existingData = GetObjectData(instance.objID);
+            if (existingData == null) continue;
+
+            bool sameRole = objectType.HasFlag(ObjectType.Goal)
+                ? existingData.objType.HasFlag(ObjectType.Goal)
+                : existingData.objType.HasFlag(ObjectType.Ghost);
+            if (sameRole) return instance;
+        }
+
         return null;
     }
 
@@ -709,6 +875,18 @@ public class MapData : SerializedScriptableObject
 
         ObjDataInstance instance = GetInstance(instanceID);
         return instance;
+    }
+
+    public ObjDataInstance GetInstanceAtGridWithType(Vector3Int gridPosition, ObjectType requiredType)
+    {
+        foreach (ObjDataInstance instance in objectInstances.Values)
+        {
+            if (instance == null || instance.currentOccupied == null ||
+                !instance.currentOccupied.Contains(gridPosition)) continue;
+            ObjData data = GetObjectData(instance.objID);
+            if (data != null && data.objType.HasFlag(requiredType)) return instance;
+        }
+        return null;
     }
 
     public void RemoveGridMapping(Vector3Int grid)
@@ -727,6 +905,25 @@ public class MapData : SerializedScriptableObject
         else
         {
             Debug.Log(grid + " had object with ID: " + instanceID);
+        }
+    }
+
+    public void RemoveGridMapping(Vector3Int grid, string expectedInstanceID)
+    {
+        if (gridToInstanceMap3D.TryGetValue(grid, out string currentInstanceID) &&
+            currentInstanceID == expectedInstanceID)
+        {
+            gridToInstanceMap3D.Remove(grid);
+            foreach (var remaining in objectInstances.Values)
+            {
+                if (remaining.instanceID == expectedInstanceID || IsPressureObjectHidden(remaining.instanceID) ||
+                    remaining.currentOccupied == null ||
+                    !remaining.currentOccupied.Contains(grid)) continue;
+                ObjData remainingData = GetObjectData(remaining.objID);
+                if (remainingData != null && remainingData.objType.HasFlag(ObjectType.Goal)) continue;
+                gridToInstanceMap3D[grid] = remaining.instanceID;
+                break;
+            }
         }
     }
 

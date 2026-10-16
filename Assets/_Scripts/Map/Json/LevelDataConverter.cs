@@ -7,45 +7,23 @@ public static class LevelDataConverter
     {
         var serialized = new SerializableLevelData
         {
-            insideWorld = new List<SerializableMapData>(),
-            outsideWorld = new List<SerializableMapData>(),
+            mapData = level.mapData != null ? MapDataConverter.FromMapData(level.mapData) : null,
             playerStart = level.playerStart,
             globalObjectCounts = level.GetGlobalObjectCounts()
         };
-
-        foreach (var map in level.insideWorld)
-        {
-            serialized.insideWorld.Add(MapDataConverter.FromMapData(map));
-        }
-
-        foreach (var map in level.outsideWorld)
-        {
-            serialized.outsideWorld.Add(MapDataConverter.FromMapData(map));
-        }
-
         return serialized;
     }
 
     public static void ApplyToLevelData(SerializableLevelData serialized, LevelData level)
     {
-        level.insideWorld.Clear();
-        level.outsideWorld.Clear();
-
-        foreach (var sMap in serialized.insideWorld)
+        level.mapData = null;
+        if (serialized.mapData != null)
         {
-            var newMap = ScriptableObject.CreateInstance<MapData>();
-            MapDataConverter.ApplyToMapData(sMap, newMap);
-            level.insideWorld.Add(newMap);
-        }
-
-        foreach (var sMap in serialized.outsideWorld)
-        {
-            var newMap = ScriptableObject.CreateInstance<MapData>();
-            MapDataConverter.ApplyToMapData(sMap, newMap);
-            level.outsideWorld.Add(newMap);
+            level.mapData = ScriptableObject.CreateInstance<MapData>();
+            MapDataConverter.ApplyToMapData(serialized.mapData, level.mapData);
         }
 
         level.playerStart = serialized.playerStart;
-        level.SetGlobalObjectCounts(serialized.globalObjectCounts);
+        level.SetGlobalObjectCounts(serialized.globalObjectCounts ?? new Dictionary<int, int>());
     }
 }

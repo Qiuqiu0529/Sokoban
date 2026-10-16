@@ -9,11 +9,13 @@ public class LevelUnlockConfig : ScriptableObject
 
     public LevelUnlockRule FindLevel(string levelName)
     {
-        var rule = unlockRules.Find(x => x.levelName == levelName);
-    if (rule == null)
-    {
-        Debug.LogWarning($"LevelUnlockRule not found for levelName: {levelName}");
-    }
+        var rule = unlockRules != null
+            ? unlockRules.Find(x => x != null && x.levelName == levelName)
+            : null;
+        if (rule == null)
+        {
+            Debug.LogWarning($"LevelUnlockRule not found for levelName: {levelName}");
+        }
         return rule;
     }
 }

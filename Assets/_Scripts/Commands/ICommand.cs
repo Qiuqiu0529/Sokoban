@@ -278,7 +278,6 @@ namespace Commands
         private MapPlane mapPlane;
 
         private bool isGlobalUnique;
-        private string previousMapID;
         private Vector2Int previousGridPos;
         private int previousHeight;
         private Quaternion previousRotation;
@@ -286,33 +285,48 @@ namespace Commands
         private string previousInstanceID;
         private GameObject uniqueObject;
         private bool isPlayer;
+        private int channelID;
+        private int previousChannelID;
+        private string currentInstanceID;
 
-        public PlaceObjectCommand(Vector3 position, Vector2Int gridPos, int height, Quaternion rotation, ObjData config, MapPlane mapPlane, Vector3 scale)
+        public PlaceObjectCommand(Vector3 position, Vector2Int gridPos, int height, Quaternion rotation, ObjData config, MapPlane mapPlane, Vector3 scale, int channelID = 0)
         {
             this.placementPosition = position;
             this.gridPosition = gridPos;
             this.height = height;
             this.placementRotation = rotation;
             this.placementScale = scale;
+            this.channelID = channelID;
             this.objConfig = config;
             this.mapPlane = mapPlane;
 
-            this.isGlobalUnique = config.maxCount == 1 || config.objType.HasFlag(ObjectType.Player);
+            bool channelUnique = channelID > 0 &&
+                (config.objType.HasFlag(ObjectType.Ghost) || config.objType.HasFlag(ObjectType.Goal));
+            this.isGlobalUnique = config.maxCount == 1 || config.objType.HasFlag(ObjectType.Player) || channelUnique;
             this.isPlayer = config.objType.HasFlag(ObjectType.Player);
 
             if (isGlobalUnique && mapPlane.levelData != null)
             {
-                foreach (var map in mapPlane.levelData.insideWorld.Concat(mapPlane.levelData.outsideWorld))
+                var map = mapPlane.levelData.mapData;
+                if (map != null)
                 {
-                    foreach (var instance in map.GetAllObjectInstances())
+                    ObjDataInstance linkedInstance = channelUnique
+                        ? map.GetLinkedInstance(config.objType, channelID)
+                        : null;
+                    bool hasObjectCountUniqueness = config.maxCount == 1 || config.objType.HasFlag(ObjectType.Player);
+                    IEnumerable<ObjDataInstance> candidates = linkedInstance != null
+                        ? new[] { linkedInstance }
+                        : map.GetAllObjectInstances();
+                    foreach (ObjDataInstance instance in candidates)
                     {
-                        if (instance.objID == config.objID)
+                        if ((channelUnique && instance == linkedInstance) ||
+                            ((!channelUnique || hasObjectCountUniqueness) && instance.objID == config.objID))
                         {
-                            previousMapID = map.mapID;
                             previousGridPos = instance.mainGrid;
                             previousHeight = instance.height;
                             previousRotation = instance.rotation;
                             previousInstanceID = instance.instanceID;
+                            previousChannelID = instance.channelID;
 
                             var mapMgr = MapMgr.Instance;
                             if (mapMgr != null)
@@ -323,7 +337,7 @@ namespace Commands
                                     if (plane.mapData == map)
                                     {
                                         previousMapPlane = plane;
-                                        uniqueObject = plane.GetObjectAtGridPosition(previousGridPos, previousHeight);
+                                        uniqueObject = plane.GetObjectByInstanceID(instance.instanceID);
                                         break;
                                     }
                                 }
@@ -331,7 +345,6 @@ namespace Commands
                             break;
                         }
                     }
-                    if (previousMapPlane != null) break;
                 }
             }
         }
@@ -342,15 +355,16 @@ namespace Commands
             {
                 if (previousMapPlane != null)
                 {
-                    Vector3Int previousGrid3D = new Vector3Int(previousGridPos.x, previousGridPos.y, previousHeight);
-                    previousMapPlane.mapData.RemoveObject(previousGrid3D);
-                    previousMapPlane.spawnedObjects.Remove(uniqueObject);
+                    previousMapPlane.mapData.RemoveObject(previousInstanceID);
+                    if (previousMapPlane != mapPlane) previousMapPlane.spawnedObjects.Remove(uniqueObject);
                     previousMapPlane.instanceToGameObject.Remove(previousInstanceID);
 
                     Vector3 worldPosition = mapPlane.GridToWorldPosition(gridPosition);
                     worldPosition.y = height * mapPlane.mapData.cellSize;
                     uniqueObject.transform.position = worldPosition;
                     uniqueObject.transform.rotation = placementRotation;
+                    BarrelMove movedBarrel = uniqueObject.GetComponent<BarrelMove>();
+                    if (movedBarrel != null) movedBarrel.InitializeOrientation(placementRotation);
 
                     if (previousMapPlane != mapPlane)
                     {
@@ -358,22 +372,26 @@ namespace Commands
                         mapPlane.spawnedObjects.Add(uniqueObject);
                     }
 
-                    string newInstanceID = mapPlane.mapData.PlaceObject(gridPosition, objConfig, height, placementRotation);
-                    mapPlane.instanceToGameObject[newInstanceID] = uniqueObject;
+                    currentInstanceID = mapPlane.mapData.PlaceObject(gridPosition, objConfig, height, placementRotation, channelID);
+                    mapPlane.instanceToGameObject[currentInstanceID] = uniqueObject;
 
                     if (isPlayer && mapPlane.levelData != null)
                     {
-                        mapPlane.levelData.playerStart.startMapID = mapPlane.mapData.mapID;
                         mapPlane.levelData.playerStart.startGridPos = gridPosition;
                     }
                 }
             }
             else
             {
-                mapPlane.PlaceObject(gridPosition, objConfig, placementRotation, height, placementScale);
+                mapPlane.PlaceObject(gridPosition, objConfig, placementRotation, height, placementScale, channelID);
+                ObjDataInstance placedInstance = channelID > 0
+                    ? mapPlane.mapData.GetLinkedInstance(objConfig.objType, channelID)
+                    : null;
+                currentInstanceID = placedInstance != null
+                    ? placedInstance.instanceID
+                    : mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPosition.x, gridPosition.y, height));
                 if (isPlayer && mapPlane.levelData != null)
                 {
-                    mapPlane.levelData.playerStart.startMapID = mapPlane.mapData.mapID;
                     mapPlane.levelData.playerStart.startGridPos = gridPosition;
                 }
             }
@@ -383,11 +401,9 @@ namespace Commands
         {
             if (isGlobalUnique && uniqueObject != null && previousMapPlane != null)
             {
-                Vector3Int currentGrid3D = new Vector3Int(gridPosition.x, gridPosition.y, height);
-                mapPlane.mapData.RemoveObject(currentGrid3D);
-                mapPlane.spawnedObjects.Remove(uniqueObject);
+                mapPlane.mapData.RemoveObject(currentInstanceID);
+                if (previousMapPlane != mapPlane) mapPlane.spawnedObjects.Remove(uniqueObject);
 
-                string currentInstanceID = mapPlane.mapData.GetInstanceIDAtGrid(currentGrid3D);
                 if (!string.IsNullOrEmpty(currentInstanceID))
                 {
                     mapPlane.instanceToGameObject.Remove(currentInstanceID);
@@ -397,6 +413,8 @@ namespace Commands
                 previousWorldPosition.y = previousHeight * previousMapPlane.mapData.cellSize;
                 uniqueObject.transform.position = previousWorldPosition;
                 uniqueObject.transform.rotation = previousRotation;
+                BarrelMove restoredBarrel = uniqueObject.GetComponent<BarrelMove>();
+                if (restoredBarrel != null) restoredBarrel.InitializeOrientation(previousRotation);
 
                 if (previousMapPlane != mapPlane)
                 {
@@ -404,18 +422,31 @@ namespace Commands
                     previousMapPlane.spawnedObjects.Add(uniqueObject);
                 }
 
-                string newInstanceID = previousMapPlane.mapData.PlaceObject(previousGridPos, objConfig, previousHeight, previousRotation);
+                string newInstanceID = previousMapPlane.mapData.PlaceObject(previousGridPos, objConfig, previousHeight, previousRotation, previousChannelID);
                 previousMapPlane.instanceToGameObject[newInstanceID] = uniqueObject;
 
                 if (isPlayer && mapPlane.levelData != null)
                 {
-                    mapPlane.levelData.playerStart.startMapID = previousMapID;
                     mapPlane.levelData.playerStart.startGridPos = previousGridPos;
                 }
             }
             else
             {
-                mapPlane.RemoveObject(gridPosition, height);
+                if (isGlobalUnique && !string.IsNullOrEmpty(currentInstanceID))
+                {
+                    GameObject placedObject = mapPlane.GetObjectByInstanceID(currentInstanceID);
+                    mapPlane.mapData.RemoveObject(currentInstanceID);
+                    if (placedObject != null)
+                    {
+                        mapPlane.spawnedObjects.Remove(placedObject);
+                        Object.Destroy(placedObject);
+                    }
+                    mapPlane.instanceToGameObject.Remove(currentInstanceID);
+                }
+                else
+                {
+                    mapPlane.RemoveObject(gridPosition, height);
+                }
             }
         }
 
@@ -436,8 +467,8 @@ namespace Commands
         private bool hadPreviousObject = false;
 
         private bool wasPlayer;
-        private string previousMapID;
         private Vector2Int previousPlayerPos;
+        private int previousChannelID;
 
         public RemoveObjectCommand(Vector3 position, Vector2Int gridPos, int height, MapPlane mapPlane)
         {
@@ -450,6 +481,9 @@ namespace Commands
             if (previousObjConfig != null)
             {
                 hadPreviousObject = true;
+                string previousInstanceID = mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPos.x, gridPos.y, height));
+                ObjDataInstance previousInstance = mapPlane.mapData.GetInstance(previousInstanceID);
+                previousChannelID = previousInstance == null ? 0 : previousInstance.channelID;
                 GameObject previousObj = mapPlane.GetObjectAtGridPosition(gridPosition, height);
                 if (previousObj != null)
                 {
@@ -459,7 +493,6 @@ namespace Commands
                 wasPlayer = previousObjConfig.objType.HasFlag(ObjectType.Player);
                 if (wasPlayer && mapPlane.levelData != null && mapPlane.levelData.playerStart != null)
                 {
-                    previousMapID = mapPlane.levelData.playerStart.startMapID;
                     previousPlayerPos = mapPlane.levelData.playerStart.startGridPos;
                 }
             }
@@ -474,10 +507,9 @@ namespace Commands
         {
             if (hadPreviousObject)
             {
-                mapPlane.PlaceObject(gridPosition, previousObjConfig, previousRotation, height);
+                mapPlane.PlaceObject(gridPosition, previousObjConfig, previousRotation, height, default, previousChannelID);
                 if (wasPlayer)
                 {
-                    mapPlane.levelData.playerStart.startMapID = previousMapID;
                     mapPlane.levelData.playerStart.startGridPos = previousPlayerPos;
                 }
             }
@@ -547,7 +579,7 @@ namespace Commands
 
             foreach (var grid in originalOccupiedGrids)
             {
-                map.mapData.RemoveGridMapping(grid);
+                map.mapData.RemoveGridMapping(grid, instanceID);
             }
             
             objInstance.currentOccupied = new List<Vector3Int>(targetOccupiedGrids);
@@ -563,10 +595,18 @@ namespace Commands
 
             Vector3 worldPos = map.GridToWorldPosition(toPos);
             worldPos.y = height * map.mapData.cellSize;
-            //targetObject.transform.position = worldPos;
-            targetObject.GetComponent<MovableObj>().SetMap(map);
-            targetObject.GetComponent<MovableObj>().PlayMoveFB(toPos, worldPos, toRotation, manhattanDistance);
-            //targetObject.transform.rotation = toRotation;
+            MovableObj movableObj = targetObject.GetComponent<MovableObj>();
+            if (movableObj != null)
+            {
+                movableObj.SetMap(map);
+                movableObj.PlayMoveFB(toPos, worldPos, toRotation, manhattanDistance);
+            }
+            else
+            {
+                // Basic pushable props such as the crate have no animation
+                // component; keep their transform in sync with the grid.
+                targetObject.transform.SetPositionAndRotation(worldPos, toRotation);
+            }
             if (isPlayer)
             {
                 GameMgr.Instance.UpdatePlayerPosition(toPos);
@@ -579,7 +619,7 @@ namespace Commands
 
             foreach (var grid in targetOccupiedGrids)
             {
-                map.mapData.RemoveGridMapping(grid);
+                map.mapData.RemoveGridMapping(grid, instanceID);
             }
 
             objInstance.mainGrid = fromPos;
@@ -595,9 +635,15 @@ namespace Commands
 
             Vector3 worldPos = map.GridToWorldPosition(fromPos);
             worldPos.y = height * map.mapData.cellSize;
-            targetObject.GetComponent<MovableObj>().PlayUndoMoveFB(fromPos, worldPos, fromRotation, manhattanDistance);
-            // targetObject.transform.position = worldPos;
-            // targetObject.transform.rotation = fromRotation;
+            MovableObj movableObj = targetObject.GetComponent<MovableObj>();
+            if (movableObj != null)
+            {
+                movableObj.PlayUndoMoveFB(fromPos, worldPos, fromRotation, manhattanDistance);
+            }
+            else
+            {
+                targetObject.transform.SetPositionAndRotation(worldPos, fromRotation);
+            }
             if (isPlayer)
             {
                 GameMgr gm = GameMgr.Instance;
@@ -615,176 +661,6 @@ namespace Commands
         }
     }
 
-    public class PossessCommand : ICommand
-    {
-        public GameObject originalPlayer;
-        private ObjDataInstance originalObjData;
-        private MapPlane originalMap;
-        private GameObject possessedObject;
-        private ObjDataInstance possessedObjData;
-        private MapPlane possessedMap;
-        private IMovementStrategy pre;
-        private IMovementStrategy after;
-
-        public PossessCommand(GameObject player, GameObject possessedObject,
-        MapPlane originalMap, MapPlane possessedMap, ObjDataInstance originalObjData, ObjDataInstance possessedObjData)
-        {
-            this.originalPlayer = player;
-            this.possessedObject = possessedObject;
-            this.originalMap = originalMap;
-            this.possessedMap = possessedMap;
-            this.originalObjData = originalObjData;
-            this.possessedObjData = possessedObjData;
-            pre = GameMgr.Instance.movementStrategy;
-
-            if (possessedObjData.objID == 9)
-            {
-                BarrelMove barrelMove = possessedObject.GetComponent<BarrelMove>();
-                if (barrelMove != null)
-                {
-                    after = barrelMove.CurrentMovementStartegy();
-                    return;
-                }
-            }
-
-            after = MovementStrategyFactory.Instance.GetStrategy(possessedMap.GetObjectDataAtGridPosition(possessedObjData.mainGrid).objType);
-
-        }
-
-        public void Execute()
-        {
-            GameMgr.Instance.DisAbleOriPlayer();
-            //originalPlayer.SetActive(false);
-            GameMgr.Instance.SetMapAndCurrentObj(possessedMap, possessedObject, possessedObjData.mainGrid, possessedObjData,0.8f);
-            GameMgr.Instance.ChangeMovementStrategy(after);
-        }
-
-        public void Undo()
-        {
-            GameMgr.Instance.EnAbleOriPlayer();
-            //originalPlayer.SetActive(true);
-            GameMgr.Instance.SetMapAndCurrentObj(originalMap, originalPlayer, originalObjData.mainGrid, originalObjData);
-            GameMgr.Instance.ChangeMovementStrategy(pre);
-        }
-
-        public void ClearCommand()
-        {
-
-        }
-    }
-
-    public class ExitPossessCommand : ICommand
-    {
-        private GameObject originalPlayer;
-        private GameObject possessedObject;
-        private MapPlane originalMap;
-        private MapPlane possessedMap;
-        private ObjDataInstance originalObjData;
-        private ObjDataInstance possessedObjData;
-        private IMovementStrategy pre;
-        private IMovementStrategy after;
-
-        private Vector2Int fromGrid;
-        private Vector2Int toGrid;
-        private int height;
-        private Quaternion rotation;
-        private List<Vector3Int> originalOccupiedGrids;
-        private List<Vector3Int> targetOccupiedGrids;
-        private string instanceID;
-
-        public ExitPossessCommand(GameObject originalPlayer, GameObject possessedObject,
-            MapPlane originalMap, MapPlane possessedMap,
-            ObjDataInstance originalObjData, ObjDataInstance possessedObjData)
-        {
-            this.originalPlayer = originalPlayer;
-            this.possessedObject = possessedObject;
-            this.originalMap = originalMap;
-            this.possessedMap = possessedMap;
-            this.originalObjData = originalObjData;
-            this.possessedObjData = possessedObjData;
-
-            this.pre = GameMgr.Instance.movementStrategy;
-            this.after = MovementStrategyFactory.Instance.GetStrategy(originalMap.GetObjectDataAtGridPosition(originalObjData.mainGrid).objType);
-
-            this.instanceID = originalObjData.instanceID;
-
-            fromGrid = originalObjData.mainGrid;
-            toGrid = possessedObjData.mainGrid;
-            height = possessedObjData.height;
-            rotation = possessedObjData.rotation;
-
-            originalOccupiedGrids = originalObjData.currentOccupied;
-            targetOccupiedGrids = new List<Vector3Int>();
-
-            foreach (var offset in originalMap.mapData.GetObjectData(originalObjData.objID).occupiedGrids)
-            {
-                Vector3Int baseOffset = new Vector3Int(offset.x, offset.z, offset.y);
-                Vector3Int rotatedOffset = originalObjData.RotateOffset(baseOffset, rotation);
-
-                Vector3Int finalPos = new Vector3Int(
-                    toGrid.x + rotatedOffset.x,
-                    toGrid.y + rotatedOffset.z,
-                    height + rotatedOffset.y
-                );
-                targetOccupiedGrids.Add(finalPos);
-            }
-        }
-
-        public void Execute()
-        {
-            foreach (var grid in originalOccupiedGrids)
-            {
-                originalMap.mapData.RemoveGridMapping(grid);
-            }
-
-            originalObjData.mainGrid = toGrid;
-            originalObjData.height = height;
-            originalObjData.rotation = rotation;
-            originalObjData.currentOccupied = targetOccupiedGrids;
-
-            foreach (var grid in targetOccupiedGrids)
-            {
-                originalMap.mapData.UpdateGridMapping(grid, instanceID);
-            }
-
-            // Vector3 worldPos = originalMap.GridToWorldPosition(toGrid);
-            // worldPos.y = height * originalMap.mapData.cellSize;
-
-            // originalPlayer.transform.position = worldPos;
-            // originalPlayer.transform.rotation = rotation;
-            GameMgr.Instance.EnAbleOriPlayer();
-            //originalPlayer.SetActive(true);
-
-            GameMgr.Instance.SetMapAndCurrentObj(originalMap, originalPlayer, toGrid, originalObjData);
-            GameMgr.Instance.UpdatePlayerPosition(toGrid);
-            GameMgr.Instance.ChangeMovementStrategy(after);
-        }
-
-        public void Undo()
-        {
-            foreach (var grid in targetOccupiedGrids)
-            {
-                originalMap.mapData.RemoveGridMapping(grid);
-            }
-            originalObjData.mainGrid = fromGrid;
-            foreach (var grid in originalOccupiedGrids)
-            {
-                originalMap.mapData.UpdateGridMapping(grid, instanceID);
-            }
-
-            GameMgr.Instance.DisAbleOriPlayer(false);
-
-            //originalPlayer.SetActive(false);
-            GameMgr.Instance.SetMapAndCurrentObj(possessedMap, possessedObject, possessedObjData.mainGrid, possessedObjData);
-            GameMgr.Instance.ChangeMovementStrategy(pre);
-        }
-
-        public void ClearCommand()
-        {
-        }
-    }
-
-
     public class BarkCommand : ICommand
     {
         private readonly Vector2Int playerGridPosition;
@@ -795,8 +671,8 @@ namespace Commands
         private readonly MapData mapData;
         private readonly MapPlane map;
 
-        private readonly List<IMovementStrategy> ghostMovementStrategies = new List<IMovementStrategy>();
-        List<Vector2Int> moveDirs = new List<Vector2Int>();
+        private readonly List<ObjDataInstance> attractedGhosts = new List<ObjDataInstance>();
+        private readonly List<Vector2Int> attractedDirections = new List<Vector2Int>();
         public bool canBark;
         CompositeCommand compositeCommand;
 
@@ -807,54 +683,150 @@ namespace Commands
             //Debug.Log("playerGridPositio"+playerGridPosition);
             this.map = map;
             canBark = false;
-            ghostMovementStrategies.Clear();
+            attractedGhosts.Clear();
+            attractedDirections.Clear();
 
             foreach (var dir in directions)
             {
                 Vector2Int checkPos = playerGridPosition + dir;
+                HashSet<string> seenGhosts = new HashSet<string>();
 
                 while (mapData.IsWithinGrid(new Vector2Int(checkPos.x, checkPos.y)))
                 {
                     var instance = mapData.GetObjDataInstanceAtGrid(new Vector3Int(checkPos.x, checkPos.y, 0));
-                    if (instance != null)
+                    ObjData targetObjData = instance == null ? null : mapData.GetObjectData(instance.objID);
+                    if (targetObjData == null || !targetObjData.objType.HasFlag(ObjectType.Ghost))
                     {
-                        ObjData targetObjData = mapData.GetObjectData(instance.objID);
-                        if (targetObjData != null)
+                        instance = null;
+                        foreach (ObjDataInstance candidate in mapData.GetAllObjectInstances())
                         {
-                            if (targetObjData.objType.HasFlag(ObjectType.Ghost))
+                            ObjData candidateData = mapData.GetObjectData(candidate.objID);
+                            if (candidateData != null && candidateData.objType.HasFlag(ObjectType.Ghost) &&
+                                candidate.currentOccupied.Contains(new Vector3Int(checkPos.x, checkPos.y, candidate.height)))
                             {
-                                var rollingMovement = new RollingMovementStrategy();
-                                Vector2Int targetPos = rollingMovement.CalculateTargetPosition(instance.mainGrid, -dir, instance.height, map, false);
-                                if (targetPos != instance.mainGrid)
-                                {
-                                    //Debug.Log($"[{instance.instanceID}] main: {instance.mainGrid} at height {instance.height}, checkPos: {checkPos}, targetPos: {targetPos}");
-                                    canBark = true;
-
-                                    ghostMovementStrategies.Add(rollingMovement);
-                                    moveDirs.Add(-dir);
-                                    break;
-                                }
-                                // else
-                                // {
-                                //     GameMgr.Instance.PlaySpiritCantMoveFB();
-                                // }
+                                instance = candidate;
+                                targetObjData = candidateData;
+                                break;
                             }
-
                         }
+                    }
+
+                    if (instance != null && targetObjData != null && targetObjData.objType.HasFlag(ObjectType.Ghost) &&
+                        seenGhosts.Add(instance.instanceID))
+                    {
+                        attractedGhosts.Add(instance);
+                        attractedDirections.Add(-dir);
                     }
                     checkPos += dir;
                 }
             }
 
-            if (canBark)
+            if (attractedGhosts.Count == 0) return;
+
+            // All ghosts in line are treated as moving together. Their starting
+            // cells are ignored during planning, then destinations are packed
+            // deterministically from nearest to farthest from Pomme.
+            HashSet<string> movingGhostIDs = new HashSet<string>();
+            foreach (ObjDataInstance ghost in attractedGhosts)
             {
-                compositeCommand = new CompositeCommand();
-                //Debug.Log(attractObjStrategies.Count);
-                for (int i = 0; i < ghostMovementStrategies.Count; i++)
-                {
-                    compositeCommand.AddCommand(ghostMovementStrategies[i].CreateMoveCommand(moveDirs[i], map, false));
-                }
+                movingGhostIDs.Add(ghost.instanceID);
             }
+
+            HashSet<Vector3Int> settledGhostGrids = new HashSet<Vector3Int>();
+            compositeCommand = new CompositeCommand();
+            for (int i = 0; i < attractedGhosts.Count; i++)
+            {
+                ObjDataInstance ghost = attractedGhosts[i];
+                Vector2Int moveDir = attractedDirections[i];
+                Vector2Int destination = FindGhostDestination(ghost, moveDir, movingGhostIDs, settledGhostGrids);
+                ObjData ghostData = mapData.GetObjectData(ghost.objID);
+                bool blocksMovement = ghostData != null && ghostData.objType.HasFlag(ObjectType.BlocksMovement);
+                if (blocksMovement)
+                {
+                    foreach (Vector3Int occupied in ghost.currentOccupied)
+                    {
+                        Vector3Int offset = occupied - new Vector3Int(ghost.mainGrid.x, ghost.mainGrid.y, ghost.height);
+                        settledGhostGrids.Add(new Vector3Int(destination.x, destination.y, ghost.height) + offset);
+                    }
+                }
+
+                if (destination == ghost.mainGrid) continue;
+                GameObject ghostObject = map.GetObjectByInstanceID(ghost.instanceID);
+                if (ghostObject == null) continue;
+
+                ICommand moveCommand = new MoveObjectCommand(
+                    ghostObject,
+                    ghost,
+                    ghost.mainGrid,
+                    destination,
+                    ghost.height,
+                    ghostObject.transform.rotation,
+                    ghostObject.transform.rotation,
+                    map,
+                    false);
+                compositeCommand.AddCommand(moveCommand);
+                canBark = true;
+            }
+        }
+
+        Vector2Int FindGhostDestination(ObjDataInstance ghost, Vector2Int moveDir,
+            HashSet<string> movingGhostIDs, HashSet<Vector3Int> settledGhostGrids)
+        {
+            Vector2Int destination = ghost.mainGrid;
+            Vector3Int shift = new Vector3Int(moveDir.x, moveDir.y, 0);
+            ObjData ghostData = mapData.GetObjectData(ghost.objID);
+            bool ghostBlocksMovement = ghostData != null &&
+                ghostData.objType.HasFlag(ObjectType.BlocksMovement);
+
+            while (true)
+            {
+                Vector2Int nextMain = destination + moveDir;
+                bool canMove = true;
+                foreach (Vector3Int occupied in ghost.currentOccupied)
+                {
+                    Vector3Int offset = occupied - new Vector3Int(ghost.mainGrid.x, ghost.mainGrid.y, ghost.height);
+                    Vector3Int nextGrid = new Vector3Int(nextMain.x, nextMain.y, ghost.height) + offset;
+                    Vector3Int currentGrid = nextGrid - shift;
+                    Vector2Int next2D = new Vector2Int(nextGrid.x, nextGrid.y);
+
+                    if (!mapData.IsWithinGrid(next2D) ||
+                        !mapData.IsGhostWalkable(next2D) ||
+                        mapData.HasWallBetween(new Vector2Int(currentGrid.x, currentGrid.y), next2D))
+                    {
+                        canMove = false;
+                        break;
+                    }
+
+                    if (ghostBlocksMovement && settledGhostGrids.Contains(nextGrid))
+                    {
+                        canMove = false;
+                        break;
+                    }
+
+                    string blockingID = mapData.GetInstanceIDAtGrid(nextGrid);
+                    if (!string.IsNullOrEmpty(blockingID) &&
+                        blockingID != ghost.instanceID &&
+                        !movingGhostIDs.Contains(blockingID))
+                    {
+                        ObjDataInstance blockingInstance = mapData.GetInstance(blockingID);
+                        ObjData blockingData = blockingInstance == null
+                            ? null
+                            : mapData.GetObjectData(blockingInstance.objID);
+                        if (blockingData == null ||
+                            !MapData.CanShareMovementGrid(ghostData == null ? ObjectType.None : ghostData.objType,
+                                blockingData.objType))
+                        {
+                            canMove = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!canMove) break;
+                destination = nextMain;
+            }
+
+            return destination;
         }
 
         public void Execute()

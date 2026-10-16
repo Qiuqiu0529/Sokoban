@@ -57,7 +57,7 @@ MonoBehaviour:
   spawnedObjects: []
   lightTrail: []
   useLoadAnimation: 1
-  tileLoadDelay: 0.06
+  tileLoadDelay: 0.04
   wallLoadDelay: 0.03
 --- !u!1 &1042392293934306178
 GameObject:

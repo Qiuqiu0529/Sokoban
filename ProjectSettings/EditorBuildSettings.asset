@@ -9,15 +9,18 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/Re/MainMenu.unity
+    guid: 87c1fa79acf89b1458df37b4ea822047
+  - enabled: 1
     path: Assets/Scenes/Re/MMAdditiveLoadingScreen.unity
     guid: eb2c0757965f3ef4a9a0711b154182ee
   - enabled: 1
     path: Assets/Scenes/Re/LevelEditorTest.unity
     guid: a0baefd54b0671c48a7cfdac896611a6
   - enabled: 1
-    path: Assets/Scenes/Re/MainMenu.unity
-    guid: 87c1fa79acf89b1458df37b4ea822047
-  - enabled: 1
     path: Assets/Scenes/Re/Gameplay.unity
     guid: 93192b6c0bde1cf4e9fa62be8a39ee23
+  - enabled: 1
+    path: Assets/Scenes/Re/HubWorld.unity
+    guid: caaeef9bbcdf3ee40bcb2d3456430b4b
   m_configObjects: {}

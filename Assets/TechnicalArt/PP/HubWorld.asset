@@ -281,7 +281,6 @@ MonoBehaviour:
   - {fileID: 7182931473164954877}
   - {fileID: -8639792140342810078}
   - {fileID: -7768707677700800484}
-  - {fileID: -2680338594978788820}
   - {fileID: 4034102184056810322}
   - {fileID: 5828700741454270810}
 --- !u!114 &4034102184056810322
@@ -336,7 +335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
   m_Name: LiftGammaGain
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   lift:
     m_OverrideState: 0
     m_Value: {x: 0.9708656, y: 1, z: 0.9314109, w: 0}

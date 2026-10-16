@@ -35,6 +35,11 @@ public class ObjectPlacementState : IPlacementState
 
     private Vector2Int lastPlacedGridPos = new Vector2Int(-1, -1);
 
+    public bool UsesChannel => currentObjConfig != null &&
+        (currentObjConfig.objType.HasFlag(ObjectType.Ghost) || currentObjConfig.objType.HasFlag(ObjectType.Goal) ||
+         currentObjConfig.objType.HasFlag(ObjectType.PressurePlate) ||
+         currentObjConfig.objType.HasFlag(ObjectType.PressureControlled));
+
     public ObjectPlacementState(ObjData objData)
     {
         currentObjConfig = objData;
@@ -74,9 +79,16 @@ public class ObjectPlacementState : IPlacementState
         GameObject targetPrefab = currentObjConfig.GetPrefab(gridPos);
         UpdatePreviewPrefab(targetPrefab);
         if (previewItem == null) return;
+        if (UsesChannel)
+        {
+            ChannelAppearance appearance = previewItem.GetComponent<ChannelAppearance>();
+            if (appearance == null) appearance = previewItem.AddComponent<ChannelAppearance>();
+            if (appearance != null) appearance.ApplyChannel(placeMgr.PlacementChannelID);
+        }
         previewItem.transform.position = targetPos;
-        rotation = placeMgr.HandleRotationInput(previewItem.transform.rotation);
         previewItem.transform.rotation = rotation;
+        BarrelMove previewBarrel = previewItem.GetComponent<BarrelMove>();
+        if (previewBarrel != null) previewBarrel.SetPlacementPreviewOrientation(rotation);
 
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
         {
@@ -87,7 +99,8 @@ public class ObjectPlacementState : IPlacementState
             if (expanded) map.RefreshMapBounds();
         }
 
-        bool canPlace = map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, placementHeight, rotation) &&
+        bool canPlace = map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, placementHeight, rotation,
+                            UsesChannel ? placeMgr.PlacementChannelID : 0) &&
                         (map.levelData == null || map.levelData.CanPlaceMoreObjects(currentObjConfig));
         placeMgr.UpdatePreviewColor(canPlace, previewItem);
 
@@ -96,10 +109,21 @@ public class ObjectPlacementState : IPlacementState
             PlaceObjectConditionally(targetPos, gridPos, map);
         }
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonUp(1) && !CameraMove.RightDragThisGesture)
         {
             placeMgr.RemoveObjectAt(targetPos, gridPos, map);
         }
+    }
+
+    public void RotatePreview()
+    {
+        BarrelMove currentBarrel = previewItem != null ? previewItem.GetComponent<BarrelMove>() : null;
+        float nextYaw = currentBarrel != null
+            ? (Mathf.Abs(Mathf.DeltaAngle(rotation.eulerAngles.y, 90f)) < 45f ? 0f : 90f)
+            : rotation.eulerAngles.y + 90f;
+        rotation = Quaternion.Euler(0f, nextYaw, 0f);
+        if (previewItem != null) previewItem.transform.rotation = rotation;
+        if (currentBarrel != null) currentBarrel.SetPlacementPreviewOrientation(rotation);
     }
 
     private void UpdatePreviewPrefab(GameObject prefab)
@@ -127,7 +151,8 @@ public class ObjectPlacementState : IPlacementState
         if (gridPos != lastPlacedGridPos)
         {
             placeMgr.PlaceObjectAt(targetPos, gridPos, currentObjConfig, map,
-                previewItem.transform.rotation, previewItem.transform.localScale);
+                previewItem.transform.rotation, previewItem.transform.localScale,
+                UsesChannel ? placeMgr.PlacementChannelID : 0);
             lastPlacedGridPos = gridPos;
         }
     }
@@ -204,7 +229,7 @@ public class TilePlacementState : IPlacementState
             isMouseHolding = false;
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonUp(1) && !CameraMove.RightDragThisGesture)
         {
             placeMgr.RemoveTileAt(targetPos, gridPos, map);
         }
@@ -322,7 +347,7 @@ public class WallPlacementState : IPlacementState
             isMouseHolding = false;
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButtonUp(1) && !CameraMove.RightDragThisGesture)
         {
             placeMgr.RemoveWallAt(gridPos, wallDirection, map);
         }
@@ -420,6 +445,12 @@ public class PlaceMgr : Singleton<PlaceMgr>
 
 
     private Command commandMgr= new Command();
+    public int PlacementChannelID { get; private set; } = 1;
+
+    public void SetPlacementChannelID(int channelID)
+    {
+        PlacementChannelID = Mathf.Clamp(channelID, 1, 3);
+    }
 
     public void ClearAllCommands()
     {
@@ -451,6 +482,16 @@ public class PlaceMgr : Singleton<PlaceMgr>
 
     private void Update()
     {
+        ObjectPlacementState channelPlacement = currentState as ObjectPlacementState;
+        ObjectPlacementState objectPlacement = currentState as ObjectPlacementState;
+        if (objectPlacement != null && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
+            objectPlacement.RotatePreview();
+        Rect channelPanel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 18,
+            Mathf.Min(600f, Screen.width - 40f), 142f);
+        Vector2 guiMousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+        if (channelPlacement != null && channelPlacement.UsesChannel && channelPanel.Contains(guiMousePosition))
+            return;
+
         if (Interaction.Raycast(uiCamera.ScreenPointToRay(Input.mousePosition), out testUIBlockHit))
         {
             if (testUIBlockHit.UIBlock.name != "UIRoot")
@@ -461,15 +502,59 @@ public class PlaceMgr : Singleton<PlaceMgr>
 
         if (Input.GetMouseButtonUp(1))
         {
-            if (Time.time - rightClickTime < doubleClickThreshold)
+            if (!CameraMove.RightDragThisGesture && Time.time - rightClickTime < doubleClickThreshold)
             {
                 SetPlacementState(new StopPlacementState());
             }
-            rightClickTime = Time.time;
+            if (!CameraMove.RightDragThisGesture) rightClickTime = Time.time;
         }
 
         currentState?.UpdateState();
     }
+
+    private void OnGUI()
+    {
+        ObjectPlacementState objectState = currentState as ObjectPlacementState;
+        if (objectState == null || !objectState.UsesChannel) return;
+
+        Rect panel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 18,
+            Mathf.Min(600f, Screen.width - 40f), 142f);
+        GUILayout.BeginArea(panel, GUI.skin.box);
+        GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 24,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter
+        };
+        GUIStyle channelStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontSize = 22,
+            fontStyle = FontStyle.Bold,
+            fixedHeight = 52
+        };
+        GUILayout.Label($"匹配频道：{PlacementChannelID}", titleStyle);
+        GUILayout.BeginHorizontal();
+        for (int channel = 1; channel <= 3; channel++)
+        {
+            GUI.backgroundColor = ChannelColor(channel);
+            string label = channel == PlacementChannelID ? $"✓ 频道 {channel}" : $"频道 {channel}";
+            if (GUILayout.Button(label, channelStyle, GUILayout.ExpandWidth(true)))
+                SetPlacementChannelID(channel);
+        }
+        GUI.backgroundColor = Color.white;
+        GUILayout.EndHorizontal();
+        GUIStyle hintStyle = new GUIStyle(GUI.skin.label) { fontSize = 16, alignment = TextAnchor.MiddleCenter };
+        GUILayout.Label("同频道的鬼魂与墓碑一一匹配；压力板可控制多个同频道南瓜", hintStyle);
+        GUILayout.EndArea();
+    }
+
+    private Color ChannelColor(int channel) => channel switch
+    {
+        1 => new Color(1f, 0.55f, 0.2f),
+        2 => new Color(0.25f, 0.55f, 1f),
+        3 => new Color(0.35f, 0.9f, 1f),
+        _ => Color.white
+    };
 
     public void EditTileMode(TileData tileData)
     {
@@ -526,7 +611,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
         gridPos = map.WorldToGridPosition(mousepos);
         targetPos = map.GridToWorldPosition(gridPos);
 
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0) || Input.GetMouseButton(1))
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
         {
             if (map.mapData.EnsureGridContains(gridPos)) map.RefreshMapBounds();
         }
@@ -536,7 +621,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
     public Quaternion HandleRotationInput(Quaternion rotation)
     {
         float yaw = rotation.eulerAngles.y;
-        if (Input.GetKeyDown(KeyCode.Keypad2))
+        if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
         {
             yaw = (yaw + 90) % 360;
         }
@@ -577,10 +662,10 @@ public class PlaceMgr : Singleton<PlaceMgr>
     }
 
 
-    public void PlaceObjectAt(Vector3 position, Vector2Int gridPos, ObjData objData, MapPlane map, Quaternion rotation, Vector3 scale)
+    public void PlaceObjectAt(Vector3 position, Vector2Int gridPos, ObjData objData, MapPlane map, Quaternion rotation, Vector3 scale, int channelID = 0)
     {
         const int editorHeight = 0;
-        if (map.mapData.CanPlaceObj(gridPos, objData.objID, editorHeight, rotation) &&
+        if (map.mapData.CanPlaceObj(gridPos, objData.objID, editorHeight, rotation, channelID) &&
             (map.levelData == null || map.levelData.CanPlaceMoreObjects(objData)))
         {
             if (map.levelData == null)
@@ -588,7 +673,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
                 Debug.LogError($"[PlaceMgr] MapPlane {map.gameObject.name} is missing levelData reference!");
                 return;
             }
-            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, editorHeight, rotation, objData, map, scale);
+            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, editorHeight, rotation, objData, map, scale, channelID);
             commandMgr.ExecuteCommand(placeCommand);
         }
     }

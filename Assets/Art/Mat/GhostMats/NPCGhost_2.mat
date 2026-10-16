@@ -8,7 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: NPCGhost_2
-  m_Shader: {fileID: -6465566751694194690, guid: 2f05b03a2c701824f826038ebfbfcff7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 2f05b03a2c701824f826038ebfbfcff7,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -120,12 +121,11 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FresnelColour: {r: 0, g: 0.027633429, b: 1, a: 0}
+    - _FresnelColour: {r: 0.9622642, g: 0.2874688, b: 0.623351, a: 0}
     - _GhostColour: {r: 1.2007308, g: 1.9666135, b: 2.670157, a: 0}
     - _GlowHeight: {r: 0, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
-  m_AllowLocking: 1
 --- !u!114 &6335966124916202179
 MonoBehaviour:
   m_ObjectHideFlags: 11

@@ -27,6 +27,7 @@ public class LevelEditor : Singleton<LevelEditor>
 
     void Start()
     {
+        LevelLoadBridge.IsEditorTestLevel = false;
         HideMapSizeControls();
         if (Camera.main != null && Camera.main.GetComponent<CameraMove>() == null)
             Camera.main.gameObject.AddComponent<CameraMove>();
@@ -45,16 +46,18 @@ public class LevelEditor : Singleton<LevelEditor>
         {
             LevelLoadBridge.LevelNameToLoad = null;
             LoadLevel(levelToResume);
+            OpenObjectList();
             return;
         }
 
         if (!string.IsNullOrEmpty(levelName))
         {
             LoadLevel(levelName);
+            OpenObjectList();
             return;
         }
 
-        CreateNewLevel();
+
         OpenLevelList();
     }
 
@@ -140,7 +143,7 @@ public class LevelEditor : Singleton<LevelEditor>
             return false;
         }
 
-        // if (levelData.insideWorld.Count < 1 || levelData.outsideWorld.Count < 1)
+        // if (levelData.mapData == null)
         // {
         //     Debug.LogError("[LevelEditor] No maps assigned in LevelData!");
         //     return false;
@@ -205,20 +208,13 @@ public class LevelEditor : Singleton<LevelEditor>
             wordWrap = true
         };
         GUI.Label(new Rect(panelRect.x + 6f, panelRect.y + 48f, panelWidth - 20f, panelHeight - 56f),
-            "鼠标中键拖动：平移视野\n滚轮：缩放地图\n鼠标左键 / 拖动：放置当前选中内容\n鼠标右键：移除内容，双击取消摆放模式\n小键盘 2：平面旋转物件 90°", hintStyle);
+            "鼠标中键拖动：平移视野\n鼠标右键拖动：旋转相机\n滚轮：缩放地图\n鼠标左键 / 拖动：放置当前选中内容\n鼠标右键单击：移除内容，双击取消摆放模式\n小键盘 2：平面旋转物件 90°", hintStyle);
     }
 
 
     private void SaveAllMaps()
     {
-        foreach (var map in levelData.insideWorld)
-        {
-            map.SaveData();
-        }
-        foreach (var map in levelData.outsideWorld)
-        {
-            map.SaveData();
-        }
+        levelData.mapData?.SaveData();
     }
 
     public void SaveLevelToJson()
@@ -267,14 +263,10 @@ public class LevelEditor : Singleton<LevelEditor>
 
     public void CreateNewLevelData()
     {
-        levelData.outsideWorld.Clear();
-        levelData.insideWorld.Clear();
-
         MapData map = CreateNewMapData();
-        levelData.outsideWorld.Add(map);
+        levelData.mapData = map;
         levelData.playerStart = new PlayerStartPosition
         {
-            startMapID = map.mapID,
             startGridPos = Vector2Int.zero
         };
     }
@@ -283,7 +275,14 @@ public class LevelEditor : Singleton<LevelEditor>
     {
         if (!levelName.IsNullOrWhitespace())
         {
+            SaveCurrentLevel();
+            // Destroy the active placement preview before the additive transition begins.
+            PlaceMgr placeMgr = FindObjectOfType<PlaceMgr>();
+            if (placeMgr != null)
+                placeMgr.ForceStopPlace();
+
             LevelLoadBridge.LevelNameToLoad = levelName;
+            LevelLoadBridge.IsEditorTestLevel = true;
             loadTestScene.PlayFeedbacks();
         }
     }

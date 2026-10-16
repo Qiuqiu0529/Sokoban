@@ -4,16 +4,15 @@ using UnityEngine;
 public class NPCMove : MovableObj
 {
     bool pair;
-    public PairColor pairColor;
     EndingMgr endingMgr;
     void OnEnable()
     {
         endingMgr=EndingMgr.Instance;
-        endingMgr.AddNeedPair();
+        if (endingMgr != null) endingMgr.AddNeedPair();
     }
     void OnDisable()
     {
-        endingMgr.DeleteNeedPair();
+        if (endingMgr != null) endingMgr.DeleteNeedPair();
     }
     
     public override void PlayMoveFB(Vector2Int targetGrid, Vector3 targetPosition, Quaternion targetQuaternion, int grid = 1)
@@ -73,33 +72,40 @@ public class NPCMove : MovableObj
     public override void Resume()
     {
         base.Resume();
-        string goal = currentMap.mapData.GetGoalIDAtGrid(new Vector3Int(pos.x, pos.y, 0));
-        if (goal != null)
+        RefreshPairState();
+    }
+
+    public void RefreshPairState()
+    {
+        if (currentMap == null || currentMap.mapData == null) return;
+
+        Vector3Int currentGrid = new Vector3Int(pos.x, pos.y, 0);
+        ObjDataInstance ghostInstance = null;
+        foreach (ObjDataInstance instance in currentMap.mapData.GetAllObjectInstances())
         {
-            if (pair)
+            ObjData data = currentMap.mapData.GetObjectData(instance.objID);
+            if (data != null && data.objType.HasFlag(ObjectType.Ghost) &&
+                instance.currentOccupied != null && instance.currentOccupied.Contains(currentGrid))
             {
-                return;
+                ghostInstance = instance;
+                break;
             }
-
-            GameObject goalobj = currentMap.GetObjectByInstanceID(goal);
-            if (goalobj)
-            {
-                GoalObj pairGoal = goalobj.GetComponent<GoalObj>();
-                if (pairGoal.pairColor == pairColor)
-                {
-                    EndingMgr.Instance.AddCorrectPair();
-                    pair = true;
-                }
-            }
-
         }
-        else
+
+        string goalID = currentMap.mapData.GetGoalIDAtGrid(currentGrid);
+        ObjDataInstance goalInstance = currentMap.mapData.GetInstance(goalID);
+        bool isCorrectPair = ghostInstance != null && ghostInstance.channelID > 0 &&
+                             goalInstance != null && goalInstance.channelID == ghostInstance.channelID;
+
+        if (isCorrectPair && !pair)
         {
-            if (pair)
-            {
-                pair = false;
-                EndingMgr.Instance.DeletePair();
-            }
+            EndingMgr.Instance.AddCorrectPair();
+            pair = true;
+        }
+        else if (!isCorrectPair && pair)
+        {
+            pair = false;
+            EndingMgr.Instance.DeletePair();
         }
     }
 }

@@ -70,6 +70,9 @@ public class ObjDataInstance
     public int objID;
     public string instanceID;
     public Vector2Int mainGrid;
+    // Shared by linked runtime objects such as a ghost and its grave.
+    // Zero means that the instance has not been assigned to a channel.
+    public int channelID;
 
     public int height;
     public Quaternion rotation;
@@ -80,6 +83,7 @@ public class ObjDataInstance
         return new ObjDataInstance(this.objID, this.mainGrid, this.height, this.rotation)
         {
             instanceID = this.instanceID,
+            channelID = this.channelID,
             currentOccupied = new List<Vector3Int>(this.currentOccupied)
         };
     }

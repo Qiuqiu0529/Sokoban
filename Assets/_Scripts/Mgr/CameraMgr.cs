@@ -35,19 +35,10 @@ public class CameraMgr : MonoBehaviour
         realCam.forceIntoRenderTexture = true;
         realCam.targetTexture = miniMapTexture;
 
-        GameMgr.OnPosession += ChangeCamera;
+        
     }
 
-    private void OnDestroy()
-    {
-        GameMgr.OnPosession -= ChangeCamera;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+   
 
     public void OnPlusButton()
     {

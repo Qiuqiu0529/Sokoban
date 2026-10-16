@@ -1,14 +1,13 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using Sirenix.Serialization;
 using System;
+using System.Collections.Generic;
 
 [System.Serializable]
 public class SerializableLevelData
 {
-    public List<SerializableMapData> insideWorld = new();
-    public List<SerializableMapData> outsideWorld = new();
+    public SerializableMapData mapData;
     public PlayerStartPosition playerStart;
     public Dictionary<int, int> globalObjectCounts;
 }

@@ -34,11 +34,13 @@ public enum ObjectType
     Goal = 1 << 11,                    // Non-blocking grave/goal marker.
     Ghost = 1 << 12,                   // Bark-guided ghost.
     BlocksGhost = 1 << 14,             // Stops a ghost's slide.
-    BlocksMovement = 1 << 15,          // Solid obstacle such as a large stone.
+    BlocksMovement = 1 << 15,          // Cannot share a grid with another movement-blocking object.
     LightSource = 1 << 16,             // Soul lantern that changes ghost access.
     PressurePlate = 1 << 17,           // Non-blocking floor mechanism.
     CanActivatePressurePlate = 1 << 18,// Object can press a pressure plate.
     PressureControlled = 1 << 19,      // Disappears while its linked plate is active.
+    ChainPushable = 1 << 20,            // Can be pushed as a trailing object in a push chain.
+    BlocksGoal = 1 << 21,               // Cannot share a grid with a grave/goal marker.
 }
 
 public enum GameplayState
@@ -46,11 +48,4 @@ public enum GameplayState
     Playing,
     Paused,
     Menu
-}
-
-public enum PairColor
-{
-    Orange,
-    Blue,
-    Green,
 }

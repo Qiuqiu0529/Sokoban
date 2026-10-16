@@ -233,6 +233,7 @@ public class MapPlane : MonoBehaviour
 
             spawnedObjects.Add(objInstance);
             instanceToGameObject[instance.instanceID] = objInstance;
+            ApplyLoadedObjectChannel(instance, objInstance);
 
             float delay = UnityEngine.Random.Range(0f, 0.2f);
             StartCoroutine(PlayObjectAppearAnimation(objInstance, delay, preScale));
@@ -245,6 +246,8 @@ public class MapPlane : MonoBehaviour
 
 
         }
+
+        InitializeLoadedMovableObjects(instances);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -609,6 +612,9 @@ public class MapPlane : MonoBehaviour
     public GameObject GetObjectAtGridPosition(Vector2Int gridPosition, int height = 0)
     {
         Vector3Int grid3D = new Vector3Int(gridPosition.x, gridPosition.y, height);
+        ObjDataInstance playerInstance = mapData.GetInstanceAtGridWithType(grid3D, ObjectType.Player);
+        if (playerInstance != null)
+            return GetObjectByInstanceID(playerInstance.instanceID);
         string instanceID = mapData.GetInstanceIDAtGrid(grid3D);
 
         if (string.IsNullOrEmpty(instanceID))
@@ -648,45 +654,60 @@ public class MapPlane : MonoBehaviour
         }
     }
 
-    public GameObject PlaceObject(Vector2Int gridPosition, ObjData objData, Quaternion quaternion, int height = 0, Vector3 scale = default)
+    public GameObject PlaceObject(Vector2Int gridPosition, ObjData objData, Quaternion quaternion, int height = 0, Vector3 scale = default, int channelID = 0)
     {
         if (!mapData.IsWithinGrid(gridPosition))
         {
             return null;
         }
 
-        if (!mapData.CanPlaceObj(gridPosition, objData.objID, height, quaternion))
+        if (!mapData.CanPlaceObj(gridPosition, objData.objID, height, quaternion, channelID))
         {
             return null;
         }
 
-        if (objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player))
+        bool channelUnique = channelID > 0 &&
+            (objData.objType.HasFlag(ObjectType.Ghost) || objData.objType.HasFlag(ObjectType.Goal));
+        if (objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player) || channelUnique)
         {
             GameObject existingUniqueObj = null;
             string existingInstanceID = null;
-            Vector3Int existingGrid3D = Vector3Int.zero;
             MapPlane sourceMap = null;
 
             if (levelData != null)
             {
-                foreach (var map in levelData.insideWorld.Concat(levelData.outsideWorld))
+                var map = levelData.mapData;
+                if (map != null)
                 {
-                    foreach (var instance in map.GetAllObjectInstances())
+                    ObjDataInstance linkedInstance = channelUnique
+                        ? map.GetLinkedInstance(objData.objType, channelID)
+                        : null;
+                    bool hasObjectCountUniqueness = objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player);
+                    IEnumerable<ObjDataInstance> candidates = linkedInstance != null
+                        ? new[] { linkedInstance }
+                        : map.GetAllObjectInstances();
+                    foreach (var instance in candidates)
                     {
-                        if (instance.objID == objData.objID)
+                        if ((channelUnique && instance == linkedInstance) ||
+                            ((!channelUnique || hasObjectCountUniqueness) && instance.objID == objData.objID))
                         {
                             existingInstanceID = instance.instanceID;
-                            existingGrid3D = new Vector3Int(instance.mainGrid.x, instance.mainGrid.y, instance.height);
                             sourceMap = FindMapPlaneByMapData(map);
                             if (sourceMap != null)
                             {
-                                existingUniqueObj = sourceMap.GetObjectAtGridPosition(instance.mainGrid, instance.height);
+                                existingUniqueObj = sourceMap.GetObjectByInstanceID(instance.instanceID);
                             }
                             break;
                         }
                     }
-                    if (existingUniqueObj != null) break;
                 }
+            }
+
+            if (!string.IsNullOrEmpty(existingInstanceID) && existingUniqueObj == null)
+            {
+                MapData sourceData = sourceMap != null ? sourceMap.mapData : levelData.mapData;
+                sourceData.RemoveObject(existingInstanceID);
+                if (sourceMap != null) sourceMap.instanceToGameObject.Remove(existingInstanceID);
             }
 
             if (existingUniqueObj != null)
@@ -694,28 +715,34 @@ public class MapPlane : MonoBehaviour
                 Vector3 worldPosition = GridToWorldPosition(gridPosition);
                 worldPosition.y = height * mapData.cellSize;
 
+                MapData sourceData = sourceMap != null ? sourceMap.mapData : mapData;
+                sourceData.RemoveObject(existingInstanceID);
+                if (sourceMap != null)
+                {
+                    sourceMap.instanceToGameObject.Remove(existingInstanceID);
+                    if (sourceMap != this) sourceMap.spawnedObjects.Remove(existingUniqueObj);
+                }
                 if (sourceMap != this)
                 {
-                    sourceMap.spawnedObjects.Remove(existingUniqueObj);
-                    sourceMap.instanceToGameObject.Remove(existingInstanceID);
-                    sourceMap.mapData.RemoveObject(existingGrid3D);
                     existingUniqueObj.transform.parent = objs.transform;
                     spawnedObjects.Add(existingUniqueObj);
                 }
 
                 existingUniqueObj.transform.position = worldPosition;
                 existingUniqueObj.transform.rotation = quaternion;
+                BarrelMove existingBarrel = existingUniqueObj.GetComponent<BarrelMove>();
+                if (existingBarrel != null) existingBarrel.InitializeOrientation(quaternion);
+                ApplyObjectChannel(objData, existingUniqueObj, channelID);
                 if (scale != default)
                 {
                     existingUniqueObj.transform.localScale = scale;
                 }
 
-                string newInstanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion);
+                string newInstanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion, channelID);
                 instanceToGameObject[newInstanceID] = existingUniqueObj;
 
                 if (isEditMode && levelData != null && objData.objType.HasFlag(ObjectType.Player))
                 {
-                    levelData.playerStart.startMapID = mapData.mapID;
                     levelData.playerStart.startGridPos = gridPosition;
                 }
 
@@ -723,7 +750,10 @@ public class MapPlane : MonoBehaviour
             }
         }
 
-        GameObject existingObject = GetObjectAtGridPosition(gridPosition, height);
+        GameObject existingObject = objData.objType.HasFlag(ObjectType.Goal) ||
+                                    objData.objType.HasFlag(ObjectType.PressurePlate)
+            ? null
+            : GetObjectAtGridPosition(gridPosition, height);
         if (existingObject != null)
         {
             RemoveObject(gridPosition, height);
@@ -732,15 +762,18 @@ public class MapPlane : MonoBehaviour
         Vector3 newWorldPosition = GridToWorldPosition(gridPosition);
         newWorldPosition.y = height * mapData.cellSize;
 
-        string instanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion);
+        string instanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion, channelID);
         GameObject prefab = objData.GetPrefab(gridPosition);
         if (prefab == null)
         {
             Debug.LogError($"[MapPlane] No prefab configured for object ID {objData.objID}");
-            mapData.RemoveObject(new Vector3Int(gridPosition.x, gridPosition.y, height));
+            mapData.RemoveObject(instanceID);
             return null;
         }
         GameObject objInstance = Instantiate(prefab, newWorldPosition, quaternion);
+        BarrelMove placedBarrel = objInstance.GetComponent<BarrelMove>();
+        if (placedBarrel != null) placedBarrel.InitializeOrientation(quaternion);
+        ApplyObjectChannel(objData, objInstance, channelID);
         if (scale != default)
         {
             objInstance.transform.localScale = scale;
@@ -854,6 +887,19 @@ public class MapPlane : MonoBehaviour
             }
         }
 
+        // Initialize movable actors from the authoritative level instances.
+        // This also evaluates ghosts already standing on their paired grave.
+        foreach (var instance in instances)
+        {
+            GameObject loadedObject = GetObjectByInstanceID(instance.instanceID);
+            if (loadedObject == null) continue;
+
+            ApplyLoadedObjectChannel(instance, loadedObject);
+        }
+
+        InitializeLoadedMovableObjects(instances);
+        if (!isEditMode) RefreshPressureMechanisms(false);
+
         foreach (var kvp in instanceToGameObject)
         {
             if (kvp.Value == null)
@@ -863,6 +909,91 @@ public class MapPlane : MonoBehaviour
         }
 
         Debug.Log($"[MapPlane] Finished loading objects. Loaded {spawnedObjects.Count} objects, Dictionary size: {instanceToGameObject.Count}");
+    }
+
+    private void ApplyLoadedObjectChannel(ObjDataInstance instance, GameObject loadedObject)
+    {
+        if (instance == null || loadedObject == null) return;
+        ObjData data = mapData.GetObjectData(instance.objID);
+        ApplyObjectChannel(data, loadedObject, instance.channelID);
+    }
+
+    private void ApplyObjectChannel(ObjData data, GameObject target, int channelID)
+    {
+        if (data == null || target == null || channelID <= 0) return;
+        bool usesChannel = data.objType.HasFlag(ObjectType.Ghost) || data.objType.HasFlag(ObjectType.Goal) ||
+                           data.objType.HasFlag(ObjectType.PressurePlate) ||
+                           data.objType.HasFlag(ObjectType.PressureControlled);
+        if (!usesChannel) return;
+        ChannelAppearance appearance = target.GetComponent<ChannelAppearance>();
+        if (appearance == null) appearance = target.AddComponent<ChannelAppearance>();
+        appearance.ApplyChannel(channelID);
+    }
+
+    /// <summary>Refreshes pressure plates after a complete turn, not during a roll animation.</summary>
+    public void RefreshPressureMechanisms(bool animate = true)
+    {
+        if (mapData == null || isEditMode) return;
+        HashSet<int> activeChannels = new HashSet<int>();
+        List<ObjDataInstance> instances = mapData.GetAllObjectInstances().ToList();
+
+        foreach (ObjDataInstance plate in instances)
+        {
+            ObjData plateData = mapData.GetObjectData(plate.objID);
+            if (plateData == null || !plateData.objType.HasFlag(ObjectType.PressurePlate) || plate.channelID <= 0 ||
+                plate.currentOccupied == null || plate.currentOccupied.Count == 0)
+                continue;
+
+            foreach (ObjDataInstance occupant in instances)
+            {
+                if (occupant.instanceID == plate.instanceID || occupant.height != plate.height ||
+                    occupant.currentOccupied == null || !occupant.currentOccupied.Contains(plate.currentOccupied[0]))
+                    continue;
+                ObjData occupantData = mapData.GetObjectData(occupant.objID);
+                if (occupantData != null && occupantData.objType.HasFlag(ObjectType.CanActivatePressurePlate))
+                {
+                    activeChannels.Add(plate.channelID);
+                    break;
+                }
+            }
+        }
+
+        foreach (ObjDataInstance instance in instances)
+        {
+            ObjData data = mapData.GetObjectData(instance.objID);
+            if (data == null || !data.objType.HasFlag(ObjectType.PressureControlled)) continue;
+            bool hidden = instance.channelID > 0 && activeChannels.Contains(instance.channelID);
+            mapData.SetPressureObjectHidden(instance, hidden);
+
+            GameObject instanceObject = GetObjectByInstanceID(instance.instanceID);
+            if (instanceObject == null) continue;
+            PressureDissolveEffect dissolve = instanceObject.GetComponent<PressureDissolveEffect>();
+            if (dissolve == null) dissolve = instanceObject.AddComponent<PressureDissolveEffect>();
+            dissolve.SetVisible(!hidden, animate);
+        }
+    }
+
+    private void InitializeLoadedMovableObjects(List<ObjDataInstance> instances)
+    {
+        foreach (ObjDataInstance instance in instances)
+        {
+            GameObject loadedObject = GetObjectByInstanceID(instance.instanceID);
+            MovableObj movable = loadedObject != null ? loadedObject.GetComponent<MovableObj>() : null;
+            if (movable == null) continue;
+
+            movable.SetMap(this);
+            movable.pos = instance.mainGrid;
+            BarrelMove barrel = movable as BarrelMove;
+            if (barrel != null) barrel.InitializeOrientation(instance.rotation);
+        }
+
+        // Pair checks need every channel object to have been instantiated first.
+        foreach (ObjDataInstance instance in instances)
+        {
+            GameObject loadedObject = GetObjectByInstanceID(instance.instanceID);
+            NPCMove ghost = loadedObject != null ? loadedObject.GetComponent<NPCMove>() : null;
+            if (ghost != null) ghost.RefreshPairState();
+        }
     }
 
     public GameObject GetObjectByInstanceID(string instanceID)

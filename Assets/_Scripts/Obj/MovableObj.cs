@@ -17,7 +17,6 @@ public class MovableObj : MonoBehaviour
     public MapPlane currentMap;
 
     public bool useIndicator=false;
-    public bool indicateInside=false;
 
     public MMF_Player indicateMoveFB;
     public MMF_Position indicatePos;
@@ -101,21 +100,6 @@ public class MovableObj : MonoBehaviour
         cantMoveFB?.PlayFeedbacks();
     }
 
-    public virtual void PlayPossessFB()
-    { 
-    }
-
-    public virtual void EnterPossess()
-    { 
-
-    }
-
-    public virtual void ExitPossess()
-    { 
-        
-    }
-
-
     public virtual bool CanMove(Vector2Int moveDir)
     {
         return true;
@@ -131,35 +115,11 @@ public class MovableObj : MonoBehaviour
         if (useIndicator)
         {
             indicateMoveFB.StopFeedbacks();
-            if (indicateInside)
-            {
-                indicatePos.DestinationPosition = GameMgr.Instance.InsidePos(targetGrid);
-            }
-            else
-            {
-                indicatePos.DestinationPosition = GameMgr.Instance.OutsidePos(targetGrid);
-            }
+            indicatePos.DestinationPosition = GameMgr.Instance.MapPos(targetGrid);
             indicatePos.AnimatePositionDuration = time;
             //Debug.Log(indicatePos.DestinationPosition);
             indicateMoveFB.PlayFeedbacks();
         }
     }
-
-    // public void MoveIndivator(Vector3 realPos)
-    // {
-    //     if (useIndicator)
-    //     {
-    //         if(indicateInside)
-    //         {
-    //             indicatePos.DestinationPosition = realPos;
-    //         }
-    //         else
-    //         {
-    //             indicatePos.DestinationPosition = realPos;
-    //         }
-    //         //Debug.Log(indicatePos.DestinationPosition);
-    //         indicateMoveFB.PlayFeedbacks();
-    //     }
-    // }
 
 }

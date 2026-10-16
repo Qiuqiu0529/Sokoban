@@ -18,8 +18,6 @@ public class MapMgr : Singleton<MapMgr>
     private List<MapPlane> mapPlanes = new List<MapPlane>();
     private Dictionary<string, MapData> runtimeMapData = new Dictionary<string, MapData>();
 
-    public List<MapPlane> insideWorld = new List<MapPlane>();
-    public List<MapPlane> outsideWorld = new List<MapPlane>();
     public int planeDistance=3;
 
     public bool IsAllMapLoaded;
@@ -63,15 +61,9 @@ public class MapMgr : Singleton<MapMgr>
             return false;
         }
 
-        if (levelData.insideWorld == null || levelData.outsideWorld == null)
+        if (levelData.mapData == null)
         {
-            Debug.LogError("[MapMgr] LevelData world references are null!");
-            return false;
-        }
-
-        if (levelData.insideWorld.Count == 0 && levelData.outsideWorld.Count == 0)
-        {
-            Debug.LogError("[MapMgr] LevelData contains no maps in either world list!");
+            Debug.LogError("[MapMgr] LevelData contains no maps!");
             return false;
         }
 
@@ -92,8 +84,6 @@ public class MapMgr : Singleton<MapMgr>
         }
         mapPlanes.Clear();
         runtimeMapData.Clear();
-        insideWorld.Clear();
-        outsideWorld.Clear();
         mapplaneCount = 0;
         loadMap = 0;
         IsAllMapLoaded = false;
@@ -106,63 +96,28 @@ public class MapMgr : Singleton<MapMgr>
         {
             runtimeMapData.Clear();
 
-            void ProcessMapList(List<MapData> mapList)
+            MapData map = currentLevelData.mapData;
+            if (map != null)
             {
-                if (mapList == null) return;
-
-                foreach (var map in mapList)
+                if (string.IsNullOrEmpty(map.mapID))
                 {
-                    if (map == null)
-                    {
-                        Debug.LogError("[MapMgr] Found null map!");
-                        continue;
-                    }
-
-                    if (string.IsNullOrEmpty(map.mapID))
-                    {
-                        Debug.LogWarning("[MapMgr] Original map has no ID, initializing...");
-                        map.Initialize();
-                    }
-
-                    var runtimeMap = map.DeepCopy();
-
-                    if (string.IsNullOrEmpty(runtimeMap.mapID))
-                    {
-                        Debug.LogError($"[MapMgr] Runtime map copy has no ID for original map ID: {map.mapID}");
-                        continue;
-                    }
-
-                    runtimeMap.tileDataList = tileDataList;
-                    runtimeMap.objDataList = objDataList;
-                    runtimeMap.wallDataList = wallDataList;
-                    runtimeMapData[runtimeMap.mapID] = runtimeMap;
-
-                    Debug.Log($"[MapMgr] Successfully created runtime data for map ID: {runtimeMap.mapID}");
+                    Debug.LogWarning("[MapMgr] Map has no ID, initializing...");
+                    map.Initialize();
                 }
-            }
 
-            ProcessMapList(currentLevelData.insideWorld);
-            ProcessMapList(currentLevelData.outsideWorld);
+                var runtimeMap = map.DeepCopy();
+                runtimeMap.tileDataList = tileDataList;
+                runtimeMap.objDataList = objDataList;
+                runtimeMap.wallDataList = wallDataList;
+                runtimeMapData[runtimeMap.mapID] = runtimeMap;
+            }
         }
     }
 
     private void LoadMaps()
     {
-        foreach (var map in currentLevelData.insideWorld)
-        {
-            if (map != null)
-            {
-                insideWorld.Add(CreateMapPlane(map));
-            }
-        }
-
-        foreach (var map in currentLevelData.outsideWorld)
-        {
-            if (map != null)
-            {
-                outsideWorld.Add(CreateMapPlane(map));
-            }
-        }
+        CreateMapPlane(currentLevelData.mapData);
+        if (mapplaneCount == 0) IsAllMapLoaded = true;
     }
 
     private MapPlane CreateMapPlane(MapData mapData)
@@ -269,36 +224,21 @@ public class MapMgr : Singleton<MapMgr>
     }
 
 
-    public ObjDataInstance GetCorrespondingObjInstance(bool inside, Vector2Int gridPosition, out MapPlane correspondingMap, int height = 0)
+    public ObjDataInstance GetCorrespondingObjInstance(Vector2Int gridPosition, out MapPlane correspondingMap, int height = 0)
     {
         Vector3Int grid3D = new Vector3Int(gridPosition.x, gridPosition.y, height);
         Debug.Log("finobjinetsnce");
-        if (inside)
+        foreach (var mapplane in mapPlanes)
         {
-            foreach (var mapplane in insideWorld)
+            if (mapplane == null || mapplane.mapData == null) continue;
+            ObjDataInstance objDataInstance = mapplane.mapData.GetObjDataInstanceAtGrid(grid3D);
+            if (objDataInstance != null)
             {
-                ObjDataInstance objDataInstance = mapplane.mapData.GetObjDataInstanceAtGrid(grid3D);
-                if (objDataInstance != null)
-                {
-                    Debug.Log("objDataInstance!=null");
-                    correspondingMap = mapplane;
-                    return objDataInstance;
-                }
+                correspondingMap = mapplane;
+                return objDataInstance;
             }
         }
-        else
-        {
-            foreach (var mapplane in outsideWorld)
-            {
-                ObjDataInstance objDataInstance = mapplane.mapData.GetObjDataInstanceAtGrid(grid3D);
-                if (objDataInstance != null)
-                {
-                    correspondingMap = mapplane;
-                    return objDataInstance;
-                }
-            }
-        }
-        correspondingMap = mapPlanes[0];
+        correspondingMap = mapPlanes.Count > 0 ? mapPlanes[0] : null;
         return null;
     }
 

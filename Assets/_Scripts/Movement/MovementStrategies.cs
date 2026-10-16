@@ -14,9 +14,15 @@ namespace Movement
         Quaternion currentRotation;
 
         bool pushObj;
-        ObjDataInstance targetInstance;
+        readonly List<ObjDataInstance> pushChain = new List<ObjDataInstance>();
+        readonly Dictionary<string, BarrelPushPlan> barrelPushPlans = new Dictionary<string, BarrelPushPlan>();
 
-        public List<IMovementStrategy> pushObjStrategies = new List<IMovementStrategy>();
+        sealed class BarrelPushPlan
+        {
+            public ObjDataInstance instance;
+            public List<Vector2Int> path = new List<Vector2Int>();
+            public Quaternion finalRotation;
+        }
 
         public ICommand CreateMoveCommand(Vector2Int moveDir, MapPlane map, bool player)
         {
@@ -36,10 +42,32 @@ namespace Movement
             if (player && pushObj)
             {
                 CompositeCommand compositeCommand = new CompositeCommand();
-
-                foreach (var pushObj in pushObjStrategies)
+                // The nearest crate is discovered first. Move the farthest crate
+                // first so each destination is clear when its command executes.
+                for (int i = pushChain.Count - 1; i >= 0; i--)
                 {
-                    compositeCommand.AddCommand(pushObj.CreateMoveCommand(moveDir, map, false));
+                    ObjDataInstance crate = pushChain[i];
+                    GameObject crateObject = map.GetObjectByInstanceID(crate.instanceID);
+                    if (crateObject == null) continue;
+
+                    if (barrelPushPlans.TryGetValue(crate.instanceID, out BarrelPushPlan barrelPlan))
+                    {
+                        compositeCommand.AddCommand(new BarrelPushCommand(map, crateObject, barrelPlan.instance,
+                            barrelPlan.path, barrelPlan.finalRotation));
+                        continue;
+                    }
+
+                    Vector2Int crateTarget = crate.mainGrid + moveDir;
+                    compositeCommand.AddCommand(new MoveObjectCommand(
+                        crateObject,
+                        crate,
+                        crate.mainGrid,
+                        crateTarget,
+                        crate.height,
+                        crateObject.transform.rotation,
+                        crateObject.transform.rotation,
+                        map,
+                        false));
                 }
 
                 compositeCommand.AddCommand(moveObjectCommand);
@@ -67,7 +95,12 @@ namespace Movement
 
 
             Vector3Int fromGrid3D = new Vector3Int(from.x, from.y, height);
-            string instanceID = map.mapData.GetInstanceIDAtGrid(fromGrid3D);
+            ObjDataInstance playerInstance = player
+                ? map.mapData.GetInstanceAtGridWithType(fromGrid3D, ObjectType.Player)
+                : null;
+            string instanceID = playerInstance != null
+                ? playerInstance.instanceID
+                : map.mapData.GetInstanceIDAtGrid(fromGrid3D);
             if (string.IsNullOrEmpty(instanceID))
             {
                 return false;
@@ -83,6 +116,8 @@ namespace Movement
 
 
             currentRotation = gameObject.transform.rotation;
+            ObjData movingObjData = map.mapData.GetObjectData(objInstance.objID);
+            if (movingObjData == null) return false;
 
             List<Vector3Int> targetOccupiedGrids = new List<Vector3Int>();
             foreach (var offset in map.mapData.GetObjectData(objInstance.objID).occupiedGrids)
@@ -99,17 +134,6 @@ namespace Movement
                 targetOccupiedGrids.Add(finalPos);
             }
 
-            if (GameMgr.Instance.IsInsideWorld(map))
-            {
-                foreach (var grid in targetOccupiedGrids)
-                {
-                    if (GameMgr.Instance.IsBlockedByTrail(grid))
-                    {
-                        return false;
-                    }
-                }
-            }
-
             if (!player)
             {
                 foreach (var grid in targetOccupiedGrids)
@@ -123,7 +147,9 @@ namespace Movement
             else
             {
                 pushObj = false;
-                pushObjStrategies.Clear();
+                pushChain.Clear();
+                barrelPushPlans.Clear();
+                HashSet<string> pushChainVisited = new HashSet<string>();
                 foreach (var grid in targetOccupiedGrids)
                 {
                     if (!map.mapData.CanWalkGrid(grid))
@@ -139,7 +165,7 @@ namespace Movement
                             continue;
                         }
 
-                        targetInstance = map.mapData.GetInstance(targetInstanceID);
+                        ObjDataInstance targetInstance = map.mapData.GetInstance(targetInstanceID);
                         if (targetInstance == null)
                         {
                             return false;
@@ -149,6 +175,10 @@ namespace Movement
                         if (targetObjData == null)
                         {
                             return false;
+                        }
+                        if (MapData.CanShareMovementGrid(movingObjData.objType, targetObjData.objType))
+                        {
+                            continue;
                         }
                         if (targetObjData.objType.HasFlag(ObjectType.Goal))
                         {
@@ -160,15 +190,11 @@ namespace Movement
                         {
                             return false;
                         }
-                        //Debug.Log("TRYPUSHOBJ");
-
-                        IMovementStrategy strategy = MovementStrategyFactory.Instance.GetStrategy(targetObjData.objType);
-                        Vector2Int targetPos = strategy.CalculateTargetPosition(targetInstance.mainGrid, moveDir, targetInstance.height, map, false);
-                        if (targetPos == targetInstance.mainGrid)
+                        if (!TryCollectPushChain(map, targetInstance, moveDir, pushChain, pushChainVisited, true))
                         {
+                            pushChain.Clear();
                             return false;
                         }
-                        pushObjStrategies.Add(strategy);
                         pushObj = true;
                     }
 
@@ -187,6 +213,175 @@ namespace Movement
             }
             return currentPos;
         }
+
+        bool TryCollectPushChain(MapPlane map, ObjDataInstance crate, Vector2Int moveDir,
+            List<ObjDataInstance> chain, HashSet<string> visited, bool isFirstInChain)
+        {
+            if (crate == null || string.IsNullOrEmpty(crate.instanceID)) return false;
+            if (!visited.Add(crate.instanceID)) return true;
+
+            ObjData crateData = map.mapData.GetObjectData(crate.objID);
+            if (crateData == null || !crateData.objType.HasFlag(ObjectType.Pushable) ||
+                (!isFirstInChain && !crateData.objType.HasFlag(ObjectType.ChainPushable))) return false;
+
+            GameObject crateObject = map.GetObjectByInstanceID(crate.instanceID);
+            if (crateObject == null) return false;
+
+            if (crateData.objType.HasFlag(ObjectType.Rollable))
+            {
+                if (crateObject.GetComponent<BarrelMove>() == null) return false;
+                // Add the barrel before any object it pushes so reverse command
+                // execution moves the farthest object first.
+                chain.Add(crate);
+                if (!TryCreateBarrelPushPlan(map, crate, moveDir, chain, visited,
+                        out BarrelPushPlan barrelPlan))
+                {
+                    chain.RemoveAt(chain.Count - 1);
+                    return false;
+                }
+                barrelPushPlans[crate.instanceID] = barrelPlan;
+                return true;
+            }
+
+            // Store in near-to-far order; CreateMoveCommand reverses it.
+            chain.Add(crate);
+            Vector3Int shift = new Vector3Int(moveDir.x, moveDir.y, 0);
+            foreach (Vector3Int occupiedGrid in crate.currentOccupied)
+            {
+                Vector3Int destination = occupiedGrid + shift;
+                Vector2Int from2D = new Vector2Int(occupiedGrid.x, occupiedGrid.y);
+                Vector2Int to2D = new Vector2Int(destination.x, destination.y);
+                if (!map.mapData.IsWithinGrid(to2D) || map.mapData.HasWallBetween(from2D, to2D) ||
+                    !map.mapData.CanWalkGrid(destination)) return false;
+
+                string blockingID = map.mapData.GetInstanceIDAtGrid(destination);
+                if (string.IsNullOrEmpty(blockingID) || blockingID == crate.instanceID) continue;
+
+                ObjDataInstance blockingInstance = map.mapData.GetInstance(blockingID);
+                if (blockingInstance == null) return false;
+                ObjData blockingData = map.mapData.GetObjectData(blockingInstance.objID);
+                if (blockingData == null) return false;
+                if (blockingData.objType.HasFlag(ObjectType.Goal)) continue;
+                if (MapData.CanShareMovementGrid(crateData.objType, blockingData.objType)) continue;
+                if (!blockingData.objType.HasFlag(ObjectType.Pushable)) return false;
+
+                if (!TryCollectPushChain(map, blockingInstance, moveDir, chain, visited, false)) return false;
+            }
+            return true;
+        }
+
+        bool TryCreateBarrelPushPlan(MapPlane map, ObjDataInstance barrel, Vector2Int moveDir,
+            List<ObjDataInstance> chain, HashSet<string> visited, out BarrelPushPlan plan)
+        {
+            plan = null;
+            GameObject barrelObject = map.GetObjectByInstanceID(barrel.instanceID);
+            BarrelMove barrelMove = barrelObject != null ? barrelObject.GetComponent<BarrelMove>() : null;
+            if (barrelMove == null) return false;
+            Vector2Int barrelAxis = barrelMove.LongAxis;
+            bool pushAlongHead = Mathf.Abs(moveDir.x * barrelAxis.x + moveDir.y * barrelAxis.y) == 1;
+            // Standing barrels always tip over after one push. A lying barrel pushed
+            // along its long axis stands up; a side push rolls until blocked.
+            bool moveOneCell = barrelMove.IsStanding || pushAlongHead;
+            Quaternion finalRotation = barrel.rotation;
+
+            List<Vector2Int> path = new List<Vector2Int>();
+            Vector2Int current = barrel.mainGrid;
+            int maxSteps = map.mapData.gridLength + map.mapData.gridWidth + 1;
+            int stepsToCheck = moveOneCell ? 1 : maxSteps;
+
+            for (int i = 0; i < stepsToCheck; i++)
+            {
+                Vector2Int next = current + moveDir;
+                if (!map.mapData.IsWithinGrid(next) || map.mapData.HasWallBetween(current, next) ||
+                    !map.mapData.CanWalkGrid(new Vector3Int(next.x, next.y, barrel.height)))
+                {
+                    break;
+                }
+
+                string blockingID = map.mapData.GetInstanceIDAtGrid(new Vector3Int(next.x, next.y, barrel.height));
+                if (!string.IsNullOrEmpty(blockingID) && blockingID != barrel.instanceID)
+                {
+                    ObjDataInstance blockingInstance = map.mapData.GetInstance(blockingID);
+                    ObjData blockingData = blockingInstance != null
+                        ? map.mapData.GetObjectData(blockingInstance.objID)
+                        : null;
+                    bool canShare = blockingData != null &&
+                        (blockingData.objType.HasFlag(ObjectType.Goal) ||
+                         MapData.CanShareMovementGrid(map.mapData.GetObjectData(barrel.objID).objType,
+                             blockingData.objType));
+                    if (!canShare)
+                    {
+                        // A barrel may push an immediately adjacent chain-pushable
+                        // object one cell. During a roll it then stops at that object.
+                        if (path.Count == 0 && blockingInstance != null &&
+                            blockingData != null && blockingData.objType.HasFlag(ObjectType.Pushable) &&
+                            TryCollectPushChain(map, blockingInstance, moveDir, chain, visited, false))
+                        {
+                            path.Add(next);
+                        }
+                        break;
+                    }
+                }
+
+                path.Add(next);
+                current = next;
+            }
+
+            if (path.Count == 0) return false;
+            plan = new BarrelPushPlan
+            {
+                instance = barrel,
+                path = path,
+                finalRotation = finalRotation
+            };
+            return true;
+        }
+    }
+
+    sealed class BarrelPushCommand : ICommand
+    {
+        readonly MapPlane map;
+        readonly GameObject barrelObject;
+        readonly ObjDataInstance barrelInstance;
+        readonly List<Vector2Int> path;
+        readonly Quaternion finalRotation;
+        readonly List<ICommand> executedMoves = new List<ICommand>();
+
+        public BarrelPushCommand(MapPlane map, GameObject barrelObject, ObjDataInstance barrelInstance,
+            List<Vector2Int> path, Quaternion finalRotation)
+        {
+            this.map = map;
+            this.barrelObject = barrelObject;
+            this.barrelInstance = barrelInstance;
+            this.path = new List<Vector2Int>(path);
+            this.finalRotation = finalRotation;
+        }
+
+        public void Execute()
+        {
+            executedMoves.Clear();
+            for (int i = 0; i < path.Count; i++)
+            {
+                Vector2Int from = barrelInstance.mainGrid;
+                Quaternion fromRotation = barrelInstance.rotation;
+                Quaternion toRotation = i == path.Count - 1 ? finalRotation : fromRotation;
+                MoveObjectCommand move = new MoveObjectCommand(barrelObject, barrelInstance, from, path[i],
+                    barrelInstance.height, fromRotation, toRotation, map, false);
+                move.Execute();
+                executedMoves.Add(move);
+            }
+
+        }
+
+        public void Undo()
+        {
+            for (int i = executedMoves.Count - 1; i >= 0; i--) executedMoves[i].Undo();
+        }
+
+        public void ClearCommand()
+        {
+            executedMoves.Clear();
+        }
     }
 
 
@@ -199,11 +394,6 @@ namespace Movement
         public ObjDataInstance objInstance;
         Vector2Int from;
         Quaternion currentRotation;
-
-        bool pushObj = false;
-        ObjDataInstance targetInstance;
-
-        public List<IMovementStrategy> pushObjStrategies = new List<IMovementStrategy>();
 
         public ICommand CreateMoveCommand(Vector2Int moveDir, MapPlane map, bool player)
         {
@@ -251,19 +441,6 @@ namespace Movement
                 player
             );
 
-            if (pushObj)
-            {
-                foreach (var pushObj in pushObjStrategies)
-                {
-                    compositeCommand.AddCommand(pushObj.CreateMoveCommand(moveDir, map, false));
-                }
-
-                compositeCommand.AddCommand(final);
-                //compositeCommand.Execute();
-                return compositeCommand;
-            }
-
-
             //final.Execute();
             return final;
         }
@@ -293,13 +470,7 @@ namespace Movement
 
             Vector2Int currentPos = from;
             ObjData selfData = map.mapData.GetObjectData(objInstance.objID);
-            GameMgr gameMgr = GameMgr.Instance;
-            bool inside = gameMgr.IsInsideWorld(map);
-            bool firstStep = true;
-            bool isGhost = selfData.objType.HasFlag(ObjectType.Ghost);
-
-
-
+            if (selfData == null) return false;
             while (true)
             {
                 Vector2Int nextPos = currentPos + moveDir;
@@ -330,94 +501,17 @@ namespace Movement
                     targetOccupiedGrids.Add(finalPos);
                 }
 
-                if (firstStep)
-                {
-                    firstStep = false;
-                    if (isGhost)
-                    {
-                        pushObj = false;
-                        pushObjStrategies.Clear();
-                        foreach (var grid in targetOccupiedGrids)
-                        {
-                            if (!map.mapData.CanWalkGrid(grid))
-                            {
-                                return false;
-                            }
-                            if (inside)
-                            {
-                                if (gameMgr.IsBlockedByTrail(grid))
-                                {
-                                    canMoveToNext = false;
-                                    break;
-                                }
-                            }
-
-                            string targetInstanceID = map.mapData.GetInstanceIDAtGrid(grid);
-                            if (!string.IsNullOrEmpty(targetInstanceID))
-                            {
-                                if (targetInstanceID == instanceID)
-                                {
-                                    continue;
-                                }
-
-                                targetInstance = map.mapData.GetInstance(targetInstanceID);
-                                if (targetInstance == null)
-                                {
-                                    return false;
-                                }
-
-                                ObjData targetObjData = map.mapData.GetObjectData(targetInstance.objID);
-                                if (targetObjData == null)
-                                {
-                                    return false;
-                                }
-                                if (targetObjData.objType.HasFlag(ObjectType.Goal))
-                                {
-                                    continue;
-                                }
-
-                                if (!targetObjData.objType.HasFlag(ObjectType.Pushable))
-                                {
-                                    return false;
-                                }
-                                //Debug.Log("TRYPUSHOBJ");
-
-                                IMovementStrategy strategy = MovementStrategyFactory.Instance.GetStrategy(targetObjData.objType);
-                                Vector2Int targetPos = strategy.CalculateTargetPosition(targetInstance.mainGrid, moveDir, targetInstance.height, map, false);
-                                if (targetPos == targetInstance.mainGrid)
-                                {
-                                    return false;
-                                }
-                                pushObjStrategies.Add(strategy);
-                                pushObj = true;
-                            }
-
-                        }
-
-                        if (pushObj)
-                        {
-                            movementPath.Add(nextPos);
-                            break;
-                        }
-                    }
-                }
-
                 foreach (var grid in targetOccupiedGrids)
                 {
-                    if (!map.mapData.CanMoveToGrid(grid, instanceID))
+                    bool canEnter = selfData.objType.HasFlag(ObjectType.Ghost)
+                        ? map.mapData.IsGhostWalkable(new Vector2Int(grid.x, grid.y)) &&
+                          map.mapData.CanMoveToGrid(grid, instanceID)
+                        : map.mapData.CanMoveToGrid(grid, instanceID);
+                    if (!canEnter)
                     {
                         canMoveToNext = false;
                         break;
                     }
-                    if (inside)
-                    {
-                        if (gameMgr.IsBlockedByTrail(grid))
-                        {
-                            canMoveToNext = false;
-                            break;
-                        }
-                    }
-
                 }
 
 
@@ -528,23 +622,11 @@ namespace Movement
                 targetOccupiedGrids.Add(finalPos);
             }
 
-            ObjData selfData = map.mapData.GetObjectData(objInstance.objID);
-            GameMgr gameMgr = GameMgr.Instance;
-            bool inside = gameMgr.IsInsideWorld(map);
-
             foreach (var grid in targetOccupiedGrids)
             {
                 if (!map.mapData.CanMoveToGrid(grid, instanceID))
                 {
                     return false;
-                }
-
-                if (inside)
-                {
-                    if (gameMgr.IsBlockedByTrail(grid))
-                    {
-                        return false;
-                    }
                 }
             }
 

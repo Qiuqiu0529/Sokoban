@@ -31,14 +31,7 @@ public class PumpkinMove : MovableObj
         targetPos.Add(targetPosition);
         if (useIndicator)
         {
-            if (indicateInside)
-            {
-                targetIndicatorPos.Add(GameMgr.Instance.InsidePos(targetGrid));
-            }
-            else
-            {
-                targetIndicatorPos.Add(GameMgr.Instance.OutsidePos(targetGrid));
-            }
+            targetIndicatorPos.Add(GameMgr.Instance.MapPos(targetGrid));
         }
 
         targetRot.Add(currentRotationAngles);

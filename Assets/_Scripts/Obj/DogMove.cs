@@ -82,9 +82,4 @@ public class DogMove : MovableObj
     }
     
 
-    public override void PlayPossessFB()
-    {
-        base.PlayPossessFB();
-        dogAnim.SetTrigger("possess");
-    }
 }

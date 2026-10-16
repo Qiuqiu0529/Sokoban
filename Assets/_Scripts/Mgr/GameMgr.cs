@@ -1,17 +1,11 @@
 using UnityEngine;
-using System.Collections.Generic;
 using Commands;
 using Movement;
 using System.Collections;
-using System;
 using MoreMountains.Feedbacks;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
-using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
-using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using KToolkit;
 using TMPro;
 
 public class GameMgr : Singleton<GameMgr>
@@ -20,6 +14,7 @@ public class GameMgr : Singleton<GameMgr>
     public string levelName;
     public bool loadFromScriptsObj;
     public LevelData levelData;
+    public bool IsEditorTestLevel { get; private set; }
 
     private GameplayState currentState = GameplayState.Playing;
     public GameObject currentPlayer;
@@ -27,32 +22,15 @@ public class GameMgr : Singleton<GameMgr>
     [SerializeField]
     private TextMeshProUGUI levelText;
 
-    private ObjDataInstance currentObjDataInstance;
     private MapPlane currentMap;
     private Vector2Int currentGridPos;
 
 
-    public GameObject originalPlayer;
-    private ObjDataInstance originalObjData;
-    private MapPlane originalMap;
-
-
     private int currentHeight;
-
-    private bool isPossessing = false;
-    private GameObject possessedObject;
-    private ObjDataInstance possessedObjData;
-    private MapPlane possessedMap;
 
     private Command commandMgr;
     public IMovementStrategy movementStrategy;
 
-    // Event for changing the camera
-    public delegate void PosessEvent();
-    public static event PosessEvent OnPosession;
-
-    StepTracker accessibleTracker;
-    StepTracker blockingTracker;
 
     public Vector2Int CurrentGridPos
     {
@@ -80,238 +58,12 @@ public class GameMgr : Singleton<GameMgr>
         currentGridPos = newPos;
     }
 
-    public Vector3 InsidePos(Vector2Int pos)
+    public Vector3 MapPos(Vector2Int pos)
     {
-        return possessedMap.GridToWorldPosition(pos);
+        return currentMap != null ? currentMap.GridToWorldPosition(pos) : Vector3.zero;
     }
-    public Vector3 OutsidePos(Vector2Int pos)
-    {
-        return originalMap.GridToWorldPosition(pos);
-    }
-
-    #region  trail
-
-    public bool IsHighlighted(Vector3Int grid)
-    {
-        return accessibleTracker.HasTrail(grid);
-    }
-    public bool IsBlockedByTrail(Vector3Int grid)
-    {
-        return blockingTracker.HasTrail(grid);
-    }
-    public bool IsInsideWorld(MapPlane map)
-    {
-        return map == possessedMap;
-    }
-    public enum TrailType { AccessibleTrail, BlockingTrail }
-    public class StepTracker
-    {
-        private Dictionary<string, List<Vector3Int>> objectTrails = new();
-        private Dictionary<string, int> objectHighLightCount = new();
-        private Dictionary<string, Dictionary<Vector3Int, int>> localTrailCounts = new();
-        private Dictionary<Vector3Int, int> globalTrailCounts = new();
-        private Dictionary<string, int> maxStepList = new();
-
-        private TrailType trailType;
-        private MapPlane targetMap;
-        private Action<Vector3Int, bool, MapPlane> setHighlight;
-        private Dictionary<string, GameObject> indicate = new();
-
-        public StepTracker(TrailType trailType, MapPlane tilemap, Action<Vector3Int, bool, MapPlane> setHighlightMethod)
-        {
-            this.trailType = trailType;
-            this.targetMap = tilemap;
-            this.setHighlight = setHighlightMethod;
-        }
-        public bool HasTrail(Vector3Int grid)
-        {
-            return globalTrailCounts.ContainsKey(grid) && globalTrailCounts[grid] > 0;
-        }
-
-        public void SetMaxStep(string instanceID, int stepMax)
-        {
-            maxStepList[instanceID] = stepMax;
-        }
-
-
-        public void AddStep(string instanceID, List<Vector3Int> newGrids, out List<Vector3Int> removedGrids)
-        {
-            removedGrids = new List<Vector3Int>();
-            int maxStep = maxStepList[instanceID];
-
-            if (!objectHighLightCount.ContainsKey(instanceID))
-                objectHighLightCount[instanceID] = 0;
-            if (!objectTrails.ContainsKey(instanceID))
-                objectTrails[instanceID] = new List<Vector3Int>();
-            if (!localTrailCounts.ContainsKey(instanceID))
-                localTrailCounts[instanceID] = new Dictionary<Vector3Int, int>();
-
-            var trailList = objectTrails[instanceID];
-            var trailCountMap = localTrailCounts[instanceID];
-
-            foreach (var grid in newGrids)
-            {
-                trailList.Add(grid);
-
-                if (!trailCountMap.ContainsKey(grid) || trailCountMap[grid] == 0)
-                {
-                    objectHighLightCount[instanceID] = objectHighLightCount[instanceID] + 1;
-                }
-                trailCountMap[grid] = trailCountMap.GetValueOrDefault(grid, 0) + 1;
-
-                if (!globalTrailCounts.ContainsKey(grid) || globalTrailCounts[grid] == 0)
-                {
-                    setHighlight(grid, true, targetMap);
-                }
-                globalTrailCounts[grid] = globalTrailCounts.GetValueOrDefault(grid, 0) + 1;
-
-            }
-
-            while (objectHighLightCount[instanceID] > maxStep)
-            {
-                Vector3Int oldGrid = trailList[0];
-                removedGrids.Add(oldGrid);
-                trailList.RemoveAt(0);
-                if (globalTrailCounts.TryGetValue(oldGrid, out int globalCount))
-                {
-                    globalCount -= 1;
-                    if (globalCount <= 0)
-                    {
-                        globalTrailCounts.Remove(oldGrid);
-                        setHighlight(oldGrid, false, targetMap);
-                    }
-                    else
-                    {
-                        globalTrailCounts[oldGrid] = globalCount;
-                    }
-                }
-
-                if (trailCountMap.TryGetValue(oldGrid, out int cnt))
-                {
-                    cnt -= 1;
-                    if (cnt <= 0)
-                    {
-                        trailCountMap.Remove(oldGrid);
-                        objectHighLightCount[instanceID] = objectHighLightCount[instanceID] - 1;
-                    }
-                    else
-                    {
-                        trailCountMap[oldGrid] = cnt;
-                    }
-                }
-
-            }
-        }
-
-        public void RevertStep(string instanceID, List<Vector3Int> addedGrids, List<Vector3Int> removedGrids)
-        {
-            var trailList = objectTrails[instanceID];
-            var trailCountMap = localTrailCounts[instanceID];
-
-            foreach (var grid in addedGrids)
-            {
-                trailList.RemoveAt(trailList.Count - 1);
-                if (!trailCountMap.TryGetValue(grid, out var cnt) || cnt <= 1)
-                {
-                    trailCountMap.Remove(grid);
-                    objectHighLightCount[instanceID] = objectHighLightCount[instanceID] - 1;
-                }
-                else
-                {
-                    trailCountMap[grid] = cnt - 1;
-                }
-
-                if (!globalTrailCounts.TryGetValue(grid, out var globalCount) || globalTrailCounts[grid] <= 1)
-                {
-                    setHighlight(grid, false, targetMap);
-                    globalTrailCounts.Remove(grid);
-                }
-                else
-                {
-                    globalTrailCounts[grid] = globalCount - 1;
-                }
-
-            }
-
-            int i = removedGrids.Count - 1;
-            for (; i >= 0; i--)
-            {
-                var grid = removedGrids[i];
-                trailList.Insert(0, grid);
-
-                if (!trailCountMap.ContainsKey(grid) || trailCountMap[grid] == 0)
-                {
-                    objectHighLightCount[instanceID] = objectHighLightCount[instanceID] + 1;
-                }
-                trailCountMap[grid] = trailCountMap.GetValueOrDefault(grid, 0) + 1;
-
-                if (!globalTrailCounts.ContainsKey(grid) || globalTrailCounts[grid] == 0)
-                {
-                    setHighlight(grid, true, targetMap);
-                }
-                globalTrailCounts[grid] = globalTrailCounts.GetValueOrDefault(grid, 0) + 1;
-            }
-        }
-    }
-
-    public void RecordPlayerStep(string instanceID, List<Vector3Int> newGrids, out List<Vector3Int> removedOldStep)
-    {
-        accessibleTracker.AddStep(instanceID, newGrids, out removedOldStep);
-    }
-
-
-    public void RevertPlayerStep(string instanceID, List<Vector3Int> addedGrids, List<Vector3Int> removedOldStep)
-    {
-        accessibleTracker.RevertStep(instanceID, addedGrids, removedOldStep);
-    }
-
-    private void SetHighlight(Vector3Int grid, bool highlight, MapPlane map)
-    {
-        if (grid.z != 0)
-        {
-            return;
-        }
-        GameObject tileObj = map.GetTileAtGridPosition(new Vector2Int(grid.x, grid.y));
-        if (tileObj != null)
-        {
-            var renderer = tileObj.transform.GetChild(0).GetComponent<MeshRenderer>();
-            if (renderer != null)
-            {
-                renderer.enabled = highlight;
-            }
-        }
-    }
-
-
-
-    public void SetAccseeibleMaxStep(string instanceID, int smaxstep)
-    {
-        accessibleTracker.SetMaxStep(instanceID, smaxstep);
-    }
-
-    public void SetBlockingMaxStep(string instanceID, int smaxstep)
-    {
-        blockingTracker.SetMaxStep(instanceID, smaxstep);
-    }
-    public void AddTrailStep(string instanceID,
-    List<Vector3Int> newGrids, out List<Vector3Int> removedGrids)
-    {
-        blockingTracker.AddStep(instanceID, newGrids, out removedGrids);
-
-    }
-
-    public void RevertTrailStep(string instanceID, List<Vector3Int> newGrids, List<Vector3Int> removedGrids)
-    {
-        blockingTracker.RevertStep(instanceID, newGrids, removedGrids);
-
-    }
-
-    #endregion
-
-
     [SerializeField] bool playMoveAnim = false;
     [SerializeField] bool blockMove = false;
-    float lastMoveTime = 0;
     public void EnterPlayMoveAnim()
     {
         playMoveAnim = true;
@@ -334,13 +86,15 @@ public class GameMgr : Singleton<GameMgr>
 
     public bool CanCheckEnd()
     {
-        return !playMoveAnim;
+        return !playMoveAnim && !blockMove;
     }
 
     #region  init
     void Start()
     {
         if (!ValidateReferences()) return;
+        if (Camera.main != null && Camera.main.GetComponent<CameraMove>() == null)
+            Camera.main.gameObject.AddComponent<CameraMove>();
         InitializeGame();
         
     }
@@ -367,11 +121,9 @@ public class GameMgr : Singleton<GameMgr>
 
         return true;
     }
-    public bool onlyOneWorld = true;
-
     private void InitializeGame()
     {
-
+        IsEditorTestLevel = LevelLoadBridge.IsEditorTestLevel;
         InitPlayerInput();
         playMoveAnim = true;
         if (loadFromScriptsObj)
@@ -389,7 +141,7 @@ public class GameMgr : Singleton<GameMgr>
             {
 
                 LevelDataIO.LoadLevelDataByName(levelData, levelName, true);
-                mapMgr.Initialize(levelData, true);
+                mapMgr.Initialize(levelData, false);
 
             }
             else
@@ -397,16 +149,9 @@ public class GameMgr : Singleton<GameMgr>
                 Debug.LogWarning("No level name provided to GameMgr.");
             }
         }
-        if (levelData.insideWorld[0].GetTileRotations().Count > 0 &&
-        levelData.outsideWorld[0].GetTileRotations().Count > 0)
-        {
-            onlyOneWorld = false;
-            MiniMapMgr.Instance.ActiveMiniMap();
-        }
-        else
-        {
+        FocusCameraBeforeMapFinishesLoading();
+        if (MiniMapMgr.Instance != null)
             MiniMapMgr.Instance.DeActiveMiniMap();
-        }
         StartCoroutine(WaitForMapLoadThenInitPlayer());
         commandMgr = new Command();
         levelText.text = "Levell " + levelName;
@@ -425,53 +170,35 @@ public class GameMgr : Singleton<GameMgr>
         yield return new WaitForSeconds(0.2f);
         InitMap();
         InitializePlayer();
-        accessibleTracker = new StepTracker(TrailType.AccessibleTrail, originalMap, SetHighlight);
-        blockingTracker = new StepTracker(TrailType.BlockingTrail, possessedMap, SetHighlight);
-
-
-        originalMap.LoadTrail();
-        possessedMap.LoadTrail();
 
         InitialFB();
         playMoveAnim = false;
 
     }
+
+    private void FocusCameraBeforeMapFinishesLoading()
+    {
+        CameraMove cameraMove = Camera.main != null ? Camera.main.GetComponent<CameraMove>() : null;
+        var mapPlanes = mapMgr != null ? mapMgr.GetMapPlanes() : null;
+        if (cameraMove != null && mapPlanes != null && mapPlanes.Count > 0)
+            cameraMove.FocusMap(mapPlanes[0]);
+    }
+
     private void InitMap()
     {
-        string targetMapID = levelData.playerStart.startMapID;
-        if (string.IsNullOrEmpty(targetMapID))
-        {
-            Debug.LogError("[GameMgr] Player start map ID is null or empty!");
-            return;
-        }
-        bool foundMap = false;
         var mapPlanes = mapMgr.GetMapPlanes();
-        foreach (var map in mapPlanes)
-        {
-            if (map.mapData.mapID == targetMapID)
-            {
-                foundMap = true;
-                currentMap = map;
-                originalMap = map;
-            }
-            else
-            {
-                possessedMap = map;
-            }
-        }
-        if (!foundMap)
-        {
-            Debug.LogError($"[GameMgr] Could not find map with ID: {targetMapID}");
-        }
-
+        currentMap = mapPlanes != null && mapPlanes.Count > 0 ? mapPlanes[0] : null;
+        if (currentMap == null)
+            Debug.LogError("[GameMgr] The level did not load its map plane.");
 
     }
 
     private void InitializePlayer()
     {
 
-        Debug.Log($"[GameMgr] Looking for player in map: {levelData.playerStart.startMapID} at position: {levelData.playerStart.startGridPos}");
-        var map = originalMap;
+        if (currentMap == null) return;
+        Debug.Log($"[GameMgr] Looking for player at position: {levelData.playerStart.startGridPos}");
+        var map = currentMap;
 
         currentGridPos = levelData.playerStart.startGridPos;
         currentPlayer = map.GetObjectAtGridPosition(currentGridPos);
@@ -487,18 +214,10 @@ public class GameMgr : Singleton<GameMgr>
             currentHeight = 0;
         }
 
-        Vector3Int grid3D = new Vector3Int(currentGridPos.x, currentGridPos.y, currentHeight);
-
-        originalObjData = map.mapData.GetObjDataInstanceAtGrid(grid3D);
-        currentObjDataInstance = originalObjData;
-        // List<Vector3Int> vector3s = new List<Vector3Int>();
-        // RecordPlayerStep(currentObjDataInstance.currentOccupied, out vector3s);
         if (currentPlayer != null)
         {
             moveObjNow = currentPlayer.GetComponent<MovableObj>();
             Debug.Log($"[GameMgr] Found player at height: {currentHeight}");
-            isPossessing = false;
-            originalPlayer = currentPlayer;
             movementStrategy = new SimpleMovementStrategy();
             return;
         }
@@ -531,7 +250,6 @@ public class GameMgr : Singleton<GameMgr>
         inputTimer += Time.deltaTime;
         CacheMovementInput();
         CacheUndoInput();
-        CachePossessionInput();
         CacheBarkInput();
 
 
@@ -583,6 +301,7 @@ public class GameMgr : Singleton<GameMgr>
         if (barkCommand.canBark)
         {
             barkCommand.Execute();
+            currentMap.RefreshPressureMechanisms();
             compositeCommand.AddCommand(barkCommand);
         }
         return compositeCommand;
@@ -593,7 +312,6 @@ public class GameMgr : Singleton<GameMgr>
     [SerializeField] private InputActionAsset inputActionsAsset;
     private InputAction moveAction;
     private InputAction barkAction;
-    private InputAction possessAction;
     private InputAction undoAction;
     private InputAction resetAction;
     [SerializeField] private float inputCooldown = 0.2f;
@@ -603,17 +321,15 @@ public class GameMgr : Singleton<GameMgr>
 
     private Vector2 navInput => moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
     private bool barkPressed => barkAction?.WasPressedThisFrame() ?? false;
-    private bool possessPressed => possessAction?.WasPressedThisFrame() ?? false;
     private bool undoPressed => undoAction?.IsPressed() ?? false;
     //private bool resetPressed => resetAction?.triggered ?? false;
 
 
     private bool bufferedMove = false;
-    float lastMoveInputTime=0,lastBarkInputTime=0,lastPossessInputTime=0,lastUndoInputTime=0;
+    float lastMoveInputTime=0,lastBarkInputTime=0,lastUndoInputTime=0;
     private Vector2Int bufferedMoveDir = Vector2Int.zero;
 
     private bool bufferedBark = false;
-    private bool bufferedPossess = false;
     private bool bufferedUndo = false;
     public void InitPlayerInput()
     {
@@ -621,13 +337,11 @@ public class GameMgr : Singleton<GameMgr>
 
         moveAction = playerActionMap.FindAction("Move");
         barkAction = playerActionMap.FindAction("Bark");
-        possessAction = playerActionMap.FindAction("Possess");
         undoAction = playerActionMap.FindAction("Undo");
         resetAction = playerActionMap.FindAction("Reset");
 
         moveAction.Enable();
         barkAction.Enable();
-        possessAction.Enable();
         undoAction.Enable();
         resetAction.Enable();
     }
@@ -663,15 +377,6 @@ public class GameMgr : Singleton<GameMgr>
         }
     }
 
-    void CachePossessionInput()
-    {
-        if (possessPressed)
-        {
-            bufferedPossess = true;
-            lastPossessInputTime = Time.time;
-        }
-    }
-
     void CacheUndoInput()
     {
         if (undoPressed)
@@ -699,21 +404,16 @@ public class GameMgr : Singleton<GameMgr>
             StartCoroutine(WaitBarkAnim());
             bufferedBark = false;
         }
-        else if (bufferedPossess && Time.time - lastPossessInputTime <= inputBufferTime)
-        {
-            ExecutePossess();
-            bufferedPossess = false;
-        }
         else if (bufferedUndo && Time.time - lastUndoInputTime <= inputBufferTime)
         {
             inputTimer = 0f;
             commandMgr.Undo();
+            if (currentMap != null) currentMap.RefreshPressureMechanisms();
             bufferedUndo = false;
         }
 
         if (Time.time - lastMoveInputTime > inputBufferTime) bufferedMove = false;
         if (Time.time - lastBarkInputTime > inputBufferTime) bufferedBark = false;
-        if (Time.time - lastPossessInputTime > inputBufferTime) bufferedPossess = false;
         if (Time.time - lastUndoInputTime > inputBufferTime) bufferedUndo = false;
     }
 
@@ -756,6 +456,7 @@ public class GameMgr : Singleton<GameMgr>
 
             ICommand commandtemp = moveObjNow.AnyCommand(moveDir);
             commandtemp.Execute();
+            currentMap.RefreshPressureMechanisms();
             compositeCommand.AddCommand(commandtemp);
 
             commandMgr.AddCommand(compositeCommand);
@@ -768,83 +469,10 @@ public class GameMgr : Singleton<GameMgr>
     
 
 
-    void ExecutePossess()
-    {
-        inputTimer = 0f;
-
-        if (!isPossessing)
-        {
-            if (CanEnterPossess())
-            {
-                inputTimer = -0.7f;
-                ICommand possessCommand = new PossessCommand(originalPlayer, possessedObject, originalMap, possessedMap, originalObjData, possessedObjData);
-                commandMgr.ExecuteCommand(possessCommand);
-                KEventManager.SendNotification(EventName.PlayerPossess, possessCommand);
-            }
-            else
-            {
-                PlayCantMoveFB();
-            }
-        }
-        else
-        {
-            if (CanExitPossess())
-            {
-                exitPossessFB?.PlayFeedbacks();
-                ICommand exitCommand = new ExitPossessCommand(originalPlayer, currentPlayer, originalMap, currentMap, originalObjData, possessedObjData);
-                commandMgr.ExecuteCommand(exitCommand);
-            }
-            else
-            {
-                PlayCantMoveFB();
-            }
-        }
-    }
-   
     #endregion
-
-
-    public bool CanExitPossess()
-    {
-        Vector3Int originalGrid3D = new Vector3Int(currentGridPos.x, currentGridPos.y, originalObjData.height);
-        return originalMap.mapData.CanMoveToGrid(originalGrid3D, originalObjData.instanceID);
-    }
-
-    public bool CanEnterPossess()
-    {
-        // Possession is retired by the current Sokoban rules.
-        return false;
-    }
-
-    public void SetMapAndCurrentObj(MapPlane map, GameObject gameObject, Vector2Int gridPos, ObjDataInstance objDataInstance, float waitTime = 0.1f)
-    {
-        if (map != currentMap)
-        {
-            StartCoroutine(WaitPossessAnim(waitTime));
-        }
-        currentMap = map;
-        Vector3 worldPos = currentMap.GridToWorldPosition(gridPos);
-        currentPlayer = gameObject;
-        currentPlayer.transform.position = worldPos;
-        currentGridPos = gridPos;
-        currentObjDataInstance = objDataInstance;
-        isPossessing = !isPossessing;
-        moveObjNow.ExitPossess();
-        moveObjNow = currentPlayer.GetComponent<MovableObj>();
-        moveObjNow.EnterPossess();
-    }
-
-    IEnumerator WaitPossessAnim(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-        OnPosession?.Invoke();
-    }
-
-
 
     #region FB
     public MMF_Player enablePlayerFB, disablePlayerFB, cantMoveFB;
-    public MMF_Player possessFB, exitPossessFB;
     public MMF_Player spiritCantMoveFB;
     public MMF_SquashAndStretch mMF_SquashAndStretchOnEnable, mMF_SquashAndStretchOnDisable;
     public MMF_SetActive mMF_SetActiveOnEnable, mMF_SetActiveOnDisable;
@@ -866,25 +494,6 @@ public class GameMgr : Singleton<GameMgr>
             mMF_SetActiveOnDisable = disablePlayerFB.GetFeedbackOfType<MMF_SetActive>();
             mMF_SetActiveOnDisable.TargetGameObject = currentPlayer;
         }
-    }
-
-    public void EnAbleOriPlayer()
-    {
-        enablePlayerFB?.PlayFeedbacks();
-    }
-
-    public void DisAbleOriPlayer(bool usepause = true)
-    {
-        moveObjNow.PlayPossessFB();
-        if (usepause)
-        {
-            disablePlayerFB.GetFeedbackOfType<MMF_HoldingPause>().Active = true;
-        }
-        else
-        {
-            disablePlayerFB.GetFeedbackOfType<MMF_HoldingPause>().Active = false;
-        }
-        disablePlayerFB?.PlayFeedbacks();
     }
 
     public void PlayCantMoveFB()

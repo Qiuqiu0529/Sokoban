@@ -1414,7 +1414,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2146020248}
+    m_TransformParent: {fileID: 1826570189}
     m_Modifications:
     - target: {fileID: 136186182047376881, guid: 8b486360347ce634d8cecea54d718055,
         type: 3}
@@ -2567,6 +2567,10 @@ MonoBehaviour:
   zoomSpeed: 20
   minHeight: 2
   maxHeight: 60
+  rotateSpeed: 0.25
+  minPitch: 35
+  maxPitch: 90
+  dragThreshold: 4
 --- !u!1001 &1027094169
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4238,7 +4242,7 @@ PrefabInstance:
     - target: {fileID: 2905764967356318471, guid: 33994460efecd9d4794903c0f8d9a630,
         type: 3}
       propertyPath: m_text
-      value: "\u6D4B\u8BD5"
+      value: "\u4FDD\u5B58\u5E76\u6D4B\u8BD5"
       objectReference: {fileID: 0}
     - target: {fileID: 2905764967356318471, guid: 33994460efecd9d4794903c0f8d9a630,
         type: 3}
@@ -4408,7 +4412,7 @@ PrefabInstance:
     - target: {fileID: 2905764967384224462, guid: 33994460efecd9d4794903c0f8d9a630,
         type: 3}
       propertyPath: OnClicked.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2905764967384224462, guid: 33994460efecd9d4794903c0f8d9a630,
         type: 3}
@@ -4526,8 +4530,6 @@ MonoBehaviour:
   mapPlanePrefab: {fileID: 4162994174390233630, guid: c7b34c9e6d4343541b9009bd16f1a706,
     type: 3}
   startPoint: {fileID: 1395655138}
-  insideWorld: []
-  outsideWorld: []
   planeDistance: 3
   IsAllMapLoaded: 0
 --- !u!1001 &1332456264
@@ -6064,10 +6066,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61a886aa8cfc3e7499a1c68feef2ca86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelData: {fileID: 11400000, guid: 465cfd68a9f51624184c104b9d592584, type: 2}
+  levelData: {fileID: 11400000, guid: 5650a4314d53a6144b2bdc72d09dd932, type: 2}
   rename: {fileID: 152689456}
   levelUI: {fileID: 1263123786}
-  objectUI: {fileID: 0}
+  objectUI: {fileID: 882181987}
   levelListObject: {fileID: 1769253340}
   objectListObject: {fileID: 6441289295089346631}
   levelName: 
@@ -7261,6 +7263,7 @@ Transform:
   - {fileID: 1953167342}
   - {fileID: 1707716070}
   - {fileID: 1331136568}
+  - {fileID: 699698227}
   - {fileID: 1701828208}
   - {fileID: 2146020248}
   m_Father: {fileID: 0}
@@ -7851,6 +7854,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3702945206387999667, guid: 46640eb424e726547b5f2426e3180e95,
+        type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 976970052}
     - target: {fileID: -3702945206387999667, guid: 46640eb424e726547b5f2426e3180e95,
         type: 3}
       propertyPath: navigationEnabled
@@ -8694,8 +8702,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 699698227}
+  m_Children: []
   m_Father: {fileID: 1826570189}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2146020249

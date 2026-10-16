@@ -27,6 +27,7 @@ public class LevelMgr : Singleton<LevelMgr>
     }
     public void LoadLevelScene(string levelName)
     {
+        LevelLoadBridge.IsEditorTestLevel = false;
         mMF_LoadScene.DestinationSceneName = levelName;
         loadScene.PlayFeedbacks();
     }
@@ -50,13 +51,17 @@ public class LevelMgr : Singleton<LevelMgr>
     public void AfterLevelClear(string levelName)
     {
         Debug.Log("AfterLevelClear" + levelName);
-        LevelUnlockRule levelUnlockRule = unlockConfig.FindLevel(levelName);
+        LevelUnlockRule levelUnlockRule = unlockConfig != null ? unlockConfig.FindLevel(levelName) : null;
         GameMgr.Instance.EnterBlockMove();
 
-        if (levelUnlockRule.nextScene != "")
+        // Test/custom levels may not have an unlock rule. Treat them as the
+        // end of a level chain and return to the hub instead of dereferencing
+        // a missing rule.
+        string nextScene = levelUnlockRule != null ? levelUnlockRule.nextScene : null;
+        if (!string.IsNullOrEmpty(nextScene))
         {
             HubWorldManagerTest.Instance.exitScene = SceneManager.GetActiveScene().name;
-            mMF_LoadScene.DestinationSceneName = levelUnlockRule.nextScene;
+            mMF_LoadScene.DestinationSceneName = nextScene;
         }
         else
         {
