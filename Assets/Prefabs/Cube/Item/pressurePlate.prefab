@@ -31,6 +31,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6803574997442388355}
+  - {fileID: 8857672312658066956}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &9084179915794275488
@@ -54,6 +55,40 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &9021000004
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 9084179915794275493}
+    m_Modifications:
+    - target: {fileID: 8857672321125218121, guid: 517478689ac04d4b84f08a4cf56f8180,
+        type: 3}
+      propertyPath: managedReferences[7098374714407518221].Sfx
+      value: 
+      objectReference: {fileID: 8300000, guid: 9bf25c6dc68777040a20003f30b7e056, type: 3}
+    - target: {fileID: 8857672321125218121, guid: 517478689ac04d4b84f08a4cf56f8180,
+        type: 3}
+      propertyPath: managedReferences[7098374714407518221].StopSoundOnFeedbackStop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8857672321125218121, guid: 517478689ac04d4b84f08a4cf56f8180,
+        type: 3}
+      propertyPath: managedReferences[7098374714407518221].DoNotPlayIfClipAlreadyPlaying
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 517478689ac04d4b84f08a4cf56f8180, type: 3}
+--- !u!4 &8857672312658066956 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8857672321125218120, guid: 517478689ac04d4b84f08a4cf56f8180,
+    type: 3}
+  m_PrefabInstance: {fileID: 9021000004}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4274066381248741754
 PrefabInstance:
   m_ObjectHideFlags: 0

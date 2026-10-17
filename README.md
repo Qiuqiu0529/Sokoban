@@ -18,10 +18,15 @@ Unity 版本：`2022.3.47f1c1`。主要编辑场景：`Assets/Scenes/Re/LevelEdi
 </p>
 <p align="center"><sub>物品摆放 · 单关卡测试</sub></p>
 
+
+
 <p align="center">
-  <img src="Documentation/Images/level-scene.png" width="80%" alt="关卡场景展示" />
+  <img src="Documentation/Images/editor-check.png" width="48%" alt="编辑器检查" />
+  <img src="Documentation/Images/level-scene.png" width="48%" alt="关卡场景" />
 </p>
-<p align="center"><sub>关卡场景</sub></p>
+<p align="center"><sub>关卡检查 · 关卡场景</sub></p>
+
+
 
 ## 游戏规则
 

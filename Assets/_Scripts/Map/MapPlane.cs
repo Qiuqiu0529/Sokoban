@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using System.Linq;
 using System.Collections;
+using MoreMountains.Feedbacks;
 
 public class MapPlane : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class MapPlane : MonoBehaviour
     private MapData originalMapData;
     public GameObject planePreview;
     public GameObject objs;
+    private readonly HashSet<string> activePressurePlateInstances = new HashSet<string>();
     public MapData mapData
     {
         get
@@ -1035,6 +1037,7 @@ public class MapPlane : MonoBehaviour
     {
         if (mapData == null || isEditMode) return;
         HashSet<int> activeChannels = new HashSet<int>();
+        HashSet<string> pressedPlateInstances = new HashSet<string>();
         List<ObjDataInstance> instances = mapData.GetAllObjectInstances().ToList();
 
         foreach (ObjDataInstance plate in instances)
@@ -1053,6 +1056,7 @@ public class MapPlane : MonoBehaviour
                 if (occupantData != null && occupantData.objType.HasFlag(ObjectType.CanActivatePressurePlate))
                 {
                     activeChannels.Add(plate.channelID);
+                    pressedPlateInstances.Add(plate.instanceID);
                     break;
                 }
             }
@@ -1071,6 +1075,42 @@ public class MapPlane : MonoBehaviour
             if (dissolve == null) dissolve = instanceObject.AddComponent<PressureDissolveEffect>();
             dissolve.SetVisible(!hidden, animate);
         }
+
+        if (animate)
+        {
+            foreach (string plateInstanceID in activePressurePlateInstances)
+            {
+                if (!pressedPlateInstances.Contains(plateInstanceID))
+                    StopPressurePlateActivationFeedback(plateInstanceID);
+            }
+
+            foreach (string plateInstanceID in pressedPlateInstances)
+            {
+                if (!activePressurePlateInstances.Contains(plateInstanceID))
+                    PlayPressurePlateActivationFeedback(plateInstanceID);
+            }
+        }
+
+        activePressurePlateInstances.Clear();
+        activePressurePlateInstances.UnionWith(pressedPlateInstances);
+    }
+
+    private void PlayPressurePlateActivationFeedback(string plateInstanceID)
+    {
+        GameObject plateObject = GetObjectByInstanceID(plateInstanceID);
+        MMF_Player feedback = plateObject != null
+            ? plateObject.GetComponentInChildren<MMF_Player>(true)
+            : null;
+        feedback?.PlayFeedbacks();
+    }
+
+    private void StopPressurePlateActivationFeedback(string plateInstanceID)
+    {
+        GameObject plateObject = GetObjectByInstanceID(plateInstanceID);
+        MMF_Player feedback = plateObject != null
+            ? plateObject.GetComponentInChildren<MMF_Player>(true)
+            : null;
+        feedback?.StopFeedbacks();
     }
 
     private void InitializeLoadedMovableObjects(List<ObjDataInstance> instances)

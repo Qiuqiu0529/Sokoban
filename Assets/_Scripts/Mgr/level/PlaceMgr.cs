@@ -505,7 +505,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
         ObjectPlacementState objectPlacement = currentState as ObjectPlacementState;
         if (objectPlacement != null && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
             objectPlacement.RotatePreview();
-        Rect channelPanel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 18,
+        Rect channelPanel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 100,
             Mathf.Min(600f, Screen.width - 40f), 142f);
         Vector2 guiMousePosition = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
         if (channelPlacement != null && channelPlacement.UsesChannel && channelPanel.Contains(guiMousePosition))
@@ -536,7 +536,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
         ObjectPlacementState objectState = currentState as ObjectPlacementState;
         if (objectState == null || !objectState.UsesChannel) return;
 
-        Rect panel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 18,
+        Rect panel = new Rect((Screen.width - Mathf.Min(600f, Screen.width - 40f)) * 0.5f, 100,
             Mathf.Min(600f, Screen.width - 40f), 142f);
         GUILayout.BeginArea(panel, GUI.skin.box);
         GUIStyle titleStyle = new GUIStyle(GUI.skin.label)
