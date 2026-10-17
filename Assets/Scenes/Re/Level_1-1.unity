@@ -371,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 1211381034}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.052335896, z: 0, w: 0.9986295}
-  m_LocalPosition: {x: -8, y: 0.77, z: 2}
+  m_LocalPosition: {x: -8.8, y: 0.77, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -599,8 +599,26 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 3869245582352216670, guid: eeb85cc85851df341a1d017487df6169, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7305414780391245461, guid: eeb85cc85851df341a1d017487df6169,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1516236927}
   m_SourcePrefab: {fileID: 100100000, guid: eeb85cc85851df341a1d017487df6169, type: 3}
+--- !u!1 &1516236926 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7305414780391245461, guid: eeb85cc85851df341a1d017487df6169,
+    type: 3}
+  m_PrefabInstance: {fileID: 1516236925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!81 &1516236927
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1516236926}
+  m_Enabled: 1
 --- !u!1001 &1519640581
 PrefabInstance:
   m_ObjectHideFlags: 0

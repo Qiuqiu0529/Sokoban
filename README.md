@@ -10,6 +10,16 @@ Unity 网格解谜游戏项目。玩家控制小狗 Pomme，在单一地图中�
 - 主菜单和 Hub 场景位于 `Assets/Scenes/Re/`。
 - 输入动作资源：`Assets/Data/InputSystem_Actions.inputactions`。
 
+## 资源目录
+
+- `Assets/_Scripts/` 按功能划分运行时代码；旧 Hub/附身玩法和旧管理器集中在 `Assets/_Scripts/Legacy/`，仅用于兼容旧场景和测试。
+- `Assets/Data/` 保存关卡、地块、物品、墙、频道配色和输入配置等项目数据。
+- `Assets/Prefabs/` 保存当前项目使用的角色、物品、地图和 UI 预制体。
+- `Assets/Scenes/Re/` 保存当前编辑器、Gameplay 和菜单场景；旧关卡和测试场景保留在相应场景目录中。
+- `Assets/DownloadedAssets/` 按素材用途分组，组内保留供应商原始目录，见 [素材包目录索引](Assets/DownloadedAssets/README.md)。
+
+Unity 资源移动时必须连同同名 `.meta` 一起移动，以保留 GUID 和场景、预制体中的引用。不要直接删除无法确认用途的素材包；先检查引用并确认对应旧场景不再需要。
+
 旧的 Hub/附身玩法脚本和测试场景仍留在工程中；当前关卡数据与主要编辑、Gameplay 流程使用单一 `MapData` 世界。
 
 ## 当前已实现的玩法

@@ -599,6 +599,8 @@ public class PlaceMgr : Singleton<PlaceMgr>
         {
             foreach (var material in renderer.materials)
             {
+                if (material == null || !material.HasProperty("_Color")) continue;
+
                 targetColor.a = material.color.a;
                 material.color = targetColor;
             }
