@@ -4,6 +4,25 @@
 
 Unity 版本：`2022.3.47f1c1`。主要编辑场景：`Assets/Scenes/Re/LevelEditorTest.unity`；Gameplay 场景：`Assets/Scenes/Re/Gameplay.unity`。
 
+## 游戏展示
+
+<p align="center">
+  <img src="Documentation/Images/main-menu.png" width="48%" alt="主菜单" />
+  <img src="Documentation/Images/editor-level-list.png" width="48%" alt="关卡编辑器与关卡列表" />
+</p>
+<p align="center"><sub>主菜单 · 关卡编辑器</sub></p>
+
+<p align="center">
+  <img src="Documentation/Images/editor-object-list.png" width="48%" alt="编辑器物品列表与频道选择" />
+  <img src="Documentation/Images/gameplay-board.png" width="48%" alt="关卡地图与交互物" />
+</p>
+<p align="center"><sub>物品摆放 · 单关卡测试</sub></p>
+
+<p align="center">
+  <img src="Documentation/Images/level-scene.png" width="80%" alt="关卡场景展示" />
+</p>
+<p align="center"><sub>关卡场景</sub></p>
+
 ## 游戏规则
 
 - 每关只有一张地图；小狗逐格移动，不能穿墙或穿过阻挡物。
@@ -61,5 +80,5 @@ Unity 版本：`2022.3.47f1c1`。主要编辑场景：`Assets/Scenes/Re/LevelEdi
 - `Assets/_Scripts/Mgr/`：Gameplay、场景、进度和编辑器管理。
 - `Assets/Data/`：关卡与物品配置；`Assets/Resources/ChannelPalette.asset` 保存共享频道配色。
 
-开发方向从旧版双世界/附身原型转为单地图推箱解谜：先统一关卡数据和编辑器，再实现移动与连推，随后加入鬼魂、墓碑、魂灯、木桶和压力机关。旧版脚本仍保留在 `Assets/_Scripts/Legacy/`，不属于当前规则。
+开发流程：先统一关卡数据和编辑器，再实现移动与连推，随后加入鬼魂、墓碑、魂灯、木桶和压力机关，测试单个关卡，制作更多关卡。
 
