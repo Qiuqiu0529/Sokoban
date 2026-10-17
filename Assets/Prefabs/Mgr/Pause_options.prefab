@@ -272,10 +272,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Options
+  m_text: "\u8BBE\u7F6E"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 71e0270a8c32aad40ba3502fb52cf2aa, type: 2}
-  m_sharedMaterial: {fileID: -9172418369514598904, guid: 71e0270a8c32aad40ba3502fb52cf2aa,
+  m_fontAsset: {fileID: 11400000, guid: f74b315efe4d9de4699c75454514c5d2, type: 2}
+  m_sharedMaterial: {fileID: -8565899459744006984, guid: f74b315efe4d9de4699c75454514c5d2,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -300,8 +300,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1605,12 +1605,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Exit to
-
-    Desktop'
+  m_text: "\u56DE\u684C\u9762"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 71e0270a8c32aad40ba3502fb52cf2aa, type: 2}
-  m_sharedMaterial: {fileID: -9172418369514598904, guid: 71e0270a8c32aad40ba3502fb52cf2aa,
+  m_fontAsset: {fileID: 11400000, guid: f74b315efe4d9de4699c75454514c5d2, type: 2}
+  m_sharedMaterial: {fileID: -8565899459744006984, guid: f74b315efe4d9de4699c75454514c5d2,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1635,8 +1633,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1694,7 +1692,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1621406066334190806
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1742,7 +1740,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: fcf82eff55ecab540acbfa65340fb2ef, type: 3}
+  m_Texture: {fileID: 2800000, guid: ac34d20bc6d2ec1408cab46715e8db0b, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -2673,8 +2671,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 16777215
+  m_fontColor: {r: 1, g: 1, b: 1, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3194,7 +3192,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &472093502228360670
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3845,10 +3843,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Resume
+  m_text: "\u7EE7\u7EED"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 71e0270a8c32aad40ba3502fb52cf2aa, type: 2}
-  m_sharedMaterial: {fileID: -9172418369514598904, guid: 71e0270a8c32aad40ba3502fb52cf2aa,
+  m_fontAsset: {fileID: 11400000, guid: f74b315efe4d9de4699c75454514c5d2, type: 2}
+  m_sharedMaterial: {fileID: -8565899459744006984, guid: f74b315efe4d9de4699c75454514c5d2,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3873,8 +3871,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5125,10 +5123,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Return to \nLevel Selection"
+  m_text: "\u56DE\u5230\u5173\u5361\u8868"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 71e0270a8c32aad40ba3502fb52cf2aa, type: 2}
-  m_sharedMaterial: {fileID: -9172418369514598904, guid: 71e0270a8c32aad40ba3502fb52cf2aa,
+  m_fontAsset: {fileID: 11400000, guid: f74b315efe4d9de4699c75454514c5d2, type: 2}
+  m_sharedMaterial: {fileID: -8565899459744006984, guid: f74b315efe4d9de4699c75454514c5d2,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -5153,8 +5151,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

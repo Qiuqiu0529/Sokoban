@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class GameMgr : Singleton<GameMgr>
 {
@@ -30,6 +31,9 @@ public class GameMgr : Singleton<GameMgr>
 
     private int currentHeight;
 
+    public static bool IsUsingGamepad { get; private set; }
+    public static event Action<bool> OnInputDeviceChanged;
+
     private Command commandMgr;
     public IMovementStrategy movementStrategy;
 
@@ -48,6 +52,7 @@ public class GameMgr : Singleton<GameMgr>
     private void OnDestroy()
     {
         PauseMenu.OnPause -= AddName;
+        StopTrackingInputDevice();
     }
 
     private void AddName()
@@ -366,6 +371,8 @@ public class GameMgr : Singleton<GameMgr>
     private bool bufferedUndo = false;
     public void InitPlayerInput()
     {
+        StopTrackingInputDevice();
+        SetInputDevice(Gamepad.current != null && Keyboard.current == null);
         var playerActionMap = inputActionsAsset.FindActionMap("Player");
 
         moveAction = playerActionMap.FindAction("Move");
@@ -377,6 +384,45 @@ public class GameMgr : Singleton<GameMgr>
         barkAction.Enable();
         undoAction.Enable();
         resetAction.Enable();
+
+        TrackInputAction(moveAction);
+        TrackInputAction(barkAction);
+        TrackInputAction(undoAction);
+        TrackInputAction(resetAction);
+    }
+
+    private void TrackInputAction(InputAction action)
+    {
+        if (action == null) return;
+        action.started += OnPlayerInputStarted;
+    }
+
+    private void StopTrackingInputDevice()
+    {
+        if (moveAction != null) moveAction.started -= OnPlayerInputStarted;
+        if (barkAction != null) barkAction.started -= OnPlayerInputStarted;
+        if (undoAction != null) undoAction.started -= OnPlayerInputStarted;
+        if (resetAction != null) resetAction.started -= OnPlayerInputStarted;
+    }
+
+    private void OnPlayerInputStarted(InputAction.CallbackContext context)
+    {
+        bool isGamepad;
+        if (context.control.device is Gamepad)
+            isGamepad = true;
+        else if (context.control.device is Keyboard)
+            isGamepad = false;
+        else
+            return;
+
+        SetInputDevice(isGamepad);
+    }
+
+    private static void SetInputDevice(bool isGamepad)
+    {
+        if (IsUsingGamepad == isGamepad) return;
+        IsUsingGamepad = isGamepad;
+        OnInputDeviceChanged?.Invoke(IsUsingGamepad);
     }
 
     void CacheMovementInput()

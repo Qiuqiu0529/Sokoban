@@ -16,4 +16,8 @@ MonoBehaviour:
   - levelName: 1-1
     sceneName: Level_1-1
     requiredLevels: []
+    nextScene: Level_1-2
+  - levelName: 1-2
+    sceneName: Level_1-2
+    requiredLevels: []
     nextScene: 

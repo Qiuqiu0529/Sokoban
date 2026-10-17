@@ -31,6 +31,16 @@
                 0,
                 0,
                 0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
                 1,
                 1,
                 1,
@@ -42,27 +52,27 @@
                 0,
                 0,
                 1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                2,
+                2,
+                2,
+                2,
+                2,
                 2,
                 1,
-                1,
-                1,
-                1,
-                1,
                 0,
                 0,
                 0,
                 1,
-                2,
-                2,
-                2,
-                2,
-                2,
                 1,
-                0,
-                0,
-                0,
-                1,
-                2,
                 1,
                 1,
                 1,
@@ -72,7 +82,6 @@
                 0,
                 0,
                 1,
-                2,
                 1,
                 1,
                 1,
@@ -81,19 +90,10 @@
                 0,
                 0,
                 0,
-                1,
-                2,
-                1,
-                1,
-                1,
-                1,
                 0,
                 0,
                 0,
                 0,
-                1,
-                1,
-                1,
                 0,
                 0,
                 0,
@@ -874,19 +874,19 @@
                 "$id": 7,
                 "$type": "9|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
             },
-            "$rlength": 4,
+            "$rlength": 3,
             "$rcontent": [
                 {
-                    "$k": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e",
+                    "$k": "cfd35157-cabc-4e22-98fc-9df86779bf68",
                     "$v": {
                         "$id": 8,
                         "$type": "10|ObjDataInstance, Assembly-CSharp",
                         "objID": 0,
-                        "instanceID": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e",
+                        "instanceID": "cfd35157-cabc-4e22-98fc-9df86779bf68",
                         "mainGrid": {
                             "$type": 2,
                             6,
-                            4
+                            5
                         },
                         "channelID": 0,
                         "height": 0,
@@ -905,7 +905,7 @@
                                 {
                                     "$type": "13|UnityEngine.Vector3Int, UnityEngine.CoreModule",
                                     6,
-                                    4,
+                                    5,
                                     0
                                 }
                             ]
@@ -920,16 +920,16 @@
                     }
                 },
                 {
-                    "$k": "b6b52dec-f5e1-47af-aa86-f2f71c9d3ee7",
+                    "$k": "791746be-da51-4d02-b46a-9ceb540a756f",
                     "$v": {
                         "$id": 10,
                         "$type": 10,
                         "objID": 4,
-                        "instanceID": "b6b52dec-f5e1-47af-aa86-f2f71c9d3ee7",
+                        "instanceID": "791746be-da51-4d02-b46a-9ceb540a756f",
                         "mainGrid": {
                             "$type": 2,
                             8,
-                            3
+                            4
                         },
                         "channelID": 3,
                         "height": 0,
@@ -948,7 +948,7 @@
                                 {
                                     "$type": 13,
                                     8,
-                                    3,
+                                    4,
                                     0
                                 }
                             ]
@@ -963,71 +963,28 @@
                     }
                 },
                 {
-                    "$k": "7570cd18-95ca-4f50-827c-7c40bbcebeb4",
+                    "$k": "75ac3dd4-8e08-4134-b18f-5f955f0d6986",
                     "$v": {
                         "$id": 12,
                         "$type": 10,
                         "objID": 1,
-                        "instanceID": "7570cd18-95ca-4f50-827c-7c40bbcebeb4",
+                        "instanceID": "75ac3dd4-8e08-4134-b18f-5f955f0d6986",
                         "mainGrid": {
                             "$type": 2,
                             4,
-                            6
+                            4
                         },
                         "channelID": 3,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
                             0,
-                            1,
+                            0.7071068,
                             0,
-                            -4.371139E-08
+                            0.7071068
                         },
                         "currentOccupied": {
                             "$id": 13,
-                            "$type": 12,
-                            "$rlength": 1,
-                            "$rcontent": [
-                                {
-                                    "$type": 13,
-                                    4,
-                                    6,
-                                    0
-                                }
-                            ]
-                        },
-                        "hasCustomWorldPosition": false,
-                        "customWorldPosition": {
-                            "$type": 6,
-                            0,
-                            0,
-                            0
-                        }
-                    }
-                },
-                {
-                    "$k": "4d9a5896-77f2-494c-aeee-9e9419225a10",
-                    "$v": {
-                        "$id": 14,
-                        "$type": 10,
-                        "objID": 2,
-                        "instanceID": "4d9a5896-77f2-494c-aeee-9e9419225a10",
-                        "mainGrid": {
-                            "$type": 2,
-                            4,
-                            4
-                        },
-                        "channelID": 0,
-                        "height": 0,
-                        "rotation": {
-                            "$type": 11,
-                            0,
-                            0,
-                            0,
-                            1
-                        },
-                        "currentOccupied": {
-                            "$id": 15,
                             "$type": 12,
                             "$rlength": 1,
                             "$rcontent": [
@@ -1051,31 +1008,22 @@
             ]
         },
         "gridToInstanceMap3D": {
-            "$id": 16,
+            "$id": 14,
             "$type": "14|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
             "comparer": {
-                "$id": 17,
+                "$id": 15,
                 "$type": "15|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
             },
-            "$rlength": 3,
+            "$rlength": 2,
             "$rcontent": [
                 {
                     "$k": {
                         "$type": 13,
                         6,
-                        4,
+                        5,
                         0
                     },
-                    "$v": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        4,
-                        6,
-                        0
-                    },
-                    "$v": "7570cd18-95ca-4f50-827c-7c40bbcebeb4"
+                    "$v": "cfd35157-cabc-4e22-98fc-9df86779bf68"
                 },
                 {
                     "$k": {
@@ -1084,42 +1032,42 @@
                         4,
                         0
                     },
-                    "$v": "4d9a5896-77f2-494c-aeee-9e9419225a10"
+                    "$v": "75ac3dd4-8e08-4134-b18f-5f955f0d6986"
                 }
             ]
         },
         "goalObjectMap3D": {
-            "$id": 18,
+            "$id": 16,
             "$type": 14,
-            "comparer": $iref:17,
+            "comparer": $iref:15,
             "$rlength": 1,
             "$rcontent": [
                 {
                     "$k": {
                         "$type": 13,
                         8,
-                        3,
+                        4,
                         0
                     },
-                    "$v": "b6b52dec-f5e1-47af-aa86-f2f71c9d3ee7"
+                    "$v": "791746be-da51-4d02-b46a-9ceb540a756f"
                 }
             ]
         }
     },
     "playerStart": {
-        "$id": 19,
+        "$id": 17,
         "$type": "16|PlayerStartPosition, Assembly-CSharp",
         "startGridPos": {
             "$type": 2,
             6,
-            4
+            5
         }
     },
     "globalObjectCounts": {
-        "$id": 20,
+        "$id": 18,
         "$type": "17|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
         "comparer": {
-            "$id": 21,
+            "$id": 19,
             "$type": "18|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
         },
         "$rlength": 4,
@@ -1138,7 +1086,7 @@
             },
             {
                 "$k": 2,
-                "$v": 1
+                "$v": 0
             }
         ]
     }
