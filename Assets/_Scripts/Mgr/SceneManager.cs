@@ -12,6 +12,7 @@ public class SceneMGR : MonoBehaviour
     public static event LoadingScreen OnLoadingScreen;
     [SerializeField] private MMF_Player sceneTransitionPlayer;
     private bool waitingForSceneLoad;
+    private string pendingDestinationSceneName;
     // let's change this later to scene paths or something else
 
     private void Awake()
@@ -22,6 +23,7 @@ public class SceneMGR : MonoBehaviour
         {
             Debug.Log("Destroying duplicate SceneMGR");
             Destroy(this.gameObject);
+            return;
         }
         else
         {
@@ -43,6 +45,8 @@ public class SceneMGR : MonoBehaviour
         // place holder!
         HubWorldRaycaster.OnSceneChange -= ChangeScene;
         SceneManager.sceneLoaded -= HandleSceneLoaded;
+        if (Instance == this)
+            Instance = null;
     }
 
     // Change the string to a reference later
@@ -77,6 +81,9 @@ public class SceneMGR : MonoBehaviour
             return;
         }
 
+        if (waitingForSceneLoad)
+            return;
+
         MMF_Player player = sceneTransitionPlayer != null ? sceneTransitionPlayer : FindSceneTransitionPlayer();
         if (player == null)
         {
@@ -91,12 +98,13 @@ public class SceneMGR : MonoBehaviour
             return;
         }
 
-        if (waitingForSceneLoad) SceneManager.sceneLoaded -= HandleSceneLoaded;
         waitingForSceneLoad = true;
+        pendingDestinationSceneName = sceneName;
         SceneManager.sceneLoaded += HandleSceneLoaded;
         OnLoadingScreen?.Invoke(true);
 
         loadSceneFeedback.DestinationSceneName = sceneName;
+        NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
         player.PlayFeedbacks();
     }
 
@@ -115,8 +123,9 @@ public class SceneMGR : MonoBehaviour
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (!waitingForSceneLoad) return;
+        if (!waitingForSceneLoad || !string.Equals(scene.name, pendingDestinationSceneName)) return;
         waitingForSceneLoad = false;
+        pendingDestinationSceneName = null;
         SceneManager.sceneLoaded -= HandleSceneLoaded;
         OnLoadingScreen?.Invoke(false);
     }

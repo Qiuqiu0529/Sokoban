@@ -874,19 +874,19 @@
                 "$id": 7,
                 "$type": "9|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
             },
-            "$rlength": 3,
+            "$rlength": 11,
             "$rcontent": [
                 {
-                    "$k": "cfd35157-cabc-4e22-98fc-9df86779bf68",
+                    "$k": "7c6e6369-2253-42c2-b8a9-3b2fdb5f82d5",
                     "$v": {
                         "$id": 8,
                         "$type": "10|ObjDataInstance, Assembly-CSharp",
                         "objID": 0,
-                        "instanceID": "cfd35157-cabc-4e22-98fc-9df86779bf68",
+                        "instanceID": "7c6e6369-2253-42c2-b8a9-3b2fdb5f82d5",
                         "mainGrid": {
                             "$type": 2,
-                            6,
-                            5
+                            7,
+                            4
                         },
                         "channelID": 0,
                         "height": 0,
@@ -904,8 +904,8 @@
                             "$rcontent": [
                                 {
                                     "$type": "13|UnityEngine.Vector3Int, UnityEngine.CoreModule",
-                                    6,
-                                    5,
+                                    7,
+                                    4,
                                     0
                                 }
                             ]
@@ -1004,14 +1004,358 @@
                             0
                         }
                     }
+                },
+                {
+                    "$k": "75224a24-d0d6-4202-a54d-7f93e9f69ada",
+                    "$v": {
+                        "$id": 14,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "75224a24-d0d6-4202-a54d-7f93e9f69ada",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 15,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.980393648,
+                            -0.4773543,
+                            5.341152
+                        }
+                    }
+                },
+                {
+                    "$k": "8103af7e-8057-4b11-b15e-2ce427dd460d",
+                    "$v": {
+                        "$id": 16,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "8103af7e-8057-4b11-b15e-2ce427dd460d",
+                        "mainGrid": {
+                            "$type": 2,
+                            9,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 17,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    9,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.86248541,
+                            -0.447023273,
+                            5.275784
+                        }
+                    }
+                },
+                {
+                    "$k": "3092cf59-7a39-4c73-9dce-750a3db59f1e",
+                    "$v": {
+                        "$id": 18,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "3092cf59-7a39-4c73-9dce-750a3db59f1e",
+                        "mainGrid": {
+                            "$type": 2,
+                            9,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 19,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    9,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.85979557,
+                            -0.4965124,
+                            4.69111633
+                        }
+                    }
+                },
+                {
+                    "$k": "27421c94-9572-4c1e-a31e-e38b24dab166",
+                    "$v": {
+                        "$id": 20,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "27421c94-9572-4c1e-a31e-e38b24dab166",
+                        "mainGrid": {
+                            "$type": 2,
+                            9,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 21,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    9,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.90085888,
+                            -0.4773544,
+                            3.72446728
+                        }
+                    }
+                },
+                {
+                    "$k": "eae70ca1-286b-4624-9590-061f5d78ba8a",
+                    "$v": {
+                        "$id": 22,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "eae70ca1-286b-4624-9590-061f5d78ba8a",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 23,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.2524159,
+                            -0.4773544,
+                            3.878521
+                        }
+                    }
+                },
+                {
+                    "$k": "b1314d26-01fc-47e4-ba03-b71a4d116529",
+                    "$v": {
+                        "$id": 24,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "b1314d26-01fc-47e4-ba03-b71a4d116529",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 25,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.02406931,
+                            -0.4773544,
+                            3.98007274
+                        }
+                    }
+                },
+                {
+                    "$k": "d4ea2ca5-b1f1-495a-832d-b1e8c81b73ea",
+                    "$v": {
+                        "$id": 26,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "d4ea2ca5-b1f1-495a-832d-b1e8c81b73ea",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 27,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.82546663,
+                            -0.447023273,
+                            4.92324829
+                        }
+                    }
+                },
+                {
+                    "$k": "af7be6ef-d204-4997-8a0a-039685b5867a",
+                    "$v": {
+                        "$id": 28,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "af7be6ef-d204-4997-8a0a-039685b5867a",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 29,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.8237486,
+                            -0.4965124,
+                            3.25101852
+                        }
+                    }
                 }
             ]
         },
         "gridToInstanceMap3D": {
-            "$id": 14,
+            "$id": 30,
             "$type": "14|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
             "comparer": {
-                "$id": 15,
+                "$id": 31,
                 "$type": "15|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
             },
             "$rlength": 2,
@@ -1019,11 +1363,11 @@
                 {
                     "$k": {
                         "$type": 13,
-                        6,
-                        5,
+                        7,
+                        4,
                         0
                     },
-                    "$v": "cfd35157-cabc-4e22-98fc-9df86779bf68"
+                    "$v": "7c6e6369-2253-42c2-b8a9-3b2fdb5f82d5"
                 },
                 {
                     "$k": {
@@ -1037,9 +1381,9 @@
             ]
         },
         "goalObjectMap3D": {
-            "$id": 16,
+            "$id": 32,
             "$type": 14,
-            "comparer": $iref:15,
+            "comparer": $iref:31,
             "$rlength": 1,
             "$rcontent": [
                 {
@@ -1055,19 +1399,19 @@
         }
     },
     "playerStart": {
-        "$id": 17,
+        "$id": 33,
         "$type": "16|PlayerStartPosition, Assembly-CSharp",
         "startGridPos": {
             "$type": 2,
-            6,
-            5
+            7,
+            4
         }
     },
     "globalObjectCounts": {
-        "$id": 18,
+        "$id": 34,
         "$type": "17|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
         "comparer": {
-            "$id": 19,
+            "$id": 35,
             "$type": "18|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
         },
         "$rlength": 4,
@@ -1085,8 +1429,8 @@
                 "$v": 1
             },
             {
-                "$k": 2,
-                "$v": 0
+                "$k": 11,
+                "$v": 8
             }
         ]
     }

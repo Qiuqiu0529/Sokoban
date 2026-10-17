@@ -4,7 +4,7 @@
     "mapData": {
         "$id": 1,
         "$type": "1|SerializableMapData, Assembly-CSharp",
-        "mapID": "d2e42b41-dd40-4434-82c2-6f38329dfb96",
+        "mapID": "2d78d24b-3e0d-408a-a6ee-b956fae73c28",
         "gridLength": 10,
         "gridWidth": 10,
         "gridMin": {
@@ -32,35 +32,12 @@
                 0,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
+                1,
+                1,
                 0,
                 1,
                 1,
                 1,
-                0,
-                0,
-                0,
-                0,
                 0,
                 0,
                 1,
@@ -68,9 +45,29 @@
                 1,
                 1,
                 0,
+                1,
+                1,
+                1,
                 0,
                 0,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
                 0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
                 0,
                 0,
                 1,
@@ -78,16 +75,19 @@
                 1,
                 1,
                 0,
-                0,
+                1,
+                2,
+                1,
                 0,
                 0,
                 0,
                 0,
                 1,
                 1,
-                1,
-                1,
                 0,
+                1,
+                1,
+                1,
                 0,
                 0,
                 0,
@@ -127,12 +127,12 @@
                 "$id": 4,
                 "$type": "5|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector2Int, UnityEngine.CoreModule]], mscorlib"
             },
-            "$rlength": 15,
+            "$rlength": 47,
             "$rcontent": [
                 {
                     "$k": {
                         "$type": 2,
-                        5,
+                        3,
                         6
                     },
                     "$v": {
@@ -145,6 +145,409 @@
                 {
                     "$k": {
                         "$type": 2,
+                        4,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        0
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        0
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
                         5,
                         5
                     },
@@ -158,138 +561,47 @@
                 {
                     "$k": {
                         "$type": 2,
+                        6,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
                         5,
-                        4
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        6,
-                        3
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        7,
-                        3
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        8,
-                        3
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        8,
-                        4
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        8,
-                        5
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        8,
-                        6
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        7,
-                        6
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        6,
-                        6
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        6,
-                        5
-                    },
-                    "$v": {
-                        "$type": 6,
-                        0,
-                        0,
-                        0
-                    }
-                },
-                {
-                    "$k": {
-                        "$type": 2,
-                        6,
-                        4
+                        2
                     },
                     "$v": {
                         "$type": 6,
@@ -316,6 +628,110 @@
                         "$type": 2,
                         7,
                         5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        1
                     },
                     "$v": {
                         "$type": 6,
@@ -341,21 +757,21 @@
                 "$id": 7,
                 "$type": "9|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
             },
-            "$rlength": 11,
+            "$rlength": 7,
             "$rcontent": [
                 {
-                    "$k": "04268177-f72a-432a-9ea3-3578ae011cb3",
+                    "$k": "768fae6c-cc1d-4db2-9fac-ea7f3e26756b",
                     "$v": {
                         "$id": 8,
                         "$type": "10|ObjDataInstance, Assembly-CSharp",
-                        "objID": 9,
-                        "instanceID": "04268177-f72a-432a-9ea3-3578ae011cb3",
+                        "objID": 3,
+                        "instanceID": "768fae6c-cc1d-4db2-9fac-ea7f3e26756b",
                         "mainGrid": {
                             "$type": 2,
-                            5,
-                            6
+                            7,
+                            4
                         },
-                        "channelID": 2,
+                        "channelID": 0,
                         "height": 0,
                         "rotation": {
                             "$type": "11|UnityEngine.Quaternion, UnityEngine.CoreModule",
@@ -371,27 +787,34 @@
                             "$rcontent": [
                                 {
                                     "$type": "13|UnityEngine.Vector3Int, UnityEngine.CoreModule",
-                                    5,
-                                    6,
+                                    7,
+                                    4,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "bc82ad9a-3cdf-412d-ad30-c210b16b69fb",
+                    "$k": "7971fb0d-6362-41ad-b6c4-26096d6ebf26",
                     "$v": {
                         "$id": 10,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "bc82ad9a-3cdf-412d-ad30-c210b16b69fb",
+                        "objID": 2,
+                        "instanceID": "7971fb0d-6362-41ad-b6c4-26096d6ebf26",
                         "mainGrid": {
                             "$type": 2,
-                            7,
-                            5
+                            6,
+                            3
                         },
-                        "channelID": 3,
+                        "channelID": 0,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
@@ -407,27 +830,34 @@
                             "$rcontent": [
                                 {
                                     "$type": 13,
-                                    7,
-                                    5,
+                                    6,
+                                    3,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "43fd0762-0818-4a88-93cd-d308911a8a2d",
+                    "$k": "0cafca7c-17bf-44a8-91ce-ad1181ec54b2",
                     "$v": {
                         "$id": 12,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "43fd0762-0818-4a88-93cd-d308911a8a2d",
+                        "objID": 3,
+                        "instanceID": "0cafca7c-17bf-44a8-91ce-ad1181ec54b2",
                         "mainGrid": {
                             "$type": 2,
                             6,
-                            6
+                            4
                         },
-                        "channelID": 1,
+                        "channelID": 0,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
@@ -444,26 +874,33 @@
                                 {
                                     "$type": 13,
                                     6,
-                                    6,
+                                    4,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "a65e10b4-34ec-4c15-81fd-067b9ba3ba43",
+                    "$k": "de543215-edab-45a6-bd04-fae5b52fcaa8",
                     "$v": {
                         "$id": 14,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "a65e10b4-34ec-4c15-81fd-067b9ba3ba43",
+                        "objID": 2,
+                        "instanceID": "de543215-edab-45a6-bd04-fae5b52fcaa8",
                         "mainGrid": {
                             "$type": 2,
                             7,
-                            6
+                            3
                         },
-                        "channelID": 2,
+                        "channelID": 0,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
@@ -480,33 +917,40 @@
                                 {
                                     "$type": 13,
                                     7,
-                                    6,
+                                    3,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "ed44217b-dea5-46e7-9c7d-9579496e6b94",
+                    "$k": "e8529dd4-77db-4355-8d84-f45f1d8d09b2",
                     "$v": {
                         "$id": 16,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "ed44217b-dea5-46e7-9c7d-9579496e6b94",
+                        "objID": 1,
+                        "instanceID": "e8529dd4-77db-4355-8d84-f45f1d8d09b2",
                         "mainGrid": {
                             "$type": 2,
-                            8,
-                            4
+                            3,
+                            3
                         },
-                        "channelID": 2,
+                        "channelID": 1,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
                             0,
+                            0.7071068,
                             0,
-                            0,
-                            1
+                            0.7071068
                         },
                         "currentOccupied": {
                             "$id": 17,
@@ -515,27 +959,34 @@
                             "$rcontent": [
                                 {
                                     "$type": 13,
-                                    8,
-                                    4,
+                                    3,
+                                    3,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "f45ee66d-7b83-4776-af9d-6604d4d4518a",
+                    "$k": "c8166181-6594-4e5a-ace5-105638cc1af3",
                     "$v": {
                         "$id": 18,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "f45ee66d-7b83-4776-af9d-6604d4d4518a",
+                        "objID": 4,
+                        "instanceID": "c8166181-6594-4e5a-ace5-105638cc1af3",
                         "mainGrid": {
                             "$type": 2,
-                            7,
-                            3
+                            8,
+                            5
                         },
-                        "channelID": 3,
+                        "channelID": 1,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
@@ -551,27 +1002,34 @@
                             "$rcontent": [
                                 {
                                     "$type": 13,
-                                    7,
-                                    3,
+                                    8,
+                                    5,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 },
                 {
-                    "$k": "5a9546f3-cfea-4b1c-935d-e0c82c290491",
+                    "$k": "21e7e7f8-ba0a-4ae7-85c2-2fabc0795697",
                     "$v": {
                         "$id": 20,
                         "$type": 10,
-                        "objID": 9,
-                        "instanceID": "5a9546f3-cfea-4b1c-935d-e0c82c290491",
+                        "objID": 0,
+                        "instanceID": "21e7e7f8-ba0a-4ae7-85c2-2fabc0795697",
                         "mainGrid": {
                             "$type": 2,
-                            8,
-                            6
+                            3,
+                            4
                         },
-                        "channelID": 1,
+                        "channelID": 0,
                         "height": 0,
                         "rotation": {
                             "$type": 11,
@@ -587,213 +1045,58 @@
                             "$rcontent": [
                                 {
                                     "$type": 13,
-                                    8,
-                                    6,
-                                    0
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$k": "04afa73d-7169-4206-94cf-7d38d4d218ca",
-                    "$v": {
-                        "$id": 22,
-                        "$type": 10,
-                        "objID": 9,
-                        "instanceID": "04afa73d-7169-4206-94cf-7d38d4d218ca",
-                        "mainGrid": {
-                            "$type": 2,
-                            6,
-                            5
-                        },
-                        "channelID": 2,
-                        "height": 0,
-                        "rotation": {
-                            "$type": 11,
-                            0,
-                            0,
-                            0,
-                            1
-                        },
-                        "currentOccupied": {
-                            "$id": 23,
-                            "$type": 12,
-                            "$rlength": 1,
-                            "$rcontent": [
-                                {
-                                    "$type": 13,
-                                    6,
-                                    5,
-                                    0
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$k": "2b7cc577-c502-4bca-9c26-3b6f6ae200c1",
-                    "$v": {
-                        "$id": 24,
-                        "$type": 10,
-                        "objID": 9,
-                        "instanceID": "2b7cc577-c502-4bca-9c26-3b6f6ae200c1",
-                        "mainGrid": {
-                            "$type": 2,
-                            8,
-                            5
-                        },
-                        "channelID": 2,
-                        "height": 0,
-                        "rotation": {
-                            "$type": 11,
-                            0,
-                            0,
-                            0,
-                            1
-                        },
-                        "currentOccupied": {
-                            "$id": 25,
-                            "$type": 12,
-                            "$rlength": 1,
-                            "$rcontent": [
-                                {
-                                    "$type": 13,
-                                    8,
-                                    5,
-                                    0
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$k": "3e4d0485-f64b-4a81-b920-373cf5d79a46",
-                    "$v": {
-                        "$id": 26,
-                        "$type": 10,
-                        "objID": 9,
-                        "instanceID": "3e4d0485-f64b-4a81-b920-373cf5d79a46",
-                        "mainGrid": {
-                            "$type": 2,
-                            5,
-                            5
-                        },
-                        "channelID": 2,
-                        "height": 0,
-                        "rotation": {
-                            "$type": 11,
-                            0,
-                            0,
-                            0,
-                            1
-                        },
-                        "currentOccupied": {
-                            "$id": 27,
-                            "$type": 12,
-                            "$rlength": 1,
-                            "$rcontent": [
-                                {
-                                    "$type": 13,
-                                    5,
-                                    5,
-                                    0
-                                }
-                            ]
-                        }
-                    }
-                },
-                {
-                    "$k": "5e3951db-78ec-4c16-853d-01d6dd688c79",
-                    "$v": {
-                        "$id": 28,
-                        "$type": 10,
-                        "objID": 9,
-                        "instanceID": "5e3951db-78ec-4c16-853d-01d6dd688c79",
-                        "mainGrid": {
-                            "$type": 2,
-                            6,
-                            3
-                        },
-                        "channelID": 3,
-                        "height": 0,
-                        "rotation": {
-                            "$type": 11,
-                            0,
-                            0,
-                            0,
-                            1
-                        },
-                        "currentOccupied": {
-                            "$id": 29,
-                            "$type": 12,
-                            "$rlength": 1,
-                            "$rcontent": [
-                                {
-                                    "$type": 13,
-                                    6,
                                     3,
+                                    4,
                                     0
                                 }
                             ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
                         }
                     }
                 }
             ]
         },
         "gridToInstanceMap3D": {
-            "$id": 30,
+            "$id": 22,
             "$type": "14|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
             "comparer": {
-                "$id": 31,
+                "$id": 23,
                 "$type": "15|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
             },
-            "$rlength": 11,
+            "$rlength": 6,
             "$rcontent": [
                 {
                     "$k": {
                         "$type": 13,
-                        5,
-                        6,
-                        0
-                    },
-                    "$v": "04268177-f72a-432a-9ea3-3578ae011cb3"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
                         7,
-                        5,
-                        0
-                    },
-                    "$v": "bc82ad9a-3cdf-412d-ad30-c210b16b69fb"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        6,
-                        6,
-                        0
-                    },
-                    "$v": "43fd0762-0818-4a88-93cd-d308911a8a2d"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        7,
-                        6,
-                        0
-                    },
-                    "$v": "a65e10b4-34ec-4c15-81fd-067b9ba3ba43"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        8,
                         4,
                         0
                     },
-                    "$v": "ed44217b-dea5-46e7-9c7d-9579496e6b94"
+                    "$v": "768fae6c-cc1d-4db2-9fac-ea7f3e26756b"
+                },
+                {
+                    "$k": {
+                        "$type": 13,
+                        6,
+                        3,
+                        0
+                    },
+                    "$v": "7971fb0d-6362-41ad-b6c4-26096d6ebf26"
+                },
+                {
+                    "$k": {
+                        "$type": 13,
+                        6,
+                        4,
+                        0
+                    },
+                    "$v": "0cafca7c-17bf-44a8-91ce-ad1181ec54b2"
                 },
                 {
                     "$k": {
@@ -802,85 +1105,83 @@
                         3,
                         0
                     },
-                    "$v": "f45ee66d-7b83-4776-af9d-6604d4d4518a"
+                    "$v": "de543215-edab-45a6-bd04-fae5b52fcaa8"
                 },
                 {
                     "$k": {
                         "$type": 13,
-                        8,
-                        6,
-                        0
-                    },
-                    "$v": "5a9546f3-cfea-4b1c-935d-e0c82c290491"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        6,
-                        5,
-                        0
-                    },
-                    "$v": "04afa73d-7169-4206-94cf-7d38d4d218ca"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        8,
-                        5,
-                        0
-                    },
-                    "$v": "2b7cc577-c502-4bca-9c26-3b6f6ae200c1"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        5,
-                        5,
-                        0
-                    },
-                    "$v": "3e4d0485-f64b-4a81-b920-373cf5d79a46"
-                },
-                {
-                    "$k": {
-                        "$type": 13,
-                        6,
+                        3,
                         3,
                         0
                     },
-                    "$v": "5e3951db-78ec-4c16-853d-01d6dd688c79"
+                    "$v": "e8529dd4-77db-4355-8d84-f45f1d8d09b2"
+                },
+                {
+                    "$k": {
+                        "$type": 13,
+                        3,
+                        4,
+                        0
+                    },
+                    "$v": "21e7e7f8-ba0a-4ae7-85c2-2fabc0795697"
                 }
             ]
         },
         "goalObjectMap3D": {
-            "$id": 32,
+            "$id": 24,
             "$type": 14,
-            "comparer": $iref:31,
-            "$rlength": 0,
+            "comparer": $iref:23,
+            "$rlength": 1,
             "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 13,
+                        8,
+                        5,
+                        0
+                    },
+                    "$v": "c8166181-6594-4e5a-ace5-105638cc1af3"
+                }
             ]
         }
     },
     "playerStart": {
-        "$id": 33,
+        "$id": 25,
         "$type": "16|PlayerStartPosition, Assembly-CSharp",
         "startGridPos": {
             "$type": 2,
-            0,
-            0
+            3,
+            4
         }
     },
     "globalObjectCounts": {
-        "$id": 34,
+        "$id": 26,
         "$type": "17|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
         "comparer": {
-            "$id": 35,
+            "$id": 27,
             "$type": "18|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
         },
-        "$rlength": 1,
+        "$rlength": 5,
         "$rcontent": [
             {
-                "$k": 9,
-                "$v": 11
+                "$k": 2,
+                "$v": 2
+            },
+            {
+                "$k": 1,
+                "$v": 1
+            },
+            {
+                "$k": 4,
+                "$v": 1
+            },
+            {
+                "$k": 0,
+                "$v": 1
+            },
+            {
+                "$k": 3,
+                "$v": 2
             }
         ]
     }

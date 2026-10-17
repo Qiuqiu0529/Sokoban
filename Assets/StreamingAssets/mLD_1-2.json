@@ -877,16 +877,16 @@
             "$rlength": 4,
             "$rcontent": [
                 {
-                    "$k": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e",
+                    "$k": "f3a66b7c-b4e4-4491-86b8-31d4facea1a7",
                     "$v": {
                         "$id": 8,
                         "$type": "10|ObjDataInstance, Assembly-CSharp",
                         "objID": 0,
-                        "instanceID": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e",
+                        "instanceID": "f3a66b7c-b4e4-4491-86b8-31d4facea1a7",
                         "mainGrid": {
                             "$type": 2,
-                            6,
-                            4
+                            4,
+                            1
                         },
                         "channelID": 0,
                         "height": 0,
@@ -904,8 +904,8 @@
                             "$rcontent": [
                                 {
                                     "$type": "13|UnityEngine.Vector3Int, UnityEngine.CoreModule",
-                                    6,
                                     4,
+                                    1,
                                     0
                                 }
                             ]
@@ -1062,11 +1062,11 @@
                 {
                     "$k": {
                         "$type": 13,
-                        6,
                         4,
+                        1,
                         0
                     },
-                    "$v": "900ed8b3-b0a8-4784-b5c4-1db67c4c932e"
+                    "$v": "f3a66b7c-b4e4-4491-86b8-31d4facea1a7"
                 },
                 {
                     "$k": {
@@ -1111,8 +1111,8 @@
         "$type": "16|PlayerStartPosition, Assembly-CSharp",
         "startGridPos": {
             "$type": 2,
-            6,
-            4
+            4,
+            1
         }
     },
     "globalObjectCounts": {

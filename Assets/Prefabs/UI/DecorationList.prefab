@@ -394,5 +394,5 @@ MonoBehaviour:
   outOfViewDistance: 0
   _uiBlock: {fileID: 0}
   crossAxis: 1
-  crossAxisItemCount: 2
+  crossAxisItemCount: 1
   virtualBlockSerializer: {fileID: 0}

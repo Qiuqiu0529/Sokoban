@@ -29,6 +29,7 @@ public class LevelMgr : Singleton<LevelMgr>
     {
         LevelLoadBridge.IsEditorTestLevel = false;
         mMF_LoadScene.DestinationSceneName = levelName;
+        NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
         loadScene.PlayFeedbacks();
     }
 
@@ -45,6 +46,7 @@ public class LevelMgr : Singleton<LevelMgr>
     {
         mMF_LoadScene.DestinationSceneName = "HubWorld";
 
+        NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
         loadScene.PlayFeedbacks();
     }
 
@@ -69,6 +71,7 @@ public class LevelMgr : Singleton<LevelMgr>
 
         }
 
+        NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
         loadScene.PlayFeedbacks();
 
     }

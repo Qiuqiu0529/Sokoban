@@ -474,6 +474,7 @@ public class LevelEditor : Singleton<LevelEditor>
 
             LevelLoadBridge.LevelNameToLoad = levelName;
             LevelLoadBridge.IsEditorTestLevel = true;
+            NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
             loadTestScene.PlayFeedbacks();
         }
     }

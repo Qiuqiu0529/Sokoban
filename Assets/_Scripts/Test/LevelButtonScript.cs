@@ -25,6 +25,7 @@ public class LevelButtonScript : MonoBehaviour
     {
         mmf_Player.GetFeedbackOfType<MMF_LoadScene>().DestinationSceneName = sceneName;
 
+        NovaSceneUnloadGuard.PrepareActiveSceneForUnload();
         mmf_Player.PlayFeedbacks();
     }
 
