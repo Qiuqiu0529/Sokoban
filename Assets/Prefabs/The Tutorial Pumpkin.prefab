@@ -333,19 +333,9 @@ MonoBehaviour:
     text: "\u80FD\u63A8\u5C31\u662F\u597D\u7BB1"
     keyboardText: 
     gamepadText: 
-  - levelName: 2-3
-    useDeviceSpecificText: 0
-    text: 
-    keyboardText: 
-    gamepadText: 
-  - levelName: 2-4
-    useDeviceSpecificText: 0
-    text: 
-    keyboardText: 
-    gamepadText: 
   - levelName: 3-1
     useDeviceSpecificText: 0
-    text: 
+    text: "\u5899\u9650\u5236\u65B9\u5411"
     keyboardText: 
     gamepadText: 
   - levelName: 3-2
@@ -433,7 +423,7 @@ MonoBehaviour:
   m_text: "\u6C6A\u6C6A\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f74b315efe4d9de4699c75454514c5d2, type: 2}
-  m_sharedMaterial: {fileID: -8565899459744006984, guid: f74b315efe4d9de4699c75454514c5d2,
+  m_sharedMaterial: {fileID: 8175987513729024320, guid: f74b315efe4d9de4699c75454514c5d2,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

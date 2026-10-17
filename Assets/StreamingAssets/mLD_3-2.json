@@ -1,0 +1,1336 @@
+{
+    "$id": 0,
+    "$type": "0|SerializableLevelData, Assembly-CSharp",
+    "mapData": {
+        "$id": 1,
+        "$type": "1|SerializableMapData, Assembly-CSharp",
+        "mapID": "3ed7d194-7bdb-4315-bd4f-6aa2347cc136",
+        "gridLength": 10,
+        "gridWidth": 10,
+        "gridMin": {
+            "$type": "2|UnityEngine.Vector2Int, UnityEngine.CoreModule",
+            0,
+            0
+        },
+        "cellSize": 1,
+        "tileIDs": {
+            "$id": 2,
+            "$type": "3|System.Int32[], mscorlib",
+            "$plength": 100,
+            "$pcontent": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                1,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                2,
+                1,
+                1,
+                0,
+                0,
+                1,
+                2,
+                2,
+                2,
+                2,
+                2,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "tileRotations": {
+            "$id": 3,
+            "$type": "4|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib",
+            "comparer": {
+                "$id": 4,
+                "$type": "5|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector2Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 38,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        5
+                    },
+                    "$v": {
+                        "$type": "6|UnityEngine.Vector3, UnityEngine.CoreModule",
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        9,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                }
+            ]
+        },
+        "tileWalls": {
+            "$id": 5,
+            "$type": "7|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[System.Collections.Generic.Dictionary`2[[WallDirection, Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib",
+            "comparer": $iref:4,
+            "$rlength": 5,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        4
+                    },
+                    "$v": {
+                        "$id": 6,
+                        "$type": "8|System.Collections.Generic.Dictionary`2[[WallDirection, Assembly-CSharp],[System.Int32, mscorlib]], mscorlib",
+                        "comparer": {
+                            "$id": 7,
+                            "$type": "9|System.Collections.Generic.EnumEqualityComparer`1[[WallDirection, Assembly-CSharp]], mscorlib",
+                            "$rlength": 0,
+                            "$rcontent": [
+                            ]
+                        },
+                        "$rlength": 1,
+                        "$rcontent": [
+                            {
+                                "$k": 0,
+                                "$v": 1
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        4
+                    },
+                    "$v": {
+                        "$id": 8,
+                        "$type": 8,
+                        "comparer": $iref:7,
+                        "$rlength": 1,
+                        "$rcontent": [
+                            {
+                                "$k": 0,
+                                "$v": 1
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        3
+                    },
+                    "$v": {
+                        "$id": 9,
+                        "$type": 8,
+                        "comparer": {
+                            "$id": 10,
+                            "$type": 9,
+                            "$rlength": 0,
+                            "$rcontent": [
+                            ]
+                        },
+                        "$rlength": 1,
+                        "$rcontent": [
+                            {
+                                "$k": 0,
+                                "$v": 1
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        3
+                    },
+                    "$v": {
+                        "$id": 11,
+                        "$type": 8,
+                        "comparer": $iref:10,
+                        "$rlength": 1,
+                        "$rcontent": [
+                            {
+                                "$k": 0,
+                                "$v": 1
+                            }
+                        ]
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        3
+                    },
+                    "$v": {
+                        "$id": 12,
+                        "$type": 8,
+                        "comparer": {
+                            "$id": 13,
+                            "$type": 9,
+                            "$rlength": 0,
+                            "$rcontent": [
+                            ]
+                        },
+                        "$rlength": 1,
+                        "$rcontent": [
+                            {
+                                "$k": 0,
+                                "$v": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "objectInstances": {
+            "$id": 14,
+            "$type": "10|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ObjDataInstance, Assembly-CSharp]], mscorlib",
+            "comparer": {
+                "$id": 15,
+                "$type": "11|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
+            },
+            "$rlength": 10,
+            "$rcontent": [
+                {
+                    "$k": "50052e11-442d-48de-934c-cb3d9b422209",
+                    "$v": {
+                        "$id": 16,
+                        "$type": "12|ObjDataInstance, Assembly-CSharp",
+                        "objID": 1,
+                        "instanceID": "50052e11-442d-48de-934c-cb3d9b422209",
+                        "mainGrid": {
+                            "$type": 2,
+                            3,
+                            5
+                        },
+                        "channelID": 3,
+                        "height": 0,
+                        "rotation": {
+                            "$type": "13|UnityEngine.Quaternion, UnityEngine.CoreModule",
+                            0,
+                            1,
+                            0,
+                            -4.371139E-08
+                        },
+                        "currentOccupied": {
+                            "$id": 17,
+                            "$type": "14|System.Collections.Generic.List`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib",
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": "15|UnityEngine.Vector3Int, UnityEngine.CoreModule",
+                                    3,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "ba19997e-142c-42ad-a944-d55063f77285",
+                    "$v": {
+                        "$id": 18,
+                        "$type": 12,
+                        "objID": 4,
+                        "instanceID": "ba19997e-142c-42ad-a944-d55063f77285",
+                        "mainGrid": {
+                            "$type": 2,
+                            3,
+                            3
+                        },
+                        "channelID": 3,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 19,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    3,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "24abab0d-06ac-4382-8a33-676513ea1f05",
+                    "$v": {
+                        "$id": 20,
+                        "$type": 12,
+                        "objID": 0,
+                        "instanceID": "24abab0d-06ac-4382-8a33-676513ea1f05",
+                        "mainGrid": {
+                            "$type": 2,
+                            4,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 21,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    4,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "cc36ab63-613a-4083-9740-bc2d507dd96a",
+                    "$v": {
+                        "$id": 22,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "cc36ab63-613a-4083-9740-bc2d507dd96a",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 23,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    7,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "bccaa0c7-43bc-47e9-b497-d726df03e37a",
+                    "$v": {
+                        "$id": 24,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "bccaa0c7-43bc-47e9-b497-d726df03e37a",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 25,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    7,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "79da063e-aae6-4267-8b3f-8c4bed6b04b3",
+                    "$v": {
+                        "$id": 26,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "79da063e-aae6-4267-8b3f-8c4bed6b04b3",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 27,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    7,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "96b32e39-9e17-4f86-bb84-c0a16000ab4f",
+                    "$v": {
+                        "$id": 28,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "96b32e39-9e17-4f86-bb84-c0a16000ab4f",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            2
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 29,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    6,
+                                    2,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "4f67c868-858d-4786-b911-02b7d0a50b74",
+                    "$v": {
+                        "$id": 30,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "4f67c868-858d-4786-b911-02b7d0a50b74",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            6
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 31,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    6,
+                                    6,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "f2dd3887-0eea-4fc5-934f-413907849884",
+                    "$v": {
+                        "$id": 32,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "f2dd3887-0eea-4fc5-934f-413907849884",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            6
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 33,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    7,
+                                    6,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "5f687f8f-d08c-42cf-8bc5-890e598029d3",
+                    "$v": {
+                        "$id": 34,
+                        "$type": 12,
+                        "objID": 2,
+                        "instanceID": "5f687f8f-d08c-42cf-8bc5-890e598029d3",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            2
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 13,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 35,
+                            "$type": 14,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 15,
+                                    7,
+                                    2,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                }
+            ]
+        },
+        "gridToInstanceMap3D": {
+            "$id": 36,
+            "$type": "16|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
+            "comparer": {
+                "$id": 37,
+                "$type": "17|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 9,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 15,
+                        3,
+                        5,
+                        0
+                    },
+                    "$v": "50052e11-442d-48de-934c-cb3d9b422209"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        4,
+                        4,
+                        0
+                    },
+                    "$v": "24abab0d-06ac-4382-8a33-676513ea1f05"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        7,
+                        4,
+                        0
+                    },
+                    "$v": "cc36ab63-613a-4083-9740-bc2d507dd96a"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        7,
+                        5,
+                        0
+                    },
+                    "$v": "bccaa0c7-43bc-47e9-b497-d726df03e37a"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        7,
+                        3,
+                        0
+                    },
+                    "$v": "79da063e-aae6-4267-8b3f-8c4bed6b04b3"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        6,
+                        2,
+                        0
+                    },
+                    "$v": "96b32e39-9e17-4f86-bb84-c0a16000ab4f"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        6,
+                        6,
+                        0
+                    },
+                    "$v": "4f67c868-858d-4786-b911-02b7d0a50b74"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        7,
+                        6,
+                        0
+                    },
+                    "$v": "f2dd3887-0eea-4fc5-934f-413907849884"
+                },
+                {
+                    "$k": {
+                        "$type": 15,
+                        7,
+                        2,
+                        0
+                    },
+                    "$v": "5f687f8f-d08c-42cf-8bc5-890e598029d3"
+                }
+            ]
+        },
+        "goalObjectMap3D": {
+            "$id": 38,
+            "$type": 16,
+            "comparer": $iref:37,
+            "$rlength": 1,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 15,
+                        3,
+                        3,
+                        0
+                    },
+                    "$v": "ba19997e-142c-42ad-a944-d55063f77285"
+                }
+            ]
+        }
+    },
+    "playerStart": {
+        "$id": 39,
+        "$type": "18|PlayerStartPosition, Assembly-CSharp",
+        "startGridPos": {
+            "$type": 2,
+            4,
+            4
+        }
+    },
+    "globalObjectCounts": {
+        "$id": 40,
+        "$type": "19|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
+        "comparer": {
+            "$id": 41,
+            "$type": "20|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
+        },
+        "$rlength": 4,
+        "$rcontent": [
+            {
+                "$k": 1,
+                "$v": 1
+            },
+            {
+                "$k": 4,
+                "$v": 1
+            },
+            {
+                "$k": 0,
+                "$v": 1
+            },
+            {
+                "$k": 2,
+                "$v": 7
+            }
+        ]
+    }
+}
