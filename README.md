@@ -22,10 +22,16 @@ Unity 版本：`2022.3.47f1c1`。主要编辑场景：`Assets/Scenes/Re/LevelEdi
 
 <p align="center">
   <img src="Documentation/Images/editor-check.png" width="48%" alt="编辑器检查" />
-  <img src="Documentation/Images/level-scene.png" width="48%" alt="关卡场景" />
+  <img src="Documentation/Images/level-list.png" width="48%" alt="关卡场景" />
 </p>
-<p align="center"><sub>关卡检查 · 关卡场景</sub></p>
+<p align="center"><sub>关卡检查 · 关卡表</sub></p>
 
+
+<p align="center">
+  <img src="Documentation/Images/level-scene.png" width="48%" alt="编辑器检查" />
+  <img src="Documentation/Images/level-scene1.png" width="48%" alt="关卡场景" />
+</p>
+<p align="center"><sub> 关卡场景</sub></p>
 
 
 ## 游戏规则

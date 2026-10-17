@@ -318,7 +318,7 @@ PrefabInstance:
     - target: {fileID: 3022848265911777655, guid: 1893a64b34f9ff948aa04b86b2e20c7c,
         type: 3}
       propertyPath: m_text
-      value: "\u80FD\u63A8\u5C31\u662F\u597D\u7BB1"
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3022848265911777655, guid: 1893a64b34f9ff948aa04b86b2e20c7c,
         type: 3}
@@ -396,6 +396,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_BlockingMask.m_Bits
       value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 3511150516873162095, guid: 1893a64b34f9ff948aa04b86b2e20c7c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3909647215599160857, guid: 1893a64b34f9ff948aa04b86b2e20c7c,
         type: 3}

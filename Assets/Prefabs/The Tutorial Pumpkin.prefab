@@ -348,9 +348,19 @@ MonoBehaviour:
     text: 
     keyboardText: 
     gamepadText: 
-  - levelName: 3-4
+  - levelName: 4-1
     useDeviceSpecificText: 0
-    text: 
+    text: "\u5357\u74DC\u662F\u5426\u53EA\u662F\u5706\u5706\u5E7B\u5F71"
+    keyboardText: 
+    gamepadText: 
+  - levelName: 5-1
+    useDeviceSpecificText: 0
+    text: "\u603B\u6709\u4E00\u76CF\u706F\u7167\u4EAE\u5F52\u9014"
+    keyboardText: 
+    gamepadText: 
+  - levelName: 6-1
+    useDeviceSpecificText: 0
+    text: "\u6728\u6876\u6EDA\u6EDA\u6765"
     keyboardText: 
     gamepadText: 
   minimumTextSize: {x: 280, y: 150}

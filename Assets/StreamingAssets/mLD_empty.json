@@ -1,0 +1,687 @@
+{
+    "$id": 0,
+    "$type": "0|SerializableLevelData, Assembly-CSharp",
+    "mapData": {
+        "$id": 1,
+        "$type": "1|SerializableMapData, Assembly-CSharp",
+        "mapID": "d78f6d81-2af6-4cc7-9665-46e458def448",
+        "gridLength": 10,
+        "gridWidth": 10,
+        "gridMin": {
+            "$type": "2|UnityEngine.Vector2Int, UnityEngine.CoreModule",
+            0,
+            0
+        },
+        "cellSize": 1,
+        "tileIDs": {
+            "$id": 2,
+            "$type": "3|System.Int32[], mscorlib",
+            "$plength": 100,
+            "$pcontent": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "tileRotations": {
+            "$id": 3,
+            "$type": "4|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib",
+            "comparer": {
+                "$id": 4,
+                "$type": "5|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector2Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 38,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        5
+                    },
+                    "$v": {
+                        "$type": "6|UnityEngine.Vector3, UnityEngine.CoreModule",
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        1
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                }
+            ]
+        },
+        "tileWalls": {
+            "$id": 5,
+            "$type": "7|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[System.Collections.Generic.Dictionary`2[[WallDirection, Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib",
+            "comparer": $iref:4,
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        },
+        "objectInstances": {
+            "$id": 6,
+            "$type": "8|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ObjDataInstance, Assembly-CSharp]], mscorlib",
+            "comparer": {
+                "$id": 7,
+                "$type": "9|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
+            },
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        },
+        "gridToInstanceMap3D": {
+            "$id": 8,
+            "$type": "10|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
+            "comparer": {
+                "$id": 9,
+                "$type": "11|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        },
+        "goalObjectMap3D": {
+            "$id": 10,
+            "$type": 10,
+            "comparer": $iref:9,
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        }
+    },
+    "playerStart": {
+        "$id": 11,
+        "$type": "12|PlayerStartPosition, Assembly-CSharp",
+        "startGridPos": {
+            "$type": 2,
+            0,
+            0
+        }
+    },
+    "globalObjectCounts": {
+        "$id": 12,
+        "$type": "13|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
+        "comparer": {
+            "$id": 13,
+            "$type": "14|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
+        },
+        "$rlength": 0,
+        "$rcontent": [
+        ]
+    }
+}
