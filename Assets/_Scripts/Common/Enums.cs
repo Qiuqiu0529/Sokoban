@@ -41,6 +41,7 @@ public enum ObjectType
     PressureControlled = 1 << 19,      // Disappears while its linked plate is active.
     ChainPushable = 1 << 20,            // Can be pushed as a trailing object in a push chain.
     BlocksGoal = 1 << 21,               // Cannot share a grid with a grave/goal marker.
+    PureDecoration = 1 << 22,            // Editor-only visual object; ignored by gameplay occupancy.
 }
 
 public enum GameplayState

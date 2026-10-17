@@ -77,6 +77,10 @@ public class ObjDataInstance
     public int height;
     public Quaternion rotation;
     public List<Vector3Int> currentOccupied;
+    // Pure decorations can be placed continuously on the ground plane.
+    // Other objects continue to use their grid-derived position.
+    public bool hasCustomWorldPosition;
+    public Vector3 customWorldPosition;
 
     public ObjDataInstance DeepCopy()
     {
@@ -84,6 +88,8 @@ public class ObjDataInstance
         {
             instanceID = this.instanceID,
             channelID = this.channelID,
+            hasCustomWorldPosition = this.hasCustomWorldPosition,
+            customWorldPosition = this.customWorldPosition,
             currentOccupied = new List<Vector3Int>(this.currentOccupied)
         };
     }

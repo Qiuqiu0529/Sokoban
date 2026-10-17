@@ -189,7 +189,9 @@ public class MapData : SerializedScriptableObject
     public bool CanPlaceTile(Vector2Int gridPosition, TileData newtileData)
     {
         if (!IsWithinGrid(gridPosition))
-            return false;
+            // The editor expands the backing array when the user places outside
+            // its current bounds, so an out-of-range preview is still valid.
+            return true;
 
         Vector3Int pos3D = new Vector3Int(gridPosition.x, gridPosition.y, 0);
         string instanceID = GetInstanceIDAtGrid(pos3D);
@@ -292,10 +294,14 @@ public class MapData : SerializedScriptableObject
             {
                 ObjDataInstance mappedInstance = GetInstance(instanceID);
                 ObjData mappedData = mappedInstance == null ? null : GetObjectData(mappedInstance.objID);
-                if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksGoal)) return instanceID;
-                if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksMovement))
+                if (mappedData != null && mappedData.objType.HasFlag(ObjectType.PureDecoration))
+                {
+                    // Decorations are intentionally invisible to gameplay occupancy queries.
+                }
+                else if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksGoal)) return instanceID;
+                else if (mappedData != null && mappedData.objType.HasFlag(ObjectType.BlocksMovement))
                     blockingInstanceID = instanceID;
-                else
+                else if (mappedData == null || !mappedData.objType.HasFlag(ObjectType.PureDecoration))
                     nonBlockingInstanceID = instanceID;
             }
         }
@@ -307,6 +313,7 @@ public class MapData : SerializedScriptableObject
             if (IsPressureObjectHidden(instance.instanceID) || instance.currentOccupied == null ||
                 !instance.currentOccupied.Contains(gridPosition)) continue;
             ObjData data = GetObjectData(instance.objID);
+            if (data != null && data.objType.HasFlag(ObjectType.PureDecoration)) continue;
             if (data != null && data.objType.HasFlag(ObjectType.BlocksGoal)) return instance.instanceID;
             if (data != null && data.objType.HasFlag(ObjectType.BlocksMovement))
             {
@@ -339,6 +346,7 @@ public class MapData : SerializedScriptableObject
 
         ObjData objData = objDataList.GetObjDetails(objID);
         if (objData == null) return false;
+        bool isPureDecoration = objData.objType.HasFlag(ObjectType.PureDecoration);
         bool isGoal = objData.objType.HasFlag(ObjectType.Goal);
         bool isPlayer = objData.objType.HasFlag(ObjectType.Player);
         bool isGhost = objData.objType.HasFlag(ObjectType.Ghost);
@@ -351,6 +359,11 @@ public class MapData : SerializedScriptableObject
 
         foreach (var grid in tempInstance.currentOccupied)
         {
+            if (isPureDecoration)
+            {
+                // Decorations are visual-only and may overlap or sit between tiles.
+                continue;
+            }
             // Pomme may only be placed on a tile marked Walkable. Goal markers
             // are stored separately from solid occupants, so they can share
             // the tile with the player.
@@ -365,7 +378,7 @@ public class MapData : SerializedScriptableObject
             }
         }
 
-        if (tempInstance.currentOccupied.Count > 1)
+        if (!isPureDecoration && tempInstance.currentOccupied.Count > 1)
         {
             for (int i = 0; i < tempInstance.currentOccupied.Count; i++)
             {
@@ -500,6 +513,8 @@ public class MapData : SerializedScriptableObject
 
     public static bool CanShareMovementGrid(ObjectType firstType, ObjectType secondType)
     {
+        if (firstType.HasFlag(ObjectType.PureDecoration) || secondType.HasFlag(ObjectType.PureDecoration))
+            return true;
         return !(firstType.HasFlag(ObjectType.BlocksMovement) &&
                  secondType.HasFlag(ObjectType.BlocksMovement));
     }
@@ -507,6 +522,33 @@ public class MapData : SerializedScriptableObject
     public bool IsPressureObjectHidden(string instanceID)
     {
         return hiddenPressureObjects != null && hiddenPressureObjects.Contains(instanceID);
+    }
+
+    /// <summary>
+    /// Returns true when an object has become overlapped by a visible solid object,
+    /// such as a pumpkin reappearing after its pressure plate is released.
+    /// Such an object must not be movable out of the occupied cell.
+    /// </summary>
+    public bool IsOverlappingBlockingObject(string instanceID)
+    {
+        ObjDataInstance instance = GetInstance(instanceID);
+        if (instance == null || instance.currentOccupied == null) return false;
+
+        foreach (ObjDataInstance other in objectInstances.Values)
+        {
+            if (other == null || other.instanceID == instanceID || IsPressureObjectHidden(other.instanceID) ||
+                other.currentOccupied == null) continue;
+
+            ObjData otherData = GetObjectData(other.objID);
+            if (otherData == null || !otherData.objType.HasFlag(ObjectType.BlocksMovement)) continue;
+
+            foreach (Vector3Int occupiedGrid in instance.currentOccupied)
+            {
+                if (other.currentOccupied.Contains(occupiedGrid)) return true;
+            }
+        }
+
+        return false;
     }
 
     public void SetPressureObjectHidden(ObjDataInstance instance, bool hidden)
@@ -539,7 +581,7 @@ public class MapData : SerializedScriptableObject
     }
 
 
-    public string PlaceObject(Vector2Int mainGrid, ObjData objData, int height, Quaternion rotation, int channelID = 0)
+    public string PlaceObject(Vector2Int mainGrid, ObjData objData, int height, Quaternion rotation, int channelID = 0, Vector3? customWorldPosition = null)
     {
         if (objData == null)
         {
@@ -549,6 +591,11 @@ public class MapData : SerializedScriptableObject
 
         ObjDataInstance newInstance = new ObjDataInstance(objData.objID, mainGrid, height, rotation, objData);
         newInstance.channelID = channelID;
+        if (objData.objType.HasFlag(ObjectType.PureDecoration) && customWorldPosition.HasValue)
+        {
+            newInstance.hasCustomWorldPosition = true;
+            newInstance.customWorldPosition = customWorldPosition.Value;
+        }
         string instanceID = newInstance.instanceID;
 
         if (string.IsNullOrEmpty(instanceID))
@@ -559,7 +606,11 @@ public class MapData : SerializedScriptableObject
 
         objectInstances[instanceID] = newInstance;
 
-        if (objData.objType.HasFlag(ObjectType.Goal))
+        if (objData.objType.HasFlag(ObjectType.PureDecoration))
+        {
+            // Decorative instances are intentionally absent from occupancy maps.
+        }
+        else if (objData.objType.HasFlag(ObjectType.Goal))
         {
             foreach (var grid in newInstance.currentOccupied)
             {

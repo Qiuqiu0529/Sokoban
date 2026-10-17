@@ -356,7 +356,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.28500003, y: -36, z: -0.28500003, w: -36}
+  m_margin: {x: -0.28500003, y: -28.8, z: -0.28500003, w: -28.8}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   _SortingLayer: 0
@@ -702,7 +702,7 @@ Transform:
   m_GameObject: {fileID: 6743186575664108798}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -75, z: 0}
+  m_LocalPosition: {x: 0, y: -60, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -742,7 +742,7 @@ MonoBehaviour:
         Raw: 0.95
         Type: 1
       Y:
-        Raw: 150
+        Raw: 120
         Type: 0
       Z:
         Raw: 0
@@ -899,7 +899,7 @@ MonoBehaviour:
     LightingModel: 0
     ShadowCastingMode: 2
     ReceiveShadows: 1
-  PreviewSize: {x: 0.95000005, y: 150, z: 0}
+  PreviewSize: {x: 0.95000005, y: 120, z: 0}
   visuals:
     Color: {r: 1, g: 1, b: 1, a: 1}
     CornerRadius:

@@ -220,6 +220,7 @@ public class LevelEditor : Singleton<LevelEditor>
     public void SaveLevelToJson()
     {
         levelName = LevelDataIO.SaveLevelData(levelData,levelName,true);
+        LoadJson();
     }
     public void SaveCurrentLevel()
     {
@@ -230,6 +231,7 @@ public class LevelEditor : Singleton<LevelEditor>
         }
 
         levelName = LevelDataIO.SaveLevelData(levelData,levelName,true,true);
+        LoadJson();
     }
 
     public void LoadJson()
@@ -249,6 +251,7 @@ public class LevelEditor : Singleton<LevelEditor>
         levelName="";
         CreateNewLevelData();
         InitializeEditor();
+
     }
 
     public static MapData CreateNewMapData()

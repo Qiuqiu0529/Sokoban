@@ -9,20 +9,13 @@ public class ChannelAppearance : MonoBehaviour
 {
     [SerializeField] private Renderer[] targetRenderers;
     [SerializeField] private string[] targetRendererPaths;
-    [SerializeField] private Material[] channelMaterials;
+    [SerializeField, HideInInspector] private Material[] channelMaterials;
     [SerializeField] private Shader channelMappingShader;
 
     private readonly List<Material> generatedMaterials = new List<Material>();
     private bool channelMaterialsPrepared;
     private static readonly int ChannelColorId = Shader.PropertyToID("_ChannelColor");
     private static readonly int EdgeColorId = Shader.PropertyToID("_EdgeColor");
-
-    private static readonly Color[] DefaultChannelColors =
-    {
-        new Color(1f, 0.55f, 0.2f),
-        new Color(0.25f, 0.55f, 1f),
-        new Color(0.35f, 0.9f, 1f)
-    };
 
     public void ApplyChannel(int channelID)
     {
@@ -55,6 +48,9 @@ public class ChannelAppearance : MonoBehaviour
             return;
         }
 
+        // Ghost and grave prefabs use their authored NPCGhost materials per
+        // channel. Other channel props (plates and pumpkins) use the shared
+        // palette with the color-mapping shader.
         if (channelMaterials != null && materialIndex >= 0 && materialIndex < channelMaterials.Length &&
             channelMaterials[materialIndex] != null)
         {
@@ -65,8 +61,8 @@ public class ChannelAppearance : MonoBehaviour
             return;
         }
 
-        if (materialIndex < 0 || materialIndex >= DefaultChannelColors.Length) return;
-        Color color = DefaultChannelColors[materialIndex];
+        if (materialIndex < 0) return;
+        Color color = ChannelPalette.GetSharedColor(channelID);
         PrepareChannelMappingMaterials();
         var propertyBlock = new MaterialPropertyBlock();
         foreach (Renderer renderer in targetRenderers)
@@ -101,7 +97,8 @@ public class ChannelAppearance : MonoBehaviour
             {
                 Material source = sourceMaterials[i];
                 if (source == null) continue;
-                if (source.shader == channelMappingShader || source.shader.name == "Sokoban/Pressure Dissolve")
+                if (source.shader == channelMappingShader ||
+                    (source.shader != null && source.shader.name == "Sokoban/Pressure Dissolve"))
                 {
                     mappedMaterials[i] = source;
                     continue;

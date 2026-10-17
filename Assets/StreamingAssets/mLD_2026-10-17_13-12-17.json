@@ -1,0 +1,2037 @@
+{
+    "$id": 0,
+    "$type": "0|SerializableLevelData, Assembly-CSharp",
+    "mapData": {
+        "$id": 1,
+        "$type": "1|SerializableMapData, Assembly-CSharp",
+        "mapID": "f91a97e9-969d-4d00-bfcc-0cb6f95df0c5",
+        "gridLength": 10,
+        "gridWidth": 10,
+        "gridMin": {
+            "$type": "2|UnityEngine.Vector2Int, UnityEngine.CoreModule",
+            0,
+            0
+        },
+        "cellSize": 1,
+        "tileIDs": {
+            "$id": 2,
+            "$type": "3|System.Int32[], mscorlib",
+            "$plength": 100,
+            "$pcontent": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0
+            ]
+        },
+        "tileRotations": {
+            "$id": 3,
+            "$type": "4|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[UnityEngine.Vector3, UnityEngine.CoreModule]], mscorlib",
+            "comparer": {
+                "$id": 4,
+                "$type": "5|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector2Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 44,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        9
+                    },
+                    "$v": {
+                        "$type": "6|UnityEngine.Vector3, UnityEngine.CoreModule",
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        8
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        2,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        3,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        4
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        6
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        5
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        4,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        5,
+                        7
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        6,
+                        8
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        8
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        8
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        3
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        8,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                },
+                {
+                    "$k": {
+                        "$type": 2,
+                        7,
+                        2
+                    },
+                    "$v": {
+                        "$type": 6,
+                        0,
+                        0,
+                        0
+                    }
+                }
+            ]
+        },
+        "tileWalls": {
+            "$id": 5,
+            "$type": "7|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector2Int, UnityEngine.CoreModule],[System.Collections.Generic.Dictionary`2[[WallDirection, Assembly-CSharp],[System.Int32, mscorlib]], mscorlib]], mscorlib",
+            "comparer": $iref:4,
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        },
+        "objectInstances": {
+            "$id": 6,
+            "$type": "8|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[ObjDataInstance, Assembly-CSharp]], mscorlib",
+            "comparer": {
+                "$id": 7,
+                "$type": "9|System.Collections.Generic.GenericEqualityComparer`1[[System.String, mscorlib]], mscorlib"
+            },
+            "$rlength": 29,
+            "$rcontent": [
+                {
+                    "$k": "2d3b2475-9efe-42db-b1f9-86ab1bedb191",
+                    "$v": {
+                        "$id": 8,
+                        "$type": "10|ObjDataInstance, Assembly-CSharp",
+                        "objID": 0,
+                        "instanceID": "2d3b2475-9efe-42db-b1f9-86ab1bedb191",
+                        "mainGrid": {
+                            "$type": 2,
+                            4,
+                            6
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": "11|UnityEngine.Quaternion, UnityEngine.CoreModule",
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 9,
+                            "$type": "12|System.Collections.Generic.List`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib",
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": "13|UnityEngine.Vector3Int, UnityEngine.CoreModule",
+                                    4,
+                                    6,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": false,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0,
+                            0,
+                            0
+                        }
+                    }
+                },
+                {
+                    "$k": "1a18afb1-9b61-4ec7-b0d0-074521b8ed1e",
+                    "$v": {
+                        "$id": 10,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "1a18afb1-9b61-4ec7-b0d0-074521b8ed1e",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            7
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 11,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    6,
+                                    7,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.700728536,
+                            -0.490381956,
+                            7.10368729
+                        }
+                    }
+                },
+                {
+                    "$k": "f071c3b6-810e-4358-b17c-e951a95ec533",
+                    "$v": {
+                        "$id": 12,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "f071c3b6-810e-4358-b17c-e951a95ec533",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            8
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 13,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    8,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.4086821,
+                            -0.4880324,
+                            8.233927
+                        }
+                    }
+                },
+                {
+                    "$k": "066a8cd6-56ad-4e14-aa08-3045144f8a55",
+                    "$v": {
+                        "$id": 14,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "066a8cd6-56ad-4e14-aa08-3045144f8a55",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 15,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.442749023,
+                            -0.4880324,
+                            4.632946
+                        }
+                    }
+                },
+                {
+                    "$k": "e83367b7-4411-4b05-8b9a-9ca152d71369",
+                    "$v": {
+                        "$id": 16,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "e83367b7-4411-4b05-8b9a-9ca152d71369",
+                        "mainGrid": {
+                            "$type": 2,
+                            5,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 17,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    5,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -1.77775478,
+                            -0.491544962,
+                            3.80750418
+                        }
+                    }
+                },
+                {
+                    "$k": "82a95c9f-85d1-4cb8-960a-82e5465dc566",
+                    "$v": {
+                        "$id": 18,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "82a95c9f-85d1-4cb8-960a-82e5465dc566",
+                        "mainGrid": {
+                            "$type": 2,
+                            3,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 19,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    3,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -3.86542773,
+                            -0.4913686,
+                            4.700976
+                        }
+                    }
+                },
+                {
+                    "$k": "5a3ae6f0-a834-419c-a192-9c28eb24a223",
+                    "$v": {
+                        "$id": 20,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "5a3ae6f0-a834-419c-a192-9c28eb24a223",
+                        "mainGrid": {
+                            "$type": 2,
+                            2,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 21,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    2,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -4.514881,
+                            -0.4913686,
+                            5.171599
+                        }
+                    }
+                },
+                {
+                    "$k": "6c0f8ac0-b7b2-4a05-9ed4-e774dc851900",
+                    "$v": {
+                        "$id": 22,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "6c0f8ac0-b7b2-4a05-9ed4-e774dc851900",
+                        "mainGrid": {
+                            "$type": 2,
+                            5,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 23,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    5,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -1.6937294,
+                            -0.491544962,
+                            3.89889574
+                        }
+                    }
+                },
+                {
+                    "$k": "da41c73e-6a9e-4fdb-b669-f28a350bac07",
+                    "$v": {
+                        "$id": 24,
+                        "$type": 10,
+                        "objID": 10,
+                        "instanceID": "da41c73e-6a9e-4fdb-b669-f28a350bac07",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 25,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.107373,
+                            -0.491544962,
+                            3.08687544
+                        }
+                    }
+                },
+                {
+                    "$k": "aae624fe-a310-48d7-bf67-170ae066abdb",
+                    "$v": {
+                        "$id": 26,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "aae624fe-a310-48d7-bf67-170ae066abdb",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            6
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 27,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    6,
+                                    6,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.8977864,
+                            -0.4773544,
+                            6.216774
+                        }
+                    }
+                },
+                {
+                    "$k": "95631152-4a7b-4ab1-9c9e-4959517ef358",
+                    "$v": {
+                        "$id": 28,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "95631152-4a7b-4ab1-9c9e-4959517ef358",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 29,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.3559215,
+                            -0.447023273,
+                            5.654376
+                        }
+                    }
+                },
+                {
+                    "$k": "f6aeeee7-500d-41ba-a1bc-60811482700c",
+                    "$v": {
+                        "$id": 30,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "f6aeeee7-500d-41ba-a1bc-60811482700c",
+                        "mainGrid": {
+                            "$type": 2,
+                            5,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 31,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    5,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -1.54421,
+                            -0.4773543,
+                            4.87167263
+                        }
+                    }
+                },
+                {
+                    "$k": "0e76b812-07c4-4569-aa38-a75dad000c7a",
+                    "$v": {
+                        "$id": 32,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "0e76b812-07c4-4569-aa38-a75dad000c7a",
+                        "mainGrid": {
+                            "$type": 2,
+                            4,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 33,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    4,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -2.78982234,
+                            -0.4773543,
+                            4.892584
+                        }
+                    }
+                },
+                {
+                    "$k": "c3b3c809-f396-460d-83d2-93790a39b760",
+                    "$v": {
+                        "$id": 34,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "c3b3c809-f396-460d-83d2-93790a39b760",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            7
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 35,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    7,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.141047,
+                            -0.4773544,
+                            7.532483
+                        }
+                    }
+                },
+                {
+                    "$k": "0b31a768-679a-449c-b3dd-4a1453b0b3f0",
+                    "$v": {
+                        "$id": 36,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "0b31a768-679a-449c-b3dd-4a1453b0b3f0",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 37,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.14856339,
+                            -0.4773544,
+                            3.16890645
+                        }
+                    }
+                },
+                {
+                    "$k": "57c16af0-ef7b-460c-8aec-82bfb6117707",
+                    "$v": {
+                        "$id": 38,
+                        "$type": 10,
+                        "objID": 11,
+                        "instanceID": "57c16af0-ef7b-460c-8aec-82bfb6117707",
+                        "mainGrid": {
+                            "$type": 2,
+                            4,
+                            2
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 39,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    4,
+                                    2,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -2.780654,
+                            -0.4773544,
+                            2.93067932
+                        }
+                    }
+                },
+                {
+                    "$k": "af141fc5-d0d3-4ca2-946e-0cebbcc2f023",
+                    "$v": {
+                        "$id": 40,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "af141fc5-d0d3-4ca2-946e-0cebbcc2f023",
+                        "mainGrid": {
+                            "$type": 2,
+                            3,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 41,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    3,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -3.23393226,
+                            -0.4964798,
+                            3.263104
+                        }
+                    }
+                },
+                {
+                    "$k": "e5bb61b6-f1b7-4f9c-bfb8-8f6bc2fe190d",
+                    "$v": {
+                        "$id": 42,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "e5bb61b6-f1b7-4f9c-bfb8-8f6bc2fe190d",
+                        "mainGrid": {
+                            "$type": 2,
+                            3,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 43,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    3,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -3.82614064,
+                            -0.4964798,
+                            3.76541758
+                        }
+                    }
+                },
+                {
+                    "$k": "6855bc64-c699-4a3a-a74b-771ae4cc292a",
+                    "$v": {
+                        "$id": 44,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "6855bc64-c699-4a3a-a74b-771ae4cc292a",
+                        "mainGrid": {
+                            "$type": 2,
+                            2,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 45,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    2,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -4.59476376,
+                            -0.477111578,
+                            3.58669519
+                        }
+                    }
+                },
+                {
+                    "$k": "68dc3b66-0794-48a4-8d49-daebba2ec116",
+                    "$v": {
+                        "$id": 46,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "68dc3b66-0794-48a4-8d49-daebba2ec116",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            2
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 47,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    2,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.07261038,
+                            -0.496479839,
+                            2.956539
+                        }
+                    }
+                },
+                {
+                    "$k": "51634e8e-be4b-4d14-b0a1-feb8aa4047fe",
+                    "$v": {
+                        "$id": 48,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "51634e8e-be4b-4d14-b0a1-feb8aa4047fe",
+                        "mainGrid": {
+                            "$type": 2,
+                            4,
+                            8
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 49,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    4,
+                                    8,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -2.56494474,
+                            -0.4964798,
+                            8.255489
+                        }
+                    }
+                },
+                {
+                    "$k": "1ddf41fc-2988-4a35-a913-f4486de2f5a9",
+                    "$v": {
+                        "$id": 50,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "1ddf41fc-2988-4a35-a913-f4486de2f5a9",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            7
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 51,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    6,
+                                    7,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -1.12956691,
+                            -0.496479839,
+                            7.20282841
+                        }
+                    }
+                },
+                {
+                    "$k": "3f271eb7-c134-4a59-9749-de4e0560c295",
+                    "$v": {
+                        "$id": 52,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "3f271eb7-c134-4a59-9749-de4e0560c295",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            7
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 53,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    7,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.632980347,
+                            -0.4937541,
+                            7.77473927
+                        }
+                    }
+                },
+                {
+                    "$k": "471f8667-dfe3-4b24-aea7-4c9242f5c7b3",
+                    "$v": {
+                        "$id": 54,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "471f8667-dfe3-4b24-aea7-4c9242f5c7b3",
+                        "mainGrid": {
+                            "$type": 2,
+                            8,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 55,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    8,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            1.53201365,
+                            -0.488638282,
+                            5.89413357
+                        }
+                    }
+                },
+                {
+                    "$k": "105526de-3db4-4156-8c4a-d3a0c91ddd89",
+                    "$v": {
+                        "$id": 56,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "105526de-3db4-4156-8c4a-d3a0c91ddd89",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            3
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 57,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    6,
+                                    3,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.986534238,
+                            -0.496479839,
+                            3.79679251
+                        }
+                    }
+                },
+                {
+                    "$k": "6061dba8-f7d5-4e99-b82a-87667a8498b7",
+                    "$v": {
+                        "$id": 58,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "6061dba8-f7d5-4e99-b82a-87667a8498b7",
+                        "mainGrid": {
+                            "$type": 2,
+                            5,
+                            5
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 59,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    5,
+                                    5,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -1.61077714,
+                            -0.4937541,
+                            5.410705
+                        }
+                    }
+                },
+                {
+                    "$k": "3561b311-65e7-4275-ba10-4fb7c227c70b",
+                    "$v": {
+                        "$id": 60,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "3561b311-65e7-4275-ba10-4fb7c227c70b",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            6
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 61,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    6,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.0554657,
+                            -0.488638282,
+                            6.183584
+                        }
+                    }
+                },
+                {
+                    "$k": "9374873a-08ee-4a0d-8e70-8d6b5d833e2d",
+                    "$v": {
+                        "$id": 62,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "9374873a-08ee-4a0d-8e70-8d6b5d833e2d",
+                        "mainGrid": {
+                            "$type": 2,
+                            6,
+                            4
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 63,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    6,
+                                    4,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            -0.3278321,
+                            -0.4964798,
+                            4.849534
+                        }
+                    }
+                },
+                {
+                    "$k": "94451354-f2fb-4e76-9fb0-e00b9ab694e4",
+                    "$v": {
+                        "$id": 64,
+                        "$type": 10,
+                        "objID": 12,
+                        "instanceID": "94451354-f2fb-4e76-9fb0-e00b9ab694e4",
+                        "mainGrid": {
+                            "$type": 2,
+                            7,
+                            2
+                        },
+                        "channelID": 0,
+                        "height": 0,
+                        "rotation": {
+                            "$type": 11,
+                            0,
+                            0,
+                            0,
+                            1
+                        },
+                        "currentOccupied": {
+                            "$id": 65,
+                            "$type": 12,
+                            "$rlength": 1,
+                            "$rcontent": [
+                                {
+                                    "$type": 13,
+                                    7,
+                                    2,
+                                    0
+                                }
+                            ]
+                        },
+                        "hasCustomWorldPosition": true,
+                        "customWorldPosition": {
+                            "$type": 6,
+                            0.5505593,
+                            -0.496479839,
+                            2.76305246
+                        }
+                    }
+                }
+            ]
+        },
+        "gridToInstanceMap3D": {
+            "$id": 66,
+            "$type": "14|System.Collections.Generic.Dictionary`2[[UnityEngine.Vector3Int, UnityEngine.CoreModule],[System.String, mscorlib]], mscorlib",
+            "comparer": {
+                "$id": 67,
+                "$type": "15|System.Collections.Generic.GenericEqualityComparer`1[[UnityEngine.Vector3Int, UnityEngine.CoreModule]], mscorlib"
+            },
+            "$rlength": 1,
+            "$rcontent": [
+                {
+                    "$k": {
+                        "$type": 13,
+                        4,
+                        6,
+                        0
+                    },
+                    "$v": "2d3b2475-9efe-42db-b1f9-86ab1bedb191"
+                }
+            ]
+        },
+        "goalObjectMap3D": {
+            "$id": 68,
+            "$type": 14,
+            "comparer": $iref:67,
+            "$rlength": 0,
+            "$rcontent": [
+            ]
+        }
+    },
+    "playerStart": {
+        "$id": 69,
+        "$type": "16|PlayerStartPosition, Assembly-CSharp",
+        "startGridPos": {
+            "$type": 2,
+            4,
+            6
+        }
+    },
+    "globalObjectCounts": {
+        "$id": 70,
+        "$type": "17|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[System.Int32, mscorlib]], mscorlib",
+        "comparer": {
+            "$id": 71,
+            "$type": "18|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32, mscorlib]], mscorlib"
+        },
+        "$rlength": 4,
+        "$rcontent": [
+            {
+                "$k": 0,
+                "$v": 1
+            },
+            {
+                "$k": 10,
+                "$v": 8
+            },
+            {
+                "$k": 11,
+                "$v": 7
+            },
+            {
+                "$k": 12,
+                "$v": 13
+            }
+        ]
+    }
+}

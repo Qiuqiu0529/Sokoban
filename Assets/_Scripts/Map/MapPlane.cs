@@ -225,8 +225,11 @@ public class MapPlane : MonoBehaviour
 
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
             worldPosition.y = instance.height * mapData.cellSize;
+            if (instance.hasCustomWorldPosition) worldPosition = instance.customWorldPosition;
 
-            GameObject objInstance = Instantiate(objData.prefab, worldPosition, instance.rotation);
+            GameObject prefab = objData.GetPrefab(gridPosition);
+            if (prefab == null) continue;
+            GameObject objInstance = Instantiate(prefab, worldPosition, instance.rotation);
             Vector3 preScale = objInstance.transform.localScale;
             objInstance.transform.localScale = Vector3.zero;
             objInstance.transform.parent = objs.transform;
@@ -436,6 +439,25 @@ public class MapPlane : MonoBehaviour
         float x = (gridPosition.x + 0.5f) * mapData.cellSize + startPoint.position.x;
         float y = (gridPosition.y + 0.5f) * mapData.cellSize + startPoint.position.z;
         return new Vector3(x, 0, y);
+    }
+
+    public float GetGroundHeightAtWorldPosition(Vector3 worldPosition)
+    {
+        Vector2Int gridPosition = WorldToGridPosition(worldPosition);
+        GameObject tile = GetTileAtGridPosition(gridPosition);
+        if (tile != null)
+        {
+            Renderer[] renderers = tile.GetComponentsInChildren<Renderer>();
+            if (renderers.Length > 0)
+            {
+                float surfaceHeight = float.NegativeInfinity;
+                foreach (Renderer renderer in renderers)
+                    surfaceHeight = Mathf.Max(surfaceHeight, renderer.bounds.max.y);
+                return surfaceHeight;
+            }
+        }
+
+        return startPoint != null ? startPoint.position.y : transform.position.y;
     }
 
     public float GetCellSize()
@@ -654,9 +676,10 @@ public class MapPlane : MonoBehaviour
         }
     }
 
-    public GameObject PlaceObject(Vector2Int gridPosition, ObjData objData, Quaternion quaternion, int height = 0, Vector3 scale = default, int channelID = 0)
+    public GameObject PlaceObject(Vector2Int gridPosition, ObjData objData, Quaternion quaternion, int height = 0, Vector3 scale = default, int channelID = 0, Vector3? customWorldPosition = null)
     {
-        if (!mapData.IsWithinGrid(gridPosition))
+        bool pureDecoration = objData != null && objData.objType.HasFlag(ObjectType.PureDecoration);
+        if (!pureDecoration && !mapData.IsWithinGrid(gridPosition))
         {
             return null;
         }
@@ -668,7 +691,7 @@ public class MapPlane : MonoBehaviour
 
         bool channelUnique = channelID > 0 &&
             (objData.objType.HasFlag(ObjectType.Ghost) || objData.objType.HasFlag(ObjectType.Goal));
-        if (objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player) || channelUnique)
+        if (!pureDecoration && (objData.maxCount == 1 || objData.objType.HasFlag(ObjectType.Player) || channelUnique))
         {
             GameObject existingUniqueObj = null;
             string existingInstanceID = null;
@@ -750,7 +773,8 @@ public class MapPlane : MonoBehaviour
             }
         }
 
-        GameObject existingObject = objData.objType.HasFlag(ObjectType.Goal) ||
+        GameObject existingObject = objData.objType.HasFlag(ObjectType.PureDecoration) ||
+                                    objData.objType.HasFlag(ObjectType.Goal) ||
                                     objData.objType.HasFlag(ObjectType.PressurePlate)
             ? null
             : GetObjectAtGridPosition(gridPosition, height);
@@ -761,8 +785,11 @@ public class MapPlane : MonoBehaviour
 
         Vector3 newWorldPosition = GridToWorldPosition(gridPosition);
         newWorldPosition.y = height * mapData.cellSize;
+        if (pureDecoration && customWorldPosition.HasValue)
+            newWorldPosition = customWorldPosition.Value;
 
-        string instanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion, channelID);
+        string instanceID = mapData.PlaceObject(gridPosition, objData, height, quaternion, channelID,
+            pureDecoration ? customWorldPosition : null);
         GameObject prefab = objData.GetPrefab(gridPosition);
         if (prefab == null)
         {
@@ -813,6 +840,71 @@ public class MapPlane : MonoBehaviour
         return mapData.GetObjectDataAtGrid(grid3D);
     }
 
+    public GameObject GetPureDecorationAtGridPosition(Vector2Int gridPosition, int height = 0)
+    {
+        Vector3Int grid = new Vector3Int(gridPosition.x, gridPosition.y, height);
+        foreach (ObjDataInstance instance in mapData.GetAllObjectInstances())
+        {
+            if (instance == null || instance.currentOccupied == null || !instance.currentOccupied.Contains(grid)) continue;
+            ObjData data = mapData.GetObjectData(instance.objID);
+            if (data == null || !data.objType.HasFlag(ObjectType.PureDecoration)) continue;
+            if (instanceToGameObject.TryGetValue(instance.instanceID, out GameObject decoration)) return decoration;
+        }
+        return null;
+    }
+
+    public ObjDataInstance GetPureDecorationInstanceAtGridPosition(Vector2Int gridPosition, int height = 0)
+    {
+        Vector3Int grid = new Vector3Int(gridPosition.x, gridPosition.y, height);
+        foreach (ObjDataInstance instance in mapData.GetAllObjectInstances())
+        {
+            if (instance == null || instance.currentOccupied == null || !instance.currentOccupied.Contains(grid)) continue;
+            ObjData data = mapData.GetObjectData(instance.objID);
+            if (data != null && data.objType.HasFlag(ObjectType.PureDecoration)) return instance;
+        }
+        return null;
+    }
+
+    public ObjDataInstance GetNearestPureDecorationInstance(Vector3 worldPosition)
+    {
+        ObjDataInstance nearest = null;
+        float nearestDistance = float.PositiveInfinity;
+        foreach (ObjDataInstance instance in mapData.GetAllObjectInstances())
+        {
+            if (instance == null) continue;
+            ObjData data = mapData.GetObjectData(instance.objID);
+            if (data == null || !data.objType.HasFlag(ObjectType.PureDecoration)) continue;
+            Vector3 objectPosition = instanceToGameObject.TryGetValue(instance.instanceID, out GameObject obj) && obj != null
+                ? obj.transform.position
+                : (instance.hasCustomWorldPosition ? instance.customWorldPosition : GridToWorldPosition(instance.mainGrid));
+            float distance = Vector2.Distance(new Vector2(objectPosition.x, objectPosition.z),
+                new Vector2(worldPosition.x, worldPosition.z));
+            float pickRadius = Mathf.Max(mapData.cellSize * 0.5f, data.prefab != null ? data.prefab.transform.localScale.magnitude * 0.35f : 0f);
+            if (distance <= pickRadius && distance < nearestDistance)
+            {
+                nearest = instance;
+                nearestDistance = distance;
+            }
+        }
+        return nearest;
+    }
+
+    public void RemoveObjectByInstanceID(string instanceID)
+    {
+        if (string.IsNullOrEmpty(instanceID)) return;
+        ObjDataInstance instance = mapData.GetInstance(instanceID);
+        if (instance == null) return;
+        ObjData data = mapData.GetObjectData(instance.objID);
+        if (isEditMode && levelData != null && data != null) levelData.UpdateObjectCount(data, false);
+        mapData.RemoveObject(instanceID);
+        if (instanceToGameObject.TryGetValue(instanceID, out GameObject obj))
+        {
+            instanceToGameObject.Remove(instanceID);
+            spawnedObjects.Remove(obj);
+            if (obj != null) Destroy(obj);
+        }
+    }
+
     public void LoadObjects()
     {
         Debug.Log($"[MapPlane] Starting to load objects for map {mapData.mapID}");
@@ -853,6 +945,7 @@ public class MapPlane : MonoBehaviour
 
                 Vector3 worldPosition = GridToWorldPosition(gridPosition);
                 worldPosition.y = instance.height * mapData.cellSize;
+                if (instance.hasCustomWorldPosition) worldPosition = instance.customWorldPosition;
 
                 GameObject objInstance = Instantiate(prefab, worldPosition, instance.rotation);
 
@@ -867,7 +960,7 @@ public class MapPlane : MonoBehaviour
                 instanceToGameObject[instance.instanceID] = objInstance;
                 objInstance.transform.parent = objs.transform;
 
-                var loadedObj = GetObjectAtGridPosition(gridPosition, instance.height);
+                var loadedObj = GetObjectByInstanceID(instance.instanceID);
                 if (loadedObj == null)
                 {
                     Debug.LogError($"[MapPlane] Failed to retrieve object at {gridPosition} after placement!");
@@ -1002,6 +1095,14 @@ public class MapPlane : MonoBehaviour
         {
             return obj;
         }
+        return null;
+    }
+
+    public string GetInstanceIDForObject(GameObject target)
+    {
+        if (target == null) return null;
+        foreach (var entry in instanceToGameObject)
+            if (entry.Value == target) return entry.Key;
         return null;
     }
 

@@ -118,6 +118,9 @@ namespace Movement
             currentRotation = gameObject.transform.rotation;
             ObjData movingObjData = map.mapData.GetObjectData(objInstance.objID);
             if (movingObjData == null) return false;
+            // If a pressure-controlled blocker reappeared over this object, keep
+            // the overlap trapped until the blocker is removed again.
+            if (map.mapData.IsOverlappingBlockingObject(instanceID)) return false;
 
             List<Vector3Int> targetOccupiedGrids = new List<Vector3Int>();
             foreach (var offset in map.mapData.GetObjectData(objInstance.objID).occupiedGrids)

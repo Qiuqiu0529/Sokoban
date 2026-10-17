@@ -75,7 +75,16 @@ public class ObjectPlacementState : IPlacementState
             return;
 
         const int placementHeight = 0;
-        targetPos.y = 0f;
+        bool pureDecoration = currentObjConfig.objType.HasFlag(ObjectType.PureDecoration);
+        if (pureDecoration)
+        {
+            targetPos = mousepos;
+            targetPos.y = map.GetGroundHeightAtWorldPosition(mousepos);
+        }
+        else
+        {
+            targetPos.y = 0f;
+        }
         GameObject targetPrefab = currentObjConfig.GetPrefab(gridPos);
         UpdatePreviewPrefab(targetPrefab);
         if (previewItem == null) return;
@@ -87,10 +96,19 @@ public class ObjectPlacementState : IPlacementState
         }
         previewItem.transform.position = targetPos;
         previewItem.transform.rotation = rotation;
+        if (pureDecoration)
+        {
+            float lowestPoint = float.PositiveInfinity;
+            foreach (Renderer renderer in previewItem.GetComponentsInChildren<Renderer>())
+                lowestPoint = Mathf.Min(lowestPoint, renderer.bounds.min.y);
+            if (!float.IsPositiveInfinity(lowestPoint))
+                previewItem.transform.position += Vector3.up * (targetPos.y - lowestPoint);
+            targetPos = previewItem.transform.position;
+        }
         BarrelMove previewBarrel = previewItem.GetComponent<BarrelMove>();
         if (previewBarrel != null) previewBarrel.SetPlacementPreviewOrientation(rotation);
 
-        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0))
+        if (!pureDecoration && (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)))
         {
             var objectInstance = new ObjDataInstance(currentObjConfig.objID, gridPos, placementHeight, rotation, currentObjConfig);
             bool expanded = false;
@@ -99,9 +117,10 @@ public class ObjectPlacementState : IPlacementState
             if (expanded) map.RefreshMapBounds();
         }
 
-        bool canPlace = map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, placementHeight, rotation,
+        bool canPlace = pureDecoration || (map.mapData.CanPlaceObj(gridPos, currentObjConfig.objID, placementHeight, rotation,
                             UsesChannel ? placeMgr.PlacementChannelID : 0) &&
-                        (map.levelData == null || map.levelData.CanPlaceMoreObjects(currentObjConfig));
+                        (currentObjConfig.objType.HasFlag(ObjectType.PureDecoration) || map.levelData == null ||
+                         map.levelData.CanPlaceMoreObjects(currentObjConfig)));
         placeMgr.UpdatePreviewColor(canPlace, previewItem);
 
         if (Input.GetMouseButtonDown(0) && canPlace)
@@ -111,7 +130,7 @@ public class ObjectPlacementState : IPlacementState
 
         if (Input.GetMouseButtonUp(1) && !CameraMove.RightDragThisGesture)
         {
-            placeMgr.RemoveObjectAt(targetPos, gridPos, map);
+            placeMgr.RemoveObjectAt(mousepos, gridPos, map);
         }
     }
 
@@ -148,7 +167,7 @@ public class ObjectPlacementState : IPlacementState
 
     private void PlaceObjectConditionally(Vector3 targetPos, Vector2Int gridPos, MapPlane map)
     {
-        if (gridPos != lastPlacedGridPos)
+        if (currentObjConfig.objType.HasFlag(ObjectType.PureDecoration) || gridPos != lastPlacedGridPos)
         {
             placeMgr.PlaceObjectAt(targetPos, gridPos, currentObjConfig, map,
                 previewItem.transform.rotation, previewItem.transform.localScale,
@@ -548,13 +567,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
         GUILayout.EndArea();
     }
 
-    private Color ChannelColor(int channel) => channel switch
-    {
-        1 => new Color(1f, 0.55f, 0.2f),
-        2 => new Color(0.25f, 0.55f, 1f),
-        3 => new Color(0.35f, 0.9f, 1f),
-        _ => Color.white
-    };
+    private Color ChannelColor(int channel) => ChannelPalette.GetSharedColor(channel);
 
     public void EditTileMode(TileData tileData)
     {
@@ -586,6 +599,7 @@ public class PlaceMgr : Singleton<PlaceMgr>
         {
             foreach (var material in renderer.materials)
             {
+                targetColor.a = material.color.a;
                 material.color = targetColor;
             }
         }
@@ -666,14 +680,16 @@ public class PlaceMgr : Singleton<PlaceMgr>
     {
         const int editorHeight = 0;
         if (map.mapData.CanPlaceObj(gridPos, objData.objID, editorHeight, rotation, channelID) &&
-            (map.levelData == null || map.levelData.CanPlaceMoreObjects(objData)))
+            (objData.objType.HasFlag(ObjectType.PureDecoration) || map.levelData == null ||
+             map.levelData.CanPlaceMoreObjects(objData)))
         {
             if (map.levelData == null)
             {
                 Debug.LogError($"[PlaceMgr] MapPlane {map.gameObject.name} is missing levelData reference!");
                 return;
             }
-            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, editorHeight, rotation, objData, map, scale, channelID);
+            Vector3? decorationPosition = objData.objType.HasFlag(ObjectType.PureDecoration) ? position : (Vector3?)null;
+            var placeCommand = new Commands.PlaceObjectCommand(position, gridPos, editorHeight, rotation, objData, map, scale, channelID, decorationPosition);
             commandMgr.ExecuteCommand(placeCommand);
         }
     }
@@ -681,10 +697,26 @@ public class PlaceMgr : Singleton<PlaceMgr>
     public void RemoveObjectAt(Vector3 position, Vector2Int gridPos, MapPlane map)
     {
         const int editorHeight = 0;
-        ObjData existingObj = map.GetObjectDataAtGridPosition(gridPos, editorHeight);
+        ObjData solidObject = map.GetObjectDataAtGridPosition(gridPos, editorHeight);
+        ObjDataInstance decoration = map.GetNearestPureDecorationInstance(position);
+        if (decoration != null && solidObject != null)
+        {
+            GameObject solidInstance = map.GetObjectAtGridPosition(gridPos, editorHeight);
+            GameObject decorationObject = map.GetObjectByInstanceID(decoration.instanceID);
+            if (solidInstance != null && decorationObject != null &&
+                Vector2.Distance(new Vector2(position.x, position.z), new Vector2(solidInstance.transform.position.x, solidInstance.transform.position.z)) <=
+                Vector2.Distance(new Vector2(position.x, position.z), new Vector2(decorationObject.transform.position.x, decorationObject.transform.position.z)))
+            {
+                decoration = null;
+            }
+        }
+        ObjData existingObj = decoration != null
+            ? map.mapData.GetObjectData(decoration.objID)
+            : map.GetObjectDataAtGridPosition(gridPos, editorHeight);
         if (existingObj != null)
         {
-            var removeCommand = new Commands.RemoveObjectCommand(position, gridPos, editorHeight, map);
+            var removeCommand = new Commands.RemoveObjectCommand(position, gridPos, editorHeight, map,
+                decoration != null ? decoration.instanceID : null);
             commandMgr.ExecuteCommand(removeCommand);
         }
     }

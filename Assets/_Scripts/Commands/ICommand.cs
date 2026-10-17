@@ -288,8 +288,9 @@ namespace Commands
         private int channelID;
         private int previousChannelID;
         private string currentInstanceID;
+        private Vector3? customWorldPosition;
 
-        public PlaceObjectCommand(Vector3 position, Vector2Int gridPos, int height, Quaternion rotation, ObjData config, MapPlane mapPlane, Vector3 scale, int channelID = 0)
+        public PlaceObjectCommand(Vector3 position, Vector2Int gridPos, int height, Quaternion rotation, ObjData config, MapPlane mapPlane, Vector3 scale, int channelID = 0, Vector3? customWorldPosition = null)
         {
             this.placementPosition = position;
             this.gridPosition = gridPos;
@@ -297,12 +298,14 @@ namespace Commands
             this.placementRotation = rotation;
             this.placementScale = scale;
             this.channelID = channelID;
+            this.customWorldPosition = customWorldPosition;
             this.objConfig = config;
             this.mapPlane = mapPlane;
 
             bool channelUnique = channelID > 0 &&
                 (config.objType.HasFlag(ObjectType.Ghost) || config.objType.HasFlag(ObjectType.Goal));
-            this.isGlobalUnique = config.maxCount == 1 || config.objType.HasFlag(ObjectType.Player) || channelUnique;
+            this.isGlobalUnique = !config.objType.HasFlag(ObjectType.PureDecoration) &&
+                (config.maxCount == 1 || config.objType.HasFlag(ObjectType.Player) || channelUnique);
             this.isPlayer = config.objType.HasFlag(ObjectType.Player);
 
             if (isGlobalUnique && mapPlane.levelData != null)
@@ -383,13 +386,16 @@ namespace Commands
             }
             else
             {
-                mapPlane.PlaceObject(gridPosition, objConfig, placementRotation, height, placementScale, channelID);
+                GameObject placedObject = mapPlane.PlaceObject(gridPosition, objConfig, placementRotation, height,
+                    placementScale, channelID, customWorldPosition);
                 ObjDataInstance placedInstance = channelID > 0
                     ? mapPlane.mapData.GetLinkedInstance(objConfig.objType, channelID)
                     : null;
                 currentInstanceID = placedInstance != null
                     ? placedInstance.instanceID
-                    : mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPosition.x, gridPosition.y, height));
+                    : (customWorldPosition.HasValue
+                        ? mapPlane.GetInstanceIDForObject(placedObject)
+                        : mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPosition.x, gridPosition.y, height)));
                 if (isPlayer && mapPlane.levelData != null)
                 {
                     mapPlane.levelData.playerStart.startGridPos = gridPosition;
@@ -443,6 +449,10 @@ namespace Commands
                     }
                     mapPlane.instanceToGameObject.Remove(currentInstanceID);
                 }
+                else if (customWorldPosition.HasValue && !string.IsNullOrEmpty(currentInstanceID))
+                {
+                    mapPlane.RemoveObjectByInstanceID(currentInstanceID);
+                }
                 else
                 {
                     mapPlane.RemoveObject(gridPosition, height);
@@ -463,31 +473,45 @@ namespace Commands
         private MapPlane mapPlane;
 
         private ObjData previousObjConfig;
+        private string previousInstanceID;
         private Quaternion previousRotation;
         private bool hadPreviousObject = false;
 
         private bool wasPlayer;
         private Vector2Int previousPlayerPos;
         private int previousChannelID;
+        private Vector3 previousWorldPosition;
+        private bool hasExplicitInstanceID;
 
-        public RemoveObjectCommand(Vector3 position, Vector2Int gridPos, int height, MapPlane mapPlane)
+        public RemoveObjectCommand(Vector3 position, Vector2Int gridPos, int height, MapPlane mapPlane, string explicitInstanceID = null)
         {
             this.placementPosition = position;
             this.gridPosition = gridPos;
             this.height = height;
             this.mapPlane = mapPlane;
 
-            previousObjConfig = mapPlane.GetObjectDataAtGridPosition(gridPosition, height);
+            ObjDataInstance decoration = !string.IsNullOrEmpty(explicitInstanceID)
+                ? mapPlane.mapData.GetInstance(explicitInstanceID)
+                : null;
+            hasExplicitInstanceID = !string.IsNullOrEmpty(explicitInstanceID);
+            previousInstanceID = decoration != null
+                ? decoration.instanceID
+                : mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPos.x, gridPos.y, height));
+            previousObjConfig = decoration != null
+                ? mapPlane.mapData.GetObjectData(decoration.objID)
+                : mapPlane.GetObjectDataAtGridPosition(gridPosition, height);
             if (previousObjConfig != null)
             {
                 hadPreviousObject = true;
-                string previousInstanceID = mapPlane.mapData.GetInstanceIDAtGrid(new Vector3Int(gridPos.x, gridPos.y, height));
                 ObjDataInstance previousInstance = mapPlane.mapData.GetInstance(previousInstanceID);
                 previousChannelID = previousInstance == null ? 0 : previousInstance.channelID;
-                GameObject previousObj = mapPlane.GetObjectAtGridPosition(gridPosition, height);
+                GameObject previousObj = decoration != null
+                    ? mapPlane.GetObjectByInstanceID(previousInstanceID)
+                    : mapPlane.GetObjectAtGridPosition(gridPosition, height);
                 if (previousObj != null)
                 {
                     previousRotation = previousObj.transform.rotation;
+                    previousWorldPosition = previousObj.transform.position;
                 }
 
                 wasPlayer = previousObjConfig.objType.HasFlag(ObjectType.Player);
@@ -500,14 +524,21 @@ namespace Commands
 
         public void Execute()
         {
-            mapPlane.RemoveObject(gridPosition, height);
+            if (hasExplicitInstanceID || (previousObjConfig != null && previousObjConfig.objType.HasFlag(ObjectType.PureDecoration)))
+                mapPlane.RemoveObjectByInstanceID(previousInstanceID);
+            else
+                mapPlane.RemoveObject(gridPosition, height);
         }
 
         public void Undo()
         {
             if (hadPreviousObject)
             {
-                mapPlane.PlaceObject(gridPosition, previousObjConfig, previousRotation, height, default, previousChannelID);
+                Vector3? restorePosition = previousObjConfig.objType.HasFlag(ObjectType.PureDecoration)
+                    ? previousWorldPosition
+                    : (Vector3?)null;
+                mapPlane.PlaceObject(gridPosition, previousObjConfig, previousRotation, height, default,
+                    previousChannelID, restorePosition);
                 if (wasPlayer)
                 {
                     mapPlane.levelData.playerStart.startGridPos = previousPlayerPos;

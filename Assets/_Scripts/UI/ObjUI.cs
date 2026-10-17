@@ -14,16 +14,29 @@ public class ObjUI : MonoBehaviour
 
     private void Start()
     {
-        objListView.AddDataBinder<ObjData, ImageButtonVisuals>(BindObj);
-        objListView.AddGestureHandler<Gesture.OnClick, ImageButtonVisuals>(HandleClicked);
-        objConfigs = objDataList.objDataList;
-        objListView.SetDataSource(objConfigs);
+        if (objDataList == null) return;
         placeMgr=PlaceMgr.Instance;
+        objConfigs = new List<ObjData>();
+        foreach (ObjData data in objDataList.objDataList)
+        {
+            if (data == null) continue;
+            if (!data.objType.HasFlag(ObjectType.PureDecoration)) objConfigs.Add(data);
+        }
+
+        if (objListView != null)
+        {
+            objListView.AddDataBinder<ObjData, ImageButtonVisuals>(BindObj);
+            objListView.AddGestureHandler<Gesture.OnClick, ImageButtonVisuals>(HandleClicked);
+            objListView.SetDataSource(objConfigs);
+        }
     }
     private void OnDestroy()
     {
-        objListView.RemoveDataBinder<ObjData, ImageButtonVisuals>(BindObj);
-        objListView.RemoveGestureHandler<Gesture.OnClick, ImageButtonVisuals>(HandleClicked);
+        if (objListView != null)
+        {
+            objListView.RemoveDataBinder<ObjData, ImageButtonVisuals>(BindObj);
+            objListView.RemoveGestureHandler<Gesture.OnClick, ImageButtonVisuals>(HandleClicked);
+        }
     }
 
     private void BindObj(Data.OnBind<ObjData> evt, ImageButtonVisuals visuals, int index)
@@ -38,5 +51,4 @@ public class ObjUI : MonoBehaviour
         ObjData item = objConfigs[index];
         placeMgr.EditObjectMode(item as ObjData);
     }
-
 }
