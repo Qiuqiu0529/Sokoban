@@ -26,14 +26,24 @@ public class CameraMgr : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
-        spiritCam = GameObject.FindGameObjectWithTag("SpiritCamera").GetComponent<Camera>();
-        realCam = GameObject.FindGameObjectWithTag("RealCamera").GetComponent<Camera>();
+        GameObject spiritCameraObject = GameObject.FindGameObjectWithTag("SpiritCamera");
+        GameObject realCameraObject = GameObject.FindGameObjectWithTag("RealCamera");
+        spiritCam = spiritCameraObject != null ? spiritCameraObject.GetComponent<Camera>() : null;
+        realCam = realCameraObject != null ? realCameraObject.GetComponent<Camera>() : null;
+        if (realCam == null) realCam = Camera.main;
+
+        Camera audioCamera = realCam != null ? realCam : spiritCam;
+        if (audioCamera != null && FindObjectOfType<AudioListener>() == null)
+            audioCamera.gameObject.AddComponent<AudioListener>();
 
         mapScaleV = new Vector3(mapScaleF, mapScaleF, 0.0f);
-        mapOGPos = map.position;
+        if (map != null) mapOGPos = map.position;
 
-        realCam.forceIntoRenderTexture = true;
-        realCam.targetTexture = miniMapTexture;
+        if (realCam != null && miniMapTexture != null)
+        {
+            realCam.forceIntoRenderTexture = true;
+            realCam.targetTexture = miniMapTexture;
+        }
 
         
     }
@@ -43,6 +53,7 @@ public class CameraMgr : MonoBehaviour
     public void OnPlusButton()
     {
         Debug.Log("Plus button");
+        if (map == null) return;
         if (map.localScale.x + mapScaleV.x <= treshold)
         {
             map.localScale += mapScaleV;
@@ -58,6 +69,7 @@ public class CameraMgr : MonoBehaviour
     public void OnMinusButton()
     {
         Debug.Log("Minus button");
+        if (map == null) return;
         if (map.localScale.x - mapScaleV.x >= 1.0f)
         {
             map.localScale -= mapScaleV;
@@ -72,6 +84,7 @@ public class CameraMgr : MonoBehaviour
 
     public void OnVisualButton()
     {
+        if (realCam == null || spiritCam == null || map == null) return;
         if (minimapOn)
         {
             Debug.Log("Slipt screen mode");
@@ -120,12 +133,14 @@ public class CameraMgr : MonoBehaviour
 
     private void OnPreRender()
     {
-        Camera.current.clearFlags = CameraClearFlags.SolidColor;
+        if (Camera.current != null)
+            Camera.current.clearFlags = CameraClearFlags.SolidColor;
     }
 
     private void ChangeCamera()
     {
         Debug.Log("Camera change invoked");
+        if (realCam == null || spiritCam == null) return;
         //spiritCam.enabled = !spiritCam.enabled;
         //realCam.enabled = !realCam.enabled;
 

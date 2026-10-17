@@ -14,6 +14,8 @@ public class GameMgr : Singleton<GameMgr>
     public string levelName;
     public bool loadFromScriptsObj;
     public LevelData levelData;
+    [SerializeField] private bool focusCameraOnMapLoad = true;
+    [SerializeField] private bool enableCameraControls = true;
     public bool IsEditorTestLevel { get; private set; }
 
     private GameplayState currentState = GameplayState.Playing;
@@ -93,10 +95,33 @@ public class GameMgr : Singleton<GameMgr>
     void Start()
     {
         if (!ValidateReferences()) return;
-        if (Camera.main != null && Camera.main.GetComponent<CameraMove>() == null)
-            Camera.main.gameObject.AddComponent<CameraMove>();
+        if (enableCameraControls)
+        {
+            Camera gameplayCamera = GetGameplayCamera();
+            if (gameplayCamera != null && gameplayCamera.GetComponent<CameraMove>() == null)
+                gameplayCamera.gameObject.AddComponent<CameraMove>();
+        }
         InitializeGame();
         
+    }
+
+    private Camera GetGameplayCamera()
+    {
+        // Gameplay scenes use SpiritCamera as the full-screen view while
+        // RealCamera renders to the minimap. Directly opening a level scene
+        // has no Camera tagged MainCamera, so Camera.main alone is not enough.
+        GameObject spiritCameraObject = GameObject.FindGameObjectWithTag("SpiritCamera");
+        Camera spiritCamera = spiritCameraObject != null
+            ? spiritCameraObject.GetComponent<Camera>()
+            : null;
+        if (spiritCamera != null && spiritCamera.isActiveAndEnabled)
+            return spiritCamera;
+
+        if (Camera.main != null)
+            return Camera.main;
+
+        GameObject realCameraObject = GameObject.FindGameObjectWithTag("RealCamera");
+        return realCameraObject != null ? realCameraObject.GetComponent<Camera>() : null;
     }
 
     private bool ValidateReferences()
@@ -167,7 +192,8 @@ public class GameMgr : Singleton<GameMgr>
             yield return new WaitForSeconds(0.1f);
         }
 
-        yield return new WaitForSeconds(0.2f);
+        // Let spawned objects run Start before the player is looked up.
+        yield return null;
         InitMap();
         InitializePlayer();
 
@@ -178,10 +204,17 @@ public class GameMgr : Singleton<GameMgr>
 
     private void FocusCameraBeforeMapFinishesLoading()
     {
-        CameraMove cameraMove = Camera.main != null ? Camera.main.GetComponent<CameraMove>() : null;
+        if (!focusCameraOnMapLoad) return;
+
+        Camera gameplayCamera = GetGameplayCamera();
+        CameraMove cameraMove = gameplayCamera != null
+            ? gameplayCamera.GetComponent<CameraMove>()
+            : null;
         var mapPlanes = mapMgr != null ? mapMgr.GetMapPlanes() : null;
         if (cameraMove != null && mapPlanes != null && mapPlanes.Count > 0)
             cameraMove.FocusMap(mapPlanes[0]);
+        else if (gameplayCamera == null)
+            Debug.LogError("[GameMgr] No gameplay camera found. Expected SpiritCamera, MainCamera, or RealCamera.");
     }
 
     private void InitMap()

@@ -493,7 +493,6 @@ MonoBehaviour:
   startPoint: {fileID: 0}
   insideWorld: []
   outsideWorld: []
-  planeDistance: 20
   IsAllMapLoaded: 0
 --- !u!114 &3931601592931649881
 MonoBehaviour:

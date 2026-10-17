@@ -18,8 +18,6 @@ public class MapMgr : Singleton<MapMgr>
     private List<MapPlane> mapPlanes = new List<MapPlane>();
     private Dictionary<string, MapData> runtimeMapData = new Dictionary<string, MapData>();
 
-    public int planeDistance=3;
-
     public bool IsAllMapLoaded;
     int mapplaneCount=0;
     int loadMap=0;
@@ -163,7 +161,6 @@ public class MapMgr : Singleton<MapMgr>
         planeInstance.wallDataList = wallDataList;
 
         mapPlanes.Add(planeInstance);
-        UpdateStartPoint(mapData);
         ++mapplaneCount;
 
         planeInstance.LoadMap();
@@ -199,11 +196,6 @@ public class MapMgr : Singleton<MapMgr>
             1,
             (float)mapData.gridWidth / 10 / mapData.cellSize
         );
-    }
-
-    private void UpdateStartPoint(MapData mapData)
-    {
-        startPoint.position += new Vector3((mapData.gridLength + planeDistance) * mapData.cellSize, 0, 0);
     }
 
     public MapData GetRuntimeMapData(string mapID)

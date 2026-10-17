@@ -124,6 +124,7 @@ public class MapPlane : MonoBehaviour
     #region  loadAnim
     private IEnumerator LoadTilesWithAnimation()
     {
+        bool hasPlacedTile = false;
         for (int x = mapData.gridMin.x; x < mapData.gridMin.x + mapData.gridLength; x++)
         {
             for (int y = mapData.gridMin.y; y < mapData.gridMin.y + mapData.gridWidth; y++)
@@ -136,16 +137,22 @@ public class MapPlane : MonoBehaviour
                     TileData tileData = tileDataList.GetTileDetails(tileID);
                     if (tileData != null)
                     {
+                        // Show the first real tile immediately. Empty cells do
+                        // not consume animation time; later tiles keep the
+                        // original staggered loading cadence.
+                        if (hasPlacedTile)
+                            yield return new WaitForSeconds(tileLoadDelay);
+
                         GameObject tile = PlaceTile(gridPosition, tileData, Quaternion.Euler(mapData.GetTileRotation(gridPosition)));
 
                         if (tile != null)
                         {
+                            hasPlacedTile = true;
                             float delay = UnityEngine.Random.Range(0f, 0.3f);
                             StartCoroutine(TileJumpEffect(tile, delay));
                         }
                     }
                 }
-                yield return new WaitForSeconds(tileLoadDelay);
             }
         }
     }
@@ -224,7 +231,7 @@ public class MapPlane : MonoBehaviour
             }
 
             Vector3 worldPosition = GridToWorldPosition(gridPosition);
-            worldPosition.y = instance.height * mapData.cellSize;
+            worldPosition.y = startPoint.position.y + instance.height * mapData.cellSize;
             if (instance.hasCustomWorldPosition) worldPosition = instance.customWorldPosition;
 
             GameObject prefab = objData.GetPrefab(gridPosition);
@@ -437,8 +444,8 @@ public class MapPlane : MonoBehaviour
     public Vector3 GridToWorldPosition(Vector2Int gridPosition)
     {
         float x = (gridPosition.x + 0.5f) * mapData.cellSize + startPoint.position.x;
-        float y = (gridPosition.y + 0.5f) * mapData.cellSize + startPoint.position.z;
-        return new Vector3(x, 0, y);
+        float z = (gridPosition.y + 0.5f) * mapData.cellSize + startPoint.position.z;
+        return new Vector3(x, startPoint.position.y, z);
     }
 
     public float GetGroundHeightAtWorldPosition(Vector3 worldPosition)
@@ -736,7 +743,7 @@ public class MapPlane : MonoBehaviour
             if (existingUniqueObj != null)
             {
                 Vector3 worldPosition = GridToWorldPosition(gridPosition);
-                worldPosition.y = height * mapData.cellSize;
+                worldPosition.y = startPoint.position.y + height * mapData.cellSize;
 
                 MapData sourceData = sourceMap != null ? sourceMap.mapData : mapData;
                 sourceData.RemoveObject(existingInstanceID);
@@ -784,7 +791,7 @@ public class MapPlane : MonoBehaviour
         }
 
         Vector3 newWorldPosition = GridToWorldPosition(gridPosition);
-        newWorldPosition.y = height * mapData.cellSize;
+        newWorldPosition.y = startPoint.position.y + height * mapData.cellSize;
         if (pureDecoration && customWorldPosition.HasValue)
             newWorldPosition = customWorldPosition.Value;
 
@@ -944,7 +951,7 @@ public class MapPlane : MonoBehaviour
                 }
 
                 Vector3 worldPosition = GridToWorldPosition(gridPosition);
-                worldPosition.y = instance.height * mapData.cellSize;
+                worldPosition.y = startPoint.position.y + instance.height * mapData.cellSize;
                 if (instance.hasCustomWorldPosition) worldPosition = instance.customWorldPosition;
 
                 GameObject objInstance = Instantiate(prefab, worldPosition, instance.rotation);

@@ -276,9 +276,9 @@ public class LevelEditor : Singleton<LevelEditor>
 
     public void PlayThisLevel()
     {
+        SaveCurrentLevel();
         if (!levelName.IsNullOrWhitespace())
         {
-            SaveCurrentLevel();
             // Destroy the active placement preview before the additive transition begins.
             PlaceMgr placeMgr = FindObjectOfType<PlaceMgr>();
             if (placeMgr != null)

@@ -617,6 +617,66 @@ MonoBehaviour:
     m_Scale: 1
     m_AtlasIndex: 0
     m_ClassDefinitionType: 0
+  - m_Index: 48
+    m_Metrics:
+      m_Width: 49.140625
+      m_Height: 59.03125
+      m_HorizontalBearingX: 2.796875
+      m_HorizontalBearingY: 58.40625
+      m_HorizontalAdvance: 54.71875
+    m_GlyphRect:
+      m_X: 449
+      m_Y: 155
+      m_Width: 50
+      m_Height: 60
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+  - m_Index: 4
+    m_Metrics:
+      m_Width: 51.828125
+      m_Height: 58.953125
+      m_HorizontalBearingX: 2.796875
+      m_HorizontalBearingY: 58.765625
+      m_HorizontalAdvance: 57.328125
+    m_GlyphRect:
+      m_X: 344
+      m_Y: 219
+      m_Width: 53
+      m_Height: 60
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+  - m_Index: 80
+    m_Metrics:
+      m_Width: 42.203125
+      m_Height: 15.109375
+      m_HorizontalBearingX: 2.4375
+      m_HorizontalBearingY: 36.265625
+      m_HorizontalAdvance: 47.34375
+    m_GlyphRect:
+      m_X: 253
+      m_Y: 233
+      m_Width: 43
+      m_Height: 16
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
+  - m_Index: 78
+    m_Metrics:
+      m_Width: 46.796875
+      m_Height: 46.796875
+      m_HorizontalBearingX: 2.796875
+      m_HorizontalBearingY: 52.203125
+      m_HorizontalAdvance: 52.375
+    m_GlyphRect:
+      m_X: 253
+      m_Y: 268
+      m_Width: 48
+      m_Height: 48
+    m_Scale: 1
+    m_AtlasIndex: 0
+    m_ClassDefinitionType: 0
   m_CharacterTable:
   - m_ElementType: 1
     m_Unicode: 32
@@ -741,6 +801,22 @@ MonoBehaviour:
   - m_ElementType: 1
     m_Unicode: 66
     m_GlyphIndex: 28
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 86
+    m_GlyphIndex: 48
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 100
+    m_GlyphIndex: 4
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 45
+    m_GlyphIndex: 80
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 43
+    m_GlyphIndex: 78
     m_Scale: 1
   m_AtlasTextures:
   - {fileID: 7500440292291269034}
@@ -868,6 +944,22 @@ MonoBehaviour:
     m_Y: 224
     m_Width: 67
     m_Height: 79
+  - m_X: 439
+    m_Y: 145
+    m_Width: 69
+    m_Height: 79
+  - m_X: 334
+    m_Y: 209
+    m_Width: 72
+    m_Height: 79
+  - m_X: 243
+    m_Y: 223
+    m_Width: 62
+    m_Height: 35
+  - m_X: 243
+    m_Y: 258
+    m_Width: 67
+    m_Height: 67
   m_FreeGlyphRects:
   - m_X: 135
     m_Y: 36
@@ -897,10 +989,6 @@ MonoBehaviour:
     m_Y: 67
     m_Width: 25
     m_Height: 63
-  - m_X: 439
-    m_Y: 130
-    m_Width: 24
-    m_Height: 893
   - m_X: 332
     m_Y: 79
     m_Width: 2
@@ -913,14 +1001,6 @@ MonoBehaviour:
     m_Y: 146
     m_Width: 40
     m_Height: 11
-  - m_X: 334
-    m_Y: 146
-    m_Width: 38
-    m_Height: 877
-  - m_X: 334
-    m_Y: 209
-    m_Width: 689
-    m_Height: 814
   - m_X: 598
     m_Y: 78
     m_Width: 425
@@ -929,26 +1009,10 @@ MonoBehaviour:
     m_Y: 66
     m_Width: 38
     m_Height: 957
-  - m_X: 439
-    m_Y: 150
-    m_Width: 584
-    m_Height: 873
-  - m_X: 439
-    m_Y: 145
-    m_Width: 87
-    m_Height: 878
   - m_X: 0
     m_Y: 344
     m_Width: 1023
     m_Height: 679
-  - m_X: 243
-    m_Y: 223
-    m_Width: 780
-    m_Height: 800
-  - m_X: 243
-    m_Y: 215
-    m_Width: 19
-    m_Height: 808
   - m_X: 119
     m_Y: 181
     m_Width: 14
@@ -958,17 +1022,61 @@ MonoBehaviour:
     m_Width: 11
     m_Height: 799
   - m_X: 73
-    m_Y: 303
-    m_Width: 950
-    m_Height: 720
-  - m_X: 186
-    m_Y: 301
-    m_Width: 837
-    m_Height: 722
-  - m_X: 73
     m_Y: 267
     m_Width: 46
     m_Height: 756
+  - m_X: 439
+    m_Y: 130
+    m_Width: 24
+    m_Height: 15
+  - m_X: 508
+    m_Y: 150
+    m_Width: 515
+    m_Height: 873
+  - m_X: 508
+    m_Y: 145
+    m_Width: 18
+    m_Height: 878
+  - m_X: 334
+    m_Y: 146
+    m_Width: 38
+    m_Height: 63
+  - m_X: 406
+    m_Y: 209
+    m_Width: 33
+    m_Height: 814
+  - m_X: 406
+    m_Y: 224
+    m_Width: 617
+    m_Height: 799
+  - m_X: 243
+    m_Y: 215
+    m_Width: 19
+    m_Height: 8
+  - m_X: 73
+    m_Y: 325
+    m_Width: 950
+    m_Height: 698
+  - m_X: 73
+    m_Y: 303
+    m_Width: 170
+    m_Height: 720
+  - m_X: 186
+    m_Y: 301
+    m_Width: 57
+    m_Height: 722
+  - m_X: 310
+    m_Y: 288
+    m_Width: 713
+    m_Height: 735
+  - m_X: 305
+    m_Y: 223
+    m_Width: 29
+    m_Height: 35
+  - m_X: 310
+    m_Y: 223
+    m_Width: 24
+    m_Height: 800
   m_fontInfo:
     Name: 
     PointSize: 0

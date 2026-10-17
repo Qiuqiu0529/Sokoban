@@ -363,7 +363,7 @@ namespace Commands
                     previousMapPlane.instanceToGameObject.Remove(previousInstanceID);
 
                     Vector3 worldPosition = mapPlane.GridToWorldPosition(gridPosition);
-                    worldPosition.y = height * mapPlane.mapData.cellSize;
+                    worldPosition.y = mapPlane.startPoint.position.y + height * mapPlane.mapData.cellSize;
                     uniqueObject.transform.position = worldPosition;
                     uniqueObject.transform.rotation = placementRotation;
                     BarrelMove movedBarrel = uniqueObject.GetComponent<BarrelMove>();
@@ -416,7 +416,8 @@ namespace Commands
                 }
 
                 Vector3 previousWorldPosition = previousMapPlane.GridToWorldPosition(previousGridPos);
-                previousWorldPosition.y = previousHeight * previousMapPlane.mapData.cellSize;
+                previousWorldPosition.y = previousMapPlane.startPoint.position.y +
+                    previousHeight * previousMapPlane.mapData.cellSize;
                 uniqueObject.transform.position = previousWorldPosition;
                 uniqueObject.transform.rotation = previousRotation;
                 BarrelMove restoredBarrel = uniqueObject.GetComponent<BarrelMove>();
@@ -625,7 +626,7 @@ namespace Commands
             }
 
             Vector3 worldPos = map.GridToWorldPosition(toPos);
-            worldPos.y = height * map.mapData.cellSize;
+            worldPos.y = map.startPoint.position.y + height * map.mapData.cellSize;
             MovableObj movableObj = targetObject.GetComponent<MovableObj>();
             if (movableObj != null)
             {
@@ -665,7 +666,7 @@ namespace Commands
             }
 
             Vector3 worldPos = map.GridToWorldPosition(fromPos);
-            worldPos.y = height * map.mapData.cellSize;
+            worldPos.y = map.startPoint.position.y + height * map.mapData.cellSize;
             MovableObj movableObj = targetObject.GetComponent<MovableObj>();
             if (movableObj != null)
             {
